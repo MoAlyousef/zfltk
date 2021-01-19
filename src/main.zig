@@ -1,4 +1,3 @@
-const std = @import("std");
 const c = @cImport({
   @cInclude("cfl.h");
   @cInclude("cfl_enums.h");

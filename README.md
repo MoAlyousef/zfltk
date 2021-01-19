@@ -6,4 +6,5 @@ This is an example repo showing how to build fltk apps using zig.
 Run:
 ```
 $ zig build
+$ ./zig-cache/bin/fltk_app
 ```
