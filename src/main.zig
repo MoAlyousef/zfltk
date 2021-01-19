@@ -1,14 +1,15 @@
 const std = @import("std");
 const c = @cImport({
   @cInclude("cfl.h");
+  @cInclude("cfl_enums.h");
   @cInclude("cfl_button.h");
   @cInclude("cfl_box.h");
   @cInclude("cfl_window.h");
 });
 
 pub fn cb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
-  var box = @ptrCast(*c.Fl_Box, data);
-  c.Fl_Box_set_label(box, "Hello World!");
+  c.Fl_Box_set_label(@ptrCast(*c.Fl_Box, data), "Hello World!");
+  c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), @enumToInt(c.Fl_Color_Red));
 }
 
 pub fn main() !void {
