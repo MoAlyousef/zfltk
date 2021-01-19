@@ -9,7 +9,7 @@ const c = @cImport({
 
 pub fn cb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
   c.Fl_Box_set_label(@ptrCast(*c.Fl_Box, data), "Hello World!");
-  c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), @enumToInt(c.Fl_Color_Red));
+  c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), c.Fl_Color_Red);
 }
 
 pub fn main() !void {
