@@ -35,6 +35,7 @@ pub fn build(b: *Builder) !void {
     });
     try fltkz_build.step.make();
 
+    // This only needs to run once!
     const fltkz_install = b.addSystemCommand(&[_][]const u8{
         "cmake",
         "--install",
@@ -69,9 +70,9 @@ pub fn build(b: *Builder) !void {
         exe.linkSystemLibrary("kernel32");
         exe.linkSystemLibrary("odbc32");
     } else if (target.isDarwin()) {
-        exe.linkSystemLibrary("Carbon");
-        exe.linkSystemLibrary("Cocoa");
-        exe.linkSystemLibrary("ApplicationServices");
+        exe.linkFramework("Carbon");
+        exe.linkFramework("Cocoa");
+        exe.linkFramework("ApplicationServices");
     } else {
         exe.linkSystemLibrary("pthread");
         exe.linkSystemLibrary("X11");

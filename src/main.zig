@@ -1,15 +1,15 @@
 const c = @cImport({
-    @cInclude("cfl.h"); // for Fl_init_all, Fl_run
-    @cInclude("cfl_enums.h"); // Fl_Color_Red
+    @cInclude("cfl.h"); // Fl_init_all, Fl_run
+    @cInclude("cfl_enums.h"); // Fl_Color_*
     @cInclude("cfl_image.h"); // Fl_register_images
     @cInclude("cfl_button.h"); // Fl_Button
     @cInclude("cfl_box.h"); // Fl_Box
     @cInclude("cfl_window.h"); // Fl_Window
 });
 
-pub fn cb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+pub fn but_cb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
     c.Fl_Box_set_label(@ptrCast(*c.Fl_Box, data), "Hello World!");
-    c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), c.Fl_Color_Red);
+    c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), c.Fl_Color_Cyan);
 }
 
 pub fn main() void {
@@ -24,7 +24,7 @@ pub fn main() void {
     c.Fl_Box_set_box(box, c.Fl_BoxType_UpBox);
     c.Fl_Window_end(win);
     c.Fl_Window_show(win);
-    c.Fl_Button_set_callback(but, cb, box);
+    c.Fl_Button_set_callback(but, but_cb, box);
     
     _ = c.Fl_run();
 }
