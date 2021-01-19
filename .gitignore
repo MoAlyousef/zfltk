@@ -1,0 +1,8 @@
+zig-cache/
+/release/
+/debug/
+/build/
+/build-*/
+/docgen_tmp/
+vendor/bin
+vendor/lib
