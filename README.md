@@ -91,4 +91,4 @@ pub fn main() void {
 }
 ```
 
-![alt_test](assets/image.jpg)
+![alt_test](screenshots/image.jpg)
