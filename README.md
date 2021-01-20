@@ -3,14 +3,36 @@
 This is an example repo showing how to build fltk apps using zig.
 
 ## Usage
-Run:
+After cloning or using this repo as a template, run:
 ```
 $ zig build
 $ ./zig-cache/bin/fltk_app
 ```
 
-## Dependencies
-Check the [cfltk](https://github.com/moalyousef/cfltk) repo for the necessary dependencies on each system/distro.
+## Dependencies 
+
+CMake (version > 3.0), Git and a C++11 compiler need to be installed and in your PATH for a crossplatform build from source.
+
+- Windows: No dependencies.
+- MacOS: No dependencies.
+- Linux: X11 and OpenGL development headers need to be installed for development. The libraries themselves are available on linux distros with a graphical user interface.
+
+For Debian-based GUI distributions, that means running:
+```
+$ sudo apt-get install libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpango1.0-dev libpng-dev libgl1-mesa-dev libglu1-mesa-dev
+```
+For RHEL-based GUI distributions, that means running:
+```
+$ sudo yum groupinstall "X Software Development" && yum install pango-devel libXinerama-devel libpng-devel
+```
+For Arch-based GUI distributions, that means running:
+```
+$ sudo pacman -S libx11 libxext libxft libxinerama libxcursor libxrender libxfixes libpng pango cairo libgl mesa --needed
+```
+For Alpine linux:
+```
+$ apk add pango-dev fontconfig-dev libxinerama-dev libxfixes-dev libxcursor-dev libpng-dev mesa-gl
+```
 
 ## API
 The code currently calls directly into the C wrapper and looks like this:
