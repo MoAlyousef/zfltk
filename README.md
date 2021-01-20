@@ -62,6 +62,6 @@ pub fn main() void {
     _ = c.Fl_run();
 }
 ```
-Hopefully I would get some time to work on a more idiomatic Zig wrapper.
+Hopefully I would get some time to work on a more idiomatic Zig wrapper once the Zig package manager is out. 
 
 ![alt_test](assets/image.jpg)
