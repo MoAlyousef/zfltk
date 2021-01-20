@@ -19,8 +19,10 @@ pub const Example = struct {
 const examples = &[_]Example{
     Example.new("simple", "examples/simple.zig", "A simple hello world app"),
     Example.new("capi", "examples/capi.zig", "Using the C-api directly"),
-    Example.new("hello", "examples/hello.zig", "Simple image example"),
+    Example.new("image", "examples/image.zig", "Simple image example"),
     Example.new("input", "examples/input.zig", "Simple input example"),
+    Example.new("mixed", "examples/mixed.zig", "Mixing both apis"),
+    Example.new("menu", "examples/menu.zig", "Example menu bar"),
 };
 
 pub fn build(b: *Builder) !void {

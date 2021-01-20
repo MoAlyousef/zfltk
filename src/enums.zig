@@ -221,7 +221,7 @@ pub const Key = struct {
     pub const Delete = 0xffff;
 };
 
-pub const Shortcu = struct {
+pub const Shortcut = struct {
     pub const None = 0;
     pub const Shift = 0x00010000;
     pub const CapsLock = 0x00020000;

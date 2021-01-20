@@ -3,6 +3,7 @@ const app = zfltk.app;
 const widget = zfltk.widget;
 const enums = zfltk.enums;
 const input = zfltk.input;
+const group = zfltk.group;
 const window = zfltk.window;
 const button = zfltk.button;
 const std = @import("std");

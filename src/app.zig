@@ -40,6 +40,26 @@ pub fn event() enums.Event {
     return @intToEnum(enums.Event, c.Fl_event());
 }
 
+pub fn event_x() i32 {
+    return c.Fl_event_x();
+}
+
+pub fn event_y() i32 {
+    return c.Fl_event_y();
+}
+
+pub fn background(r: u8, g: u8, b: u8) void {
+    c.Fl_backround(r, g, b);
+}
+
+pub fn background2(r: u8, g: u8, b: u8) void {
+    c.Fl_backround2(r, g, b);
+}
+
+pub fn foreground(r: u8, g: u8, b: u8) void {
+    c.Fl_foreground(r, g, b);
+}
+
 pub const WidgetTracker = struct {
     inner: ?*c.Fl_Widget_Tracker,
     pub fn new(w: widget.Widget) WidgetTracker {
@@ -49,9 +69,11 @@ pub const WidgetTracker = struct {
             .inner = ptr,
         };
     }
+
     pub fn deleted() bool {
         return c.Fl_Widget_Tracker_deleted() != 0;
     }
+
     pub fn delete(self: WidgetTracker) void {
         c.Fl_Widget_Tracker_delete(self.inner);
     }

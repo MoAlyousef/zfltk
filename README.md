@@ -6,6 +6,10 @@ After cloning the repo, run:
 ```
 $ zig build run-simple
 $ zig build run-capi
+$ zig build run-input
+$ zig build run-image
+$ zig build run-mixed
+$ zig build run-menu
 ```
 
 ## Usage
@@ -168,6 +172,32 @@ pub fn main() void {
     c.Fl_Window_show(win);
     c.Fl_Button_set_callback(but, but_cb, box);
     _ = c.Fl_run();
+}
+```
+You can also mix and match for any missing functionalities in the Zig wrapper:
+```zig
+const c = @cImport({
+    @cInclude("cfl.h"); // Fl_event_x() and Fl_event_y()
+});
+const zfltk = @import("zfltk");
+const app = zfltk.app;
+const widget = zfltk.widget;
+const window = zfltk.window;
+const button = zfltk.button;
+const std = @import("std");
+
+pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    std.debug.warn("{},{}\n", .{c.Fl_event_x(), c.Fl_event_y()});
+}
+
+pub fn main() !void {
+    try app.init();
+    var win = window.Window.new(100, 100, 400, 300, "Hello");
+    var but = button.Button.new(160, 200, 80, 40, "Click");
+    win.asGroup().end();
+    win.asWidget().show();
+    but.asWidget().setCallback(butCb, null);
+    try app.run();
 }
 ```
 
