@@ -9,7 +9,14 @@ $ zig build run-capi
 ```
 
 ## Usage
-Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone, then you will need a build.zig file as follows:
+Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
+```
+$ git submodule add https://github.com/moalyousef/zfltk
+$ cd zfltk
+$ zig build
+$ cd ..
+```
+then you will need a build.zig file as follows:
 ```zig
 const Builder = @import("std").build.Builder;
 
@@ -75,6 +82,10 @@ pub fn build(b: *Builder) void {
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
 }
+```
+Then you can run:
+```
+$ zig build run
 ```
 
 ## Dependencies 
