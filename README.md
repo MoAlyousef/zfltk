@@ -1,12 +1,11 @@
-# fltk-zig-example
+# zfltk
+A Zig wrapper for the FLTK gui library.
 
-This is an example repo showing how to build fltk apps using zig.
-
-## Usage
-After cloning or using this repo as a template, run:
+## Running the examples
+After cloning the repo, run:
 ```
-$ zig build
-$ ./zig-cache/bin/main
+$ zig build run-simple
+$ zig build run-capi
 ```
 
 ## Dependencies 
@@ -35,7 +34,37 @@ $ apk add pango-dev fontconfig-dev libxinerama-dev libxfixes-dev libxcursor-dev 
 ```
 
 ## API
-The code currently calls directly into the C wrapper and looks like this:
+Using the Zig wrapper (under development):
+```zig
+const zfltk = @import("zfltk");
+const app = zfltk.app;
+const widget = zfltk.widget;
+const window = zfltk.window;
+const button = zfltk.button;
+const box = zfltk.box;
+const enums = zfltk.enums;
+
+pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    var mybox = widget.Widget.fromVoidPtr(data);
+    mybox.setLabel("Hello World!");
+    var but = button.Button.fromWidgetPtr(w); // You can still you a Widget.fromWidgetPtr
+    but.asWidget().setColor(enums.Color.Cyan);
+}
+
+pub fn main() !void {
+    try app.init();
+    app.setScheme(.Gtk);
+    var win = window.Window.new(100, 100, 400, 300, "Hello");
+    var but = button.Button.new(160, 200, 80, 40, "Click");
+    var mybox = box.Box.new(0, 0, 400, 200, "");
+    win.asGroup().end();
+    win.asWidget().show();
+    but.asWidget().setCallback(butCb, @ptrCast(?*c_void, mybox.raw()));
+    try app.run();
+}
+```
+
+Using the C Api directly:
 ```zig
 const c = @cImport({
     @cInclude("cfl.h"); // Fl_run
@@ -58,10 +87,8 @@ pub fn main() void {
     c.Fl_Window_end(win);
     c.Fl_Window_show(win);
     c.Fl_Button_set_callback(but, but_cb, box);
-    
     _ = c.Fl_run();
 }
 ```
-Hopefully I would get some time to work on a more idiomatic Zig wrapper once the Zig package manager is out. 
 
 ![alt_test](assets/image.jpg)
