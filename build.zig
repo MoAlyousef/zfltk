@@ -1,47 +1,51 @@
-const Builder = @import("std").build.Builder;
+const std = @import("std");
+const fs = std.fs;
+const Builder = std.build.Builder;
 
 pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
+    
+    _ = fs.cwd().openDir("vendor/lib", .{}) catch |err| {
+        const fltkz_init = b.addSystemCommand(&[_][]const u8{
+            "git",
+            "submodule",
+            "update",
+            "--init",
+            "--recursive",
+        });
+        try fltkz_init.step.make();
 
-    const fltkz_init = b.addSystemCommand(&[_][]const u8{
-        "git",
-        "submodule",
-        "update",
-        "--init",
-        "--recursive",
-    });
-    try fltkz_init.step.make();
+        const fltkz_config = b.addSystemCommand(&[_][]const u8{
+            "cmake",
+            "-B",
+            "vendor/bin",
+            "-S",
+            "vendor/cfltk",
+            "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_INSTALL_PREFIX=vendor/lib",
+            "-DFLTK_BUILD_TEST=OFF",
+        });
+        try fltkz_config.step.make();
 
-    const fltkz_config = b.addSystemCommand(&[_][]const u8{
-        "cmake",
-        "-B",
-        "vendor/bin",
-        "-S",
-        "vendor/cfltk",
-        "-DCMAKE_BUILD_TYPE=Release",
-        "-DCMAKE_INSTALL_PREFIX=vendor/lib",
-        "-DFLTK_BUILD_TEST=OFF",
-    });
-    try fltkz_config.step.make();
+        const fltkz_build = b.addSystemCommand(&[_][]const u8{
+            "cmake",
+            "--build",
+            "vendor/bin",
+            "--config",
+            "Release",
+            "--parallel",
+        });
+        try fltkz_build.step.make();
 
-    const fltkz_build = b.addSystemCommand(&[_][]const u8{
-        "cmake",
-        "--build",
-        "vendor/bin",
-        "--config",
-        "Release",
-        "--parallel",
-    });
-    try fltkz_build.step.make();
-
-    // This only needs to run once!
-    const fltkz_install = b.addSystemCommand(&[_][]const u8{
-        "cmake",
-        "--install",
-        "vendor/bin",
-    });
-    try fltkz_install.step.make();
+        // This only needs to run once!
+        const fltkz_install = b.addSystemCommand(&[_][]const u8{
+            "cmake",
+            "--install",
+            "vendor/bin",
+        });
+        try fltkz_install.step.make();
+    };
 
     const exe = b.addExecutable("fltk_app", "src/main.zig");
     exe.setTarget(target);
