@@ -9,7 +9,7 @@ const enums = zfltk.enums;
 pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
     var mybox = widget.Widget.fromVoidPtr(data);
     mybox.setLabel("Hello World!");
-    var but = button.Button.fromWidgetPtr(w); // You can still you a Widget.fromWidgetPtr
+    var but = button.Button.fromWidgetPtr(w); // You can still use a Widget.fromWidgetPtr
     but.asWidget().setColor(enums.Color.Cyan);
 }
 

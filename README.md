@@ -8,6 +8,75 @@ $ zig build run-simple
 $ zig build run-capi
 ```
 
+## Usage
+Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone, then you will need a build.zig file as follows:
+```zig
+const Builder = @import("std").build.Builder;
+
+pub fn build(b: *Builder) void {
+    const target = b.standardTargetOptions(.{});
+    const mode = b.standardReleaseOptions();
+    const exe = b.addExecutable("main", "src/main.zig");
+    exe.addPackagePath("zfltk", "zfltk/src/zfltk.zig");
+    exe.addIncludeDir("zfltk/vendor/cfltk/include");
+    exe.addLibPath("zfltk/vendor/lib/lib");
+    exe.linkSystemLibrary("cfltk");
+    exe.linkSystemLibrary("fltk");
+    exe.linkSystemLibrary("fltk_images");
+    exe.linkSystemLibrary("fltk_png");
+    exe.linkSystemLibrary("fltk_jpeg");
+    exe.linkSystemLibrary("fltk_z");
+    exe.linkSystemLibrary("c");
+    if (target.isWindows()) {
+        exe.linkSystemLibrary("ws2_32");
+        exe.linkSystemLibrary("comctl32");
+        exe.linkSystemLibrary("gdi32");
+        exe.linkSystemLibrary("oleaut32");
+        exe.linkSystemLibrary("ole32");
+        exe.linkSystemLibrary("uuid");
+        exe.linkSystemLibrary("shell32");
+        exe.linkSystemLibrary("advapi32");
+        exe.linkSystemLibrary("comdlg32");
+        exe.linkSystemLibrary("winspool");
+        exe.linkSystemLibrary("user32");
+        exe.linkSystemLibrary("kernel32");
+        exe.linkSystemLibrary("odbc32");
+    } else if (target.isDarwin()) {
+        exe.linkFramework("Carbon");
+        exe.linkFramework("Cocoa");
+        exe.linkFramework("ApplicationServices");
+    } else {
+        exe.linkSystemLibrary("pthread");
+        exe.linkSystemLibrary("X11");
+        exe.linkSystemLibrary("Xext");
+        exe.linkSystemLibrary("Xinerama");
+        exe.linkSystemLibrary("Xcursor");
+        exe.linkSystemLibrary("Xrender");
+        exe.linkSystemLibrary("Xfixes");
+        exe.linkSystemLibrary("Xft");
+        exe.linkSystemLibrary("fontconfig");
+        exe.linkSystemLibrary("pango-1.0");
+        exe.linkSystemLibrary("pangoxft-1.0");
+        exe.linkSystemLibrary("gobject-2.0");
+        exe.linkSystemLibrary("cairo");
+        exe.linkSystemLibrary("pangocairo-1.0");
+    }
+    exe.setTarget(target);
+    exe.setBuildMode(mode);
+    exe.linkSystemLibrary("c");
+    exe.install();
+
+    const run_cmd = exe.run();
+    run_cmd.step.dependOn(b.getInstallStep());
+    if (b.args) |args| {
+        run_cmd.addArgs(args);
+    }
+
+    const run_step = b.step("run", "Run the app");
+    run_step.dependOn(&run_cmd.step);
+}
+```
+
 ## Dependencies 
 
 CMake (version > 3.15), Git and a C++11 compiler need to be installed and in your PATH for a crossplatform build from source.
@@ -47,7 +116,7 @@ const enums = zfltk.enums;
 pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
     var mybox = widget.Widget.fromVoidPtr(data);
     mybox.setLabel("Hello World!");
-    var but = button.Button.fromWidgetPtr(w); // You can still you a Widget.fromWidgetPtr
+    var but = button.Button.fromWidgetPtr(w); // You can still use a Widget.fromWidgetPtr
     but.asWidget().setColor(enums.Color.Cyan);
 }
 
