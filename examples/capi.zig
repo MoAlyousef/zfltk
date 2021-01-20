@@ -12,9 +12,7 @@ pub fn fltk_init() !void {
     c.Fl_init_all(); // inits all styles, if needed
     c.Fl_register_images(); // register image types supported by fltk, if needed
     const ret = c.Fl_lock(); // enable multithreading, if needed
-    if (ret != 0) {
-        unreachable;
-    }
+    if (ret != 0) unreachable;
 }
 
 // Button callback

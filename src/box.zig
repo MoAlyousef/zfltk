@@ -7,9 +7,7 @@ pub const Box = struct {
     inner: ?*c.Fl_Box,
     pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Box {
         const ptr = c.Fl_Box_new(x, y, w, h, title);
-        if (ptr == null) {
-            unreachable;
-        }
+        if (ptr == null) unreachable;
         return Box{
             .inner = ptr,
         };
@@ -32,9 +30,15 @@ pub const Box = struct {
             .inner = @ptrCast(*c.Fl_Box, ptr),
         };
     }
-    pub fn asWidget(self: *Box) widget.Widget {
+    pub fn asWidget(self: *const Box) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
         };
+    }
+    pub fn handle(self: *Box, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+        c.Fl_Box_handle(self.inner, cb, data);
+    }
+    pub fn draw(self: *Box, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+        c.Fl_Box_draw(self.inner, cb, data);
     }
 };

@@ -6,3 +6,4 @@ zig-cache/
 /docgen_tmp/
 vendor/bin
 vendor/lib
+temp.zig

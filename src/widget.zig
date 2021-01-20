@@ -2,6 +2,7 @@ const c = @cImport({
     @cInclude("cfl_widget.h");
 });
 const enums = @import("enums.zig");
+const image = @import("image.zig");
 
 pub const WidgetPtr = ?*c.Fl_Widget;
 
@@ -9,9 +10,7 @@ pub const Widget = struct {
     inner: ?*c.Fl_Widget,
     pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Widget {
         const ptr = c.Fl_Widget_new(x, y, w, h, title);
-        if (ptr == null) {
-            unreachable;
-        }
+        if (ptr == null) unreachable;
         return Widget{
             .inner = ptr,
         };
@@ -33,6 +32,10 @@ pub const Widget = struct {
         return Widget{
             .inner = @ptrCast(*c.Fl_Widget, ptr),
         };
+    }
+    pub fn delete(self: *Widget) void {
+        c.Fl_Widget_delete(self.inner);
+        self.inner = null;
     }
     pub fn setCallback(self: *Widget, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Widget_set_callback(self.inner, cb, data);
@@ -64,10 +67,51 @@ pub const Widget = struct {
     pub fn h(self: *const Widget) i32 {
         return c.Fl_Widget_h(self.inner);
     }
-    pub fn label(self: *const Widget) [:0]const u8 {
+    pub fn label(self: *const Widget) [*c]const u8 {
         return c.Fl_Widget_label(self.inner);
     }
     pub fn color(self: *const Widget) enums.Color {
         return @intToEnum(enums.Color, c.Fl_Widget_color(self.inner));
+    }
+    pub fn labelColor(self: *const Widget) enums.Color {
+        c.Fl_Widget_label_color(self.inner);
+    }
+    pub fn setLabelColor(self: *Widget, col: enums.Color) void {
+        c.Fl_Widget_set_label_color(self.inner, color);
+    }
+    pub fn labelFont(self: *const Widget) enums.Font {
+        c.Fl_Widget_label_font(self.inner);
+    }
+    pub fn setLabelFont(self: *Widget, font: enums.Font) void {
+        c.Fl_Widget_set_label_font(self.inner, @enumToInt(font));
+    }
+    pub fn labelSize(self: *const Widget) i32 {
+        c.Fl_Widget_label_size(self.inner);
+    }
+    pub fn setLabelSize(self: *Widget, sz: i32) void {
+        c.Fl_Widget_set_label_size(self.inner, sz);
+    }
+    pub fn setAlign(self: *Widget, a: i32) void {
+        c.Fl_Widget_set_align(self.inner, a);
+    }
+    pub fn set_trigger(self: *Widget, trigger: i32) void {
+        c.Fl_Widget_set_trigger(self.inner, trigger);
+    }
+    pub fn setBox(self: *Widget, boxtype: enums.BoxType) void {
+        c.Fl_Widget_set_box(self.inner, @enumToInt(boxtype));
+    }
+    pub fn setImage(self: *Widget, img: ?image.Image) void {
+        if (img) |i| {
+            c.Fl_Widget_set_image(self.inner, i.inner);
+        } else {
+            c.Fl_Widget_set_image(self.inner, null);
+        }
+    }
+    pub fn setDeimage(self: *Widget, img: ?image.Image) void {
+        if (img) |i| {
+            c.Fl_Widget_set_deimage(self.inner, i.inner);
+        } else {
+            c.Fl_Widget_set_deimage(self.inner, null);
+        }
     }
 };
