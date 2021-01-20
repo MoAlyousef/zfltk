@@ -6,12 +6,12 @@ This is an example repo showing how to build fltk apps using zig.
 After cloning or using this repo as a template, run:
 ```
 $ zig build
-$ ./zig-cache/bin/fltk_app
+$ ./zig-cache/bin/main
 ```
 
 ## Dependencies 
 
-CMake (version > 3.0), Git and a C++11 compiler need to be installed and in your PATH for a crossplatform build from source.
+CMake (version > 3.15), Git and a C++11 compiler need to be installed and in your PATH for a crossplatform build from source.
 
 - Windows: No dependencies.
 - MacOS: No dependencies.

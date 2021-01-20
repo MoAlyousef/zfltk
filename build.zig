@@ -47,7 +47,7 @@ pub fn build(b: *Builder) !void {
         try fltkz_install.step.make();
     };
 
-    const exe = b.addExecutable("fltk_app", "src/main.zig");
+    const exe = b.addExecutable("main", "src/main.zig");
     exe.setTarget(target);
     exe.setBuildMode(mode);
     exe.addIncludeDir("vendor/cfltk/include");
