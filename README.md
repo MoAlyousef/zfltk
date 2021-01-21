@@ -158,7 +158,7 @@ const c = @cImport({
     @cInclude("cfl_window.h"); // Fl_Window
 });
 
-pub fn but_cb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+pub fn butCb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
     c.Fl_Box_set_label(@ptrCast(*c.Fl_Box, data), "Hello World!");
     c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), c.Fl_Color_Cyan);
 }
@@ -170,7 +170,7 @@ pub fn main() void {
     var box = c.Fl_Box_new(10, 10, 380, 180, "");
     c.Fl_Window_end(win);
     c.Fl_Window_show(win);
-    c.Fl_Button_set_callback(but, but_cb, box);
+    c.Fl_Button_set_callback(but, butCb, box);
     _ = c.Fl_run();
 }
 ```
@@ -202,3 +202,5 @@ pub fn main() !void {
 ```
 
 ![alt_test](screenshots/image.jpg)
+
+

@@ -8,7 +8,7 @@ const c = @cImport({
 });
 
 // fltk initizialization of optional functionalities
-pub fn fltk_init() !void {
+pub fn fltkInit() !void {
     c.Fl_init_all(); // inits all styles, if needed
     c.Fl_register_images(); // register image types supported by fltk, if needed
     const ret = c.Fl_lock(); // enable multithreading, if needed
@@ -16,7 +16,7 @@ pub fn fltk_init() !void {
 }
 
 // Button callback
-pub fn but_cb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+pub fn butCb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
     c.Fl_Box_set_label(@ptrCast(*c.Fl_Box, data), "Hello World!");
     c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), c.Fl_Color_Cyan);
 }
@@ -32,6 +32,6 @@ pub fn main() !void {
     c.Fl_Box_set_label_font(box, c.Fl_Font_Courier);
     c.Fl_Window_end(win);
     c.Fl_Window_show(win);
-    c.Fl_Button_set_callback(but, but_cb, box);
+    c.Fl_Button_set_callback(but, butCb, box);
     _ = c.Fl_run();
 }

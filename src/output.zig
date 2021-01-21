@@ -60,6 +60,18 @@ pub const Output = struct {
     pub fn setValue(self: *Output, val: [*c]const u8) void {
         c.Fl_Output_set_value(self.inner, val);
     }
+
+    pub fn setTextFont(self: *Output, font: enums.Font) void {
+        c.Fl_Output_set_text_font(self.inner, @enumToInt(font));
+    }
+
+    pub fn setTextColor(self: *Output, col: Color) void {
+        c.Fl_Output_set_text_color(self.inner, @enumToInt(col));
+    }
+
+    pub fn setTextSize(self: *Output, sz: u32) void {
+        c.Fl_Output_set_text_size(self.inner, sz);
+    }
 };
 
 pub const MultilineOutput = struct {

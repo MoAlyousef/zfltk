@@ -50,7 +50,7 @@ pub const NativeFileDialog = struct {
         return c.Fl_Native_File_Chooser_filenames(self.inner, 0);
     }
 
-    pub fn filename_at(self: *const NativeFileDialog, idx: u32) [*c]const u8 {
+    pub fn filenameAt(self: *const NativeFileDialog, idx: u32) [*c]const u8 {
         return c.Fl_Native_File_Chooser_filenames(self.inner, idx);
     }
 

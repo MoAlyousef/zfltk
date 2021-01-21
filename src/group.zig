@@ -15,6 +15,12 @@ pub const Group = struct {
         };
     }
 
+    pub fn current() Group {
+        return Group{
+            .inner = c.Fl_Group_current(),
+        };
+    }
+
     pub fn raw(self: *Group) ?*c.Fl_Group {
         return self.inner;
     }
@@ -79,6 +85,11 @@ pub const Group = struct {
     }
 };
 
+pub const PackType = enum(i32) {
+    Vertical = 0,
+    Horizontal = 1,
+};
+
 pub const Pack = struct {
     inner: ?*c.Fl_Pack,
     pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Pack {
@@ -133,6 +144,16 @@ pub const Pack = struct {
 
     pub fn draw(self: *Pack, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Pack_draw(self.inner, cb, data);
+    }
+
+    /// Get the spacing of the pack
+    pub fn spacing(self: *const Pack) i32 {
+        return c.Fl_Pack_spacing(self.inner);
+    }
+
+    /// Set the spacing of the pack
+    pub fn setSpacing(self: *Pack, s: i32) void {
+        c.Fl_Pack_set_spacing(self.inner, s);
     }
 };
 
@@ -211,6 +232,45 @@ pub const Tabs = struct {
     pub fn resizable(self: *const Group, widget: *widget.Widget) void {
         return c.Fl_Group_resizable(self.inner, widget.raw());
     }
+
+    /// Gets the currently visible group
+    pub fn value(self: *Tabs) Group {
+        return Group{ .inner = c.Fl_Tabs_value(self.inner) };
+    }
+
+    /// Sets the currently visible group
+    pub fn set_value(self: *Tabs, w: *const Group) void {
+        _ = c.Fl_Tabs_set_value(self.inner, w);
+    }
+
+    /// Sets the tab label alignment
+    pub fn set_tab_align(self: *Tabs, a: i32) void {
+        c.Fl_Tabs_set_tab_align(self.inner, a);
+    }
+
+    /// Gets the tab label alignment.
+    pub fn tab_align(self: *const Tab) i32 {
+        return c.Fl_Tabs_tab_align(self.inner);
+    }
+};
+
+pub const ScrollType = enum(i32) {
+    /// Never show bars
+    None = 0,
+    /// Show vertical bar
+    Horizontal = 1,
+    /// Show vertical bar
+    Vertical = 2,
+    /// Show both horizontal and vertical bars
+    Both = 3,
+    /// Always show bars
+    AlwaysOn = 4,
+    /// Show horizontal bar always
+    HorizontalAlways = 5,
+    /// Show vertical bar always
+    VerticalAlways = 6,
+    /// Always show both horizontal and vertical bars
+    BothAlways = 7,
 };
 
 pub const Scroll = struct {

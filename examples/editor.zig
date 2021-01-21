@@ -7,7 +7,7 @@ const enums = zfltk.enums;
 const text = zfltk.text;
 const dialog = zfltk.dialog;
 
-// To avoid exiting when hitting escape. 
+// To avoid exiting when hitting escape.
 // Also logic can be added to prompt the user to save their work
 pub fn winCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
     if (app.event() == enums.Event.Close) {
@@ -25,8 +25,21 @@ pub fn openCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
     dlg.setFilter("*.{txt,zig}");
     dlg.show();
     var fname = dlg.filename();
-    var buf = text.TextBuffer.fromVoidPtr(data);
-    _ = buf.loadFile(fname) catch unreachable;
+    if (fname != null) {
+        var buf = text.TextBuffer.fromVoidPtr(data);
+        _ = buf.loadFile(fname) catch unreachable;
+    }
+}
+
+pub fn saveCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    var dlg = dialog.NativeFileDialog.new(.BrowseSaveFile);
+    dlg.setFilter("*.{txt,zig}");
+    dlg.show();
+    var fname = dlg.filename();
+    if (fname != null) {
+        var buf = text.TextBuffer.fromVoidPtr(data);
+        _ = buf.saveFile(fname) catch unreachable;
+    }
 }
 
 pub fn quitCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
@@ -57,20 +70,35 @@ pub fn main() !void {
     try app.init();
     app.setScheme(.Gtk);
     app.background(211, 211, 211);
-    var win = window.Window.new(100, 100, 800, 600, "Hello");
+    var win = window.Window.new(100, 100, 800, 600, "Editor");
     var mymenu = menu.MenuBar.new(0, 0, 800, 35, "");
     var buf = text.TextBuffer.new();
+    defer buf.delete();
     var editor = text.TextEditor.new(2, 37, 800 - 2, 600 - 37, "");
     editor.asTextDisplay().setBuffer(&buf);
     win.asGroup().end();
     win.asWidget().show();
     win.asWidget().setCallback(winCb, null);
-    mymenu.asMenu().add("&File/New...\t", enums.Shortcut.Ctrl | 'n', .Normal, newCb, buf.toVoidPtr());
-    mymenu.asMenu().add("&File/Open...\t", enums.Shortcut.Ctrl | 'o', .MenuDivider, openCb, buf.toVoidPtr());
-    mymenu.asMenu().add("&File/Quit...\t", enums.Shortcut.Ctrl | 'q', .Normal, quitCb, win.toVoidPtr());
-    mymenu.asMenu().add("&Edit/Cut...\t", enums.Shortcut.Ctrl | 'x', .Normal, cutCb, editor.toVoidPtr());
-    mymenu.asMenu().add("&Edit/Copy...\t", enums.Shortcut.Ctrl | 'c', .Normal, copyCb, editor.toVoidPtr());
-    mymenu.asMenu().add("&Edit/Paste...\t", enums.Shortcut.Ctrl | 'v', .Normal, pasteCb, editor.toVoidPtr());
-    mymenu.asMenu().add("&Help/About...\t", enums.Shortcut.Ctrl | 'q', .Normal, helpCb, null);
+
+    mymenu.asMenu().add("&File/New...\t", enums.Shortcut.Ctrl | 'n',
+         .Normal, newCb, buf.toVoidPtr());
+    mymenu.asMenu().add("&File/Open...\t", enums.Shortcut.Ctrl | 'o',
+         .Normal, openCb, buf.toVoidPtr());
+    mymenu.asMenu().add("&File/Save...\t", enums.Shortcut.Ctrl | 's',
+         .MenuDivider, saveCb, buf.toVoidPtr());
+    mymenu.asMenu().add("&File/Quit...\t", enums.Shortcut.Ctrl | 'q',
+         .Normal, quitCb, win.toVoidPtr());
+    mymenu.asMenu().add("&Edit/Cut...\t", enums.Shortcut.Ctrl | 'x',
+         .Normal, cutCb, editor.toVoidPtr());
+    mymenu.asMenu().add("&Edit/Copy...\t", enums.Shortcut.Ctrl | 'c',
+         .Normal, copyCb, editor.toVoidPtr());
+    mymenu.asMenu().add("&Edit/Paste...\t", enums.Shortcut.Ctrl | 'v',
+         .Normal, pasteCb, editor.toVoidPtr());
+    mymenu.asMenu().add("&Help/About...\t", enums.Shortcut.Ctrl | 'q',
+         .Normal, helpCb, null);
+    
+    var item = mymenu.asMenu().findItem("&File/Quit...\t");
+    item.setLabelColor(enums.Color.Red);
+
     try app.run();
 }

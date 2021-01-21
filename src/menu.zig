@@ -2,6 +2,7 @@ const c = @cImport({
     @cInclude("cfl_menu.h");
 });
 const widget = @import("widget.zig");
+const enums = @import("enums.zig");
 
 pub const WidgetPtr = ?*c.Fl_Widget;
 
@@ -90,8 +91,24 @@ pub const Menu = struct {
         _ = c.Fl_Menu_Bar_remove(self.inner, idx);
     }
 
+    pub fn findItem(self: *Menu, path: [*c]const u8) MenuItem {
+        return MenuItem{ .inner = c.Fl_Menu_Bar_get_item(self.inner, path) };
+    }
+
     pub fn clear(self: *Menu) void {
         c.Fl_Menu_Bar_clear(self.inner);
+    }
+
+    pub fn setTextFont(self: *Menu, font: enums.Font) void {
+        c.Fl_Menu_Bar_set_text_font(self.inner, @enumToInt(font));
+    }
+
+    pub fn setTextColor(self: *Menu, col: Color) void {
+        c.Fl_Menu_Bar_set_text_color(self.inner, @enumToInt(col));
+    }
+
+    pub fn setTextSize(self: *Menu, sz: u32) void {
+        c.Fl_Menu_Bar_set_text_size(self.inner, sz);
     }
 };
 
@@ -263,5 +280,52 @@ pub const SysMenuBar = struct {
 
     pub fn draw(self: *Menu, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Sys_Menu_Bar_draw(self.inner, cb, data);
+    }
+};
+
+pub const MenuItem = struct {
+    inner: ?*c.Fl_Menu_Item,
+    pub fn setCallback(self: *MenuItem, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+        c.Fl_Menu_Item_set_callback(self.inner, cb, data);
+    }
+
+    pub fn setLabel(self: *MenuItem, str: [*c]const u8) void {
+        c.Fl_Menu_Item_set_label(self.inner, str);
+    }
+
+    pub fn color(self: *const MenuItem) enums.Color {
+        return @intToEnum(enums.Color, c.Fl_Menu_Item_color(self.inner));
+    }
+
+    pub fn labelColor(self: *const MenuItem) enums.Color {
+        return @intToEnum(enums.Color, c.Fl_Menu_Item_label_color(self.inner));
+    }
+
+    pub fn setLabelColor(self: *MenuItem, col: enums.Color) void {
+        c.Fl_Menu_Item_set_label_color(self.inner, @enumToInt(col));
+    }
+
+    pub fn labelFont(self: *const MenuItem) enums.Font {
+        return @intToEnum(enums.Font, c.Fl_Menu_Item_label_font(self.inner));
+    }
+
+    pub fn setLabelFont(self: *MenuItem, font: enums.Font) void {
+        c.Fl_Menu_Item_set_label_font(self.inner, @enumToInt(font));
+    }
+
+    pub fn labelSize(self: *const MenuItem) i32 {
+        c.Fl_Menu_Item_label_size(self.inner);
+    }
+
+    pub fn setLabelSize(self: *MenuItem, sz: i32) void {
+        c.Fl_Menu_Item_set_label_size(self.inner, sz);
+    }
+
+    pub fn show(self: *MenuItem) void {
+        c.Fl_Menu_Item_show(self.inner);
+    }
+
+    pub fn hide(self: *MenuItem) void {
+        c.Fl_Menu_Item_hide(self.inner);
     }
 };

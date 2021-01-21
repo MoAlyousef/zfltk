@@ -7,7 +7,7 @@ const box = zfltk.box;
 
 pub fn main() !void {
     try app.init();
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
+    var win = window.Window.new(100, 100, 400, 300, "Image");
     var mybox = box.Box.new(0, 0, 400, 300, "");
     win.asGroup().end();
     win.asWidget().show();

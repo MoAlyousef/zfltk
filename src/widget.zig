@@ -95,20 +95,24 @@ pub const Widget = struct {
         return c.Fl_Widget_label(self.inner);
     }
 
+    pub fn setType(self: *Widget, typ: i32) void {
+        c.Fl_Widget_set_type(self.inner, typ);
+    }
+
     pub fn color(self: *const Widget) enums.Color {
         return @intToEnum(enums.Color, c.Fl_Widget_color(self.inner));
     }
 
     pub fn labelColor(self: *const Widget) enums.Color {
-        c.Fl_Widget_label_color(self.inner);
+        return @intToEnum(enums.Color, c.Fl_Widget_label_color(self.inner));
     }
 
     pub fn setLabelColor(self: *Widget, col: enums.Color) void {
-        c.Fl_Widget_set_label_color(self.inner, color);
+        c.Fl_Widget_set_label_color(self.inner, @enumToInt(col));
     }
 
     pub fn labelFont(self: *const Widget) enums.Font {
-        c.Fl_Widget_label_font(self.inner);
+        return @intToEnum(c.Fl_Widget_label_font(self.inner));
     }
 
     pub fn setLabelFont(self: *Widget, font: enums.Font) void {
@@ -127,7 +131,7 @@ pub const Widget = struct {
         c.Fl_Widget_set_align(self.inner, a);
     }
 
-    pub fn set_trigger(self: *Widget, trigger: i32) void {
+    pub fn setTrigger(self: *Widget, trigger: i32) void {
         c.Fl_Widget_set_trigger(self.inner, trigger);
     }
 

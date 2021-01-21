@@ -60,6 +60,18 @@ pub const Input = struct {
     pub fn setValue(self: *Input, val: [*c]const u8) void {
         c.Fl_Input_set_value(self.inner, val);
     }
+
+    pub fn setTextFont(self: *Input, font: enums.Font) void {
+        c.Fl_Input_set_text_font(self.inner, @enumToInt(font));
+    }
+
+    pub fn setTextColor(self: *Input, col: Color) void {
+        c.Fl_Input_set_text_color(self.inner, @enumToInt(col));
+    }
+
+    pub fn setTextSize(self: *Input, sz: u32) void {
+        c.Fl_Input_set_text_size(self.inner, sz);
+    }
 };
 
 pub const MultilineInput = struct {

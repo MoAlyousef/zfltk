@@ -41,11 +41,11 @@ pub fn event() enums.Event {
     return @intToEnum(enums.Event, c.Fl_event());
 }
 
-pub fn event_x() i32 {
+pub fn eventX() i32 {
     return c.Fl_event_x();
 }
 
-pub fn event_y() i32 {
+pub fn eventY() i32 {
     return c.Fl_event_y();
 }
 

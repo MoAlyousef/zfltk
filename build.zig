@@ -21,8 +21,10 @@ const examples = &[_]Example{
     Example.new("capi", "examples/capi.zig", "Using the C-api directly"),
     Example.new("image", "examples/image.zig", "Simple image example"),
     Example.new("input", "examples/input.zig", "Simple input example"),
-    Example.new("mixed", "examples/mixed.zig", "Mixing both apis"),
+    Example.new("mixed", "examples/mixed.zig", "Mixing both c and zig apis"),
     Example.new("editor", "examples/editor.zig", "More complex example"),
+    Example.new("layout", "examples/layout.zig", "Layout example"),
+    Example.new("valuators", "examples/valuators.zig", "valuators example"),
 };
 
 pub fn build(b: *Builder) !void {
