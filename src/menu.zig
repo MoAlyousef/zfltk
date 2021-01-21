@@ -60,6 +60,10 @@ pub const Menu = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *Menu) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const Menu) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -106,21 +110,25 @@ pub const MenuBar = struct {
     }
 
     pub fn fromRaw(ptr: ?*c.Fl_Menu_Bar) MenuBar {
-        return Menu{
+        return MenuBar{
             .inner = ptr,
         };
     }
 
     pub fn fromWidgetPtr(w: ?*c.Fl_Widget) MenuBar {
-        return Menu{
+        return MenuBar{
             .inner = @ptrCast(*c.Fl_Menu_Bar, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) MenuBar {
-        return Menu{
+        return MenuBar{
             .inner = @ptrCast(*c.Fl_Menu_Bar, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *MenuBar) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const MenuBar) widget.Widget {
@@ -135,11 +143,11 @@ pub const MenuBar = struct {
         };
     }
 
-    pub fn handle(self: *Menu, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *MenuBar, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Menu_Bar_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Menu, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *MenuBar, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Menu_Bar_draw(self.inner, cb, data);
     }
 };
@@ -171,9 +179,13 @@ pub const Choice = struct {
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Choice {
-        return Menu{
+        return Choice{
             .inner = @ptrCast(*c.Fl_Choice, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *Choice) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const Choice) widget.Widget {
@@ -212,21 +224,25 @@ pub const SysMenuBar = struct {
     }
 
     pub fn fromRaw(ptr: ?*c.Fl_Sys_Menu_Bar) SysMenuBar {
-        return Menu{
+        return SysMenuBar{
             .inner = ptr,
         };
     }
 
     pub fn fromWidgetPtr(w: ?*c.Fl_Widget) SysMenuBar {
-        return Menu{
+        return SysMenuBar{
             .inner = @ptrCast(*c.Fl_Sys_Menu_Bar, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) SysMenuBar {
-        return Menu{
+        return SysMenuBar{
             .inner = @ptrCast(*c.Fl_Sys_Menu_Bar, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *SysMenuBar) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const SysMenuBar) widget.Widget {

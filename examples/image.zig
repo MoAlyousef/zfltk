@@ -11,7 +11,7 @@ pub fn main() !void {
     var mybox = box.Box.new(0, 0, 400, 300, "");
     win.asGroup().end();
     win.asWidget().show();
-    var img = image.SharedImage.load("screenshots/logo.png");
+    var img = try image.SharedImage.load("screenshots/logo.png");
     img.asImage().scale(400, 300, false, true);
     mybox.asWidget().setImage(img.asImage());
     try app.run();

@@ -35,6 +35,10 @@ pub const Input = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *Input) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const Input) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -90,6 +94,10 @@ pub const MultilineInput = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *MultilineInput) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const MultilineInput) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -141,6 +149,10 @@ pub const IntInput = struct {
         return IntInput{
             .inner = @ptrCast(*c.Fl_Int_Input, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *IntInput) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const IntInput) widget.Widget {
@@ -196,6 +208,10 @@ pub const FloatInput = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *FloatInput) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const FloatInput) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -247,6 +263,10 @@ pub const SecretInput = struct {
         return SecretInput{
             .inner = @ptrCast(*c.Fl_Secret_Input, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *SecretInput) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const SecretInput) widget.Widget {

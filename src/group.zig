@@ -37,6 +37,10 @@ pub const Group = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *Group) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const Group) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -107,6 +111,10 @@ pub const Pack = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *Pack) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const Pack) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -158,6 +166,10 @@ pub const Tabs = struct {
         return Tabs{
             .inner = @ptrCast(*c.Fl_Tabs, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *Tabs) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const Tabs) widget.Widget {
@@ -231,6 +243,10 @@ pub const Scroll = struct {
         return Scroll{
             .inner = @ptrCast(*c.Fl_Scroll, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *Scroll) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const Scroll) widget.Widget {

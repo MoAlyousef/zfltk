@@ -10,15 +10,22 @@ pub const TextBuffer = struct {
             .inner = c.Fl_Text_Buffer_new(),
         };
     }
+
     pub fn fromVoidPtr(ptr: ?*c_void) TextBuffer {
         return TextBuffer{
             .inner = @ptrCast(?*c.Fl_Text_Buffer, ptr),
         };
     }
+
+    pub fn toVoidPtr(self: *TextBuffer) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn delete(self: *TextBuffer) void {
         c.Fl_Text_Buffer_delete(self.inner);
         self.inner = null;
     }
+
     /// Sets the text of the buffer
     pub fn setText(self: *TextBuffer, txt: [*c]const u8) void {
         return c.Fl_Text_Buffer_set_text(self.inner, txt);
@@ -158,6 +165,10 @@ pub const TextDisplay = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *TextDisplay) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const TextDisplay) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -284,6 +295,10 @@ pub const TextEditor = struct {
         return TextEditor{
             .inner = @ptrCast(*c.Fl_Text_Editor, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *TextEditor) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const TextEditor) widget.Widget {

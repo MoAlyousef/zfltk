@@ -58,12 +58,12 @@ pub fn main() !void {
     editor.asTextDisplay().setBuffer(&buf);
     win.asGroup().end();
     win.asWidget().show();
-    mymenu.asMenu().add("&File/New...\t", enums.Shortcut.Ctrl | 'n', .Normal, newCb, @ptrCast(?*c_void, buf.inner));
-    mymenu.asMenu().add("&File/Open...\t", enums.Shortcut.Ctrl | 'o', .MenuDivider, openCb, @ptrCast(?*c_void, buf.inner));
-    mymenu.asMenu().add("&File/Quit...\t", enums.Shortcut.Ctrl | 'q', .Normal, quitCb, @ptrCast(?*c_void, win.raw()));
-    mymenu.asMenu().add("&Edit/Cut...\t", enums.Shortcut.Ctrl | 'x', .Normal, cutCb, @ptrCast(?*c_void, editor.raw()));
-    mymenu.asMenu().add("&Edit/Copy...\t", enums.Shortcut.Ctrl | 'c', .Normal, copyCb, @ptrCast(?*c_void, editor.raw()));
-    mymenu.asMenu().add("&Edit/Paste...\t", enums.Shortcut.Ctrl | 'v', .Normal, pasteCb, @ptrCast(?*c_void, editor.raw()));
+    mymenu.asMenu().add("&File/New...\t", enums.Shortcut.Ctrl | 'n', .Normal, newCb, buf.toVoidPtr());
+    mymenu.asMenu().add("&File/Open...\t", enums.Shortcut.Ctrl | 'o', .MenuDivider, openCb, buf.toVoidPtr());
+    mymenu.asMenu().add("&File/Quit...\t", enums.Shortcut.Ctrl | 'q', .Normal, quitCb, win.toVoidPtr());
+    mymenu.asMenu().add("&Edit/Cut...\t", enums.Shortcut.Ctrl | 'x', .Normal, cutCb, editor.toVoidPtr());
+    mymenu.asMenu().add("&Edit/Copy...\t", enums.Shortcut.Ctrl | 'c', .Normal, copyCb, editor.toVoidPtr());
+    mymenu.asMenu().add("&Edit/Paste...\t", enums.Shortcut.Ctrl | 'v', .Normal, pasteCb, editor.toVoidPtr());
     mymenu.asMenu().add("&Help/About...\t", enums.Shortcut.Ctrl | 'q', .Normal, helpCb, null);
     try app.run();
 }

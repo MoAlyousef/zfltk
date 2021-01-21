@@ -7,6 +7,11 @@ pub const Image = struct {
     pub fn scale(self: *Image, width: i32, height: i32, proportional: bool, can_expand: bool) void {
         c.Fl_Image_scale(self.inner, width, height, @boolToInt(proportional), @boolToInt(can_expand));
     }
+
+    pub fn toVoidPtr(self: *Image) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn copy(self: *const Image) Image {
         const img = c.Fl_Image_copy(self.inner);
         return Image{
@@ -49,13 +54,17 @@ pub const Image = struct {
 
 pub const SharedImage = struct {
     inner: ?*c.Fl_Shared_Image,
-    pub fn load(path: [*c]const u8) SharedImage {
+    pub fn load(path: [*c]const u8) !SharedImage {
         const ptr = c.Fl_Shared_Image_get(path, 0, 0);
-        if (ptr == null) unreachable;
+        if (ptr == null) return error.InvalidParemeter;
         return SharedImage{ .inner = ptr };
     }
 
     pub fn asImage(self: *const SharedImage) Image {
         return Image{ .inner = @ptrCast(*c.Fl_Image, self.inner) };
+    }
+
+    pub fn toVoidPtr(self: *SharedImage) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 };

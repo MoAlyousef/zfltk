@@ -35,6 +35,10 @@ pub const Output = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *MultilineOutput) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const Output) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -88,6 +92,10 @@ pub const MultilineOutput = struct {
         return MultilineOutput{
             .inner = @ptrCast(*c.Fl_Multiline_Output, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *MultilineOutput) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const MultilineOutput) widget.Widget {

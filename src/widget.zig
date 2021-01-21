@@ -38,6 +38,10 @@ pub const Widget = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *Widget) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn delete(self: *Widget) void {
         c.Fl_Widget_delete(self.inner);
         self.inner = null;

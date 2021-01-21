@@ -39,17 +39,32 @@ pub fn build(b: *Builder) !void {
         });
         try fltkz_init.step.make();
 
-        const fltkz_config = b.addSystemCommand(&[_][]const u8{
-            "cmake",
-            "-B",
-            "vendor/bin",
-            "-S",
-            "vendor/cfltk",
-            "-DCMAKE_BUILD_TYPE=Release",
-            "-DCMAKE_INSTALL_PREFIX=vendor/lib",
-            "-DFLTK_BUILD_TEST=OFF",
-        });
-        try fltkz_config.step.make();
+        if (target.isWindows() or target.isDarwin()) {
+            const fltkz_config = b.addSystemCommand(&[_][]const u8{
+                "cmake",
+                "-B",
+                "vendor/bin",
+                "-S",
+                "vendor/cfltk",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_INSTALL_PREFIX=vendor/lib",
+                "-DFLTK_BUILD_TEST=OFF",
+            });
+            try fltkz_config.step.make();
+        } else {
+            const fltkz_config = b.addSystemCommand(&[_][]const u8{
+                "cmake",
+                "-B",
+                "vendor/bin",
+                "-S",
+                "vendor/cfltk",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_INSTALL_PREFIX=vendor/lib",
+                "-DFLTK_BUILD_TEST=OFF",
+                "-DOPTION_USE_PANGO=ON", // enable if rtl/cjk font support is needed
+            });
+            try fltkz_config.step.make();
+        }
 
         const fltkz_build = b.addSystemCommand(&[_][]const u8{
             "cmake",

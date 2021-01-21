@@ -35,6 +35,10 @@ pub const Box = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *Box) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const Box) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),

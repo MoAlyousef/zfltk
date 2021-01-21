@@ -24,6 +24,6 @@ pub fn main() !void {
     var but = button.Button.new(160, 200, 80, 40, "Get Value!");
     win.asGroup().end();
     win.asWidget().show();
-    but.handle(butCb, @ptrCast(?*c_void, inp.raw()));
+    but.handle(butCb, inp.toVoidPtr());
     try app.run();
 }

@@ -36,6 +36,10 @@ pub const Button = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *Button) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const Button) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -111,6 +115,10 @@ pub const RadioButton = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *RadioButton) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const RadioButton) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -164,6 +172,10 @@ pub const CheckButton = struct {
         };
     }
 
+    pub fn toVoidPtr(self: *CheckButton) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
+    }
+
     pub fn asWidget(self: *const CheckButton) widget.Widget {
         return widget.Widget{
             .inner = @ptrCast(widget.WidgetPtr, self.inner),
@@ -215,6 +227,10 @@ pub const RoundButton = struct {
         return RoundButton{
             .inner = @ptrCast(*c.Fl_RoundButton, ptr),
         };
+    }
+
+    pub fn toVoidPtr(self: *RoundButton) ?*c_void {
+        return @ptrCast(?*c_void, self.inner);
     }
 
     pub fn asWidget(self: *const RoundButton) widget.Widget {

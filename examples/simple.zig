@@ -24,6 +24,6 @@ pub fn main() !void {
     mybox.asWidget().setLabelSize(18);
     win.asGroup().end();
     win.asWidget().show();
-    but.asWidget().setCallback(butCb, @ptrCast(?*c_void, mybox.raw()));
+    but.asWidget().setCallback(butCb, mybox.toVoidPtr());
     try app.run();
 }
