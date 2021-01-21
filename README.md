@@ -143,7 +143,7 @@ pub fn main() !void {
     var mybox = box.Box.new(0, 0, 400, 200, "");
     win.asGroup().end();
     win.asWidget().show();
-    but.asWidget().setCallback(butCb, @ptrCast(?*c_void, mybox.raw()));
+    but.asWidget().setCallback(butCb, mybox.toVoidPtr());
     try app.run();
 }
 ```

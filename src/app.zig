@@ -3,6 +3,7 @@ const c = @cImport({
     @cInclude("cfl_image.h");
 });
 const widget = @import("widget.zig");
+const enums = @import("enums.zig");
 
 const Scheme = enum {
     Base,

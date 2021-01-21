@@ -26,9 +26,9 @@ pub const Widget = struct {
         };
     }
 
-    pub fn fromWidgetPtr(w: WidgetPtr) Widget {
+    pub fn fromWidgetPtr(wid: WidgetPtr) Widget {
         return Widget{
-            .inner = @ptrCast(*c.Fl_Widget, w),
+            .inner = @ptrCast(*c.Fl_Widget, wid),
         };
     }
 

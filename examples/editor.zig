@@ -6,8 +6,14 @@ const menu = zfltk.menu;
 const enums = zfltk.enums;
 const text = zfltk.text;
 const dialog = zfltk.dialog;
-const std = @import("std");
-const fmt = std.fmt;
+
+// To avoid exiting when hitting escape. 
+// Also logic can be added to prompt the user to save their work
+pub fn winCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    if (app.event() == enums.Event.Close) {
+        widget.Widget.fromWidgetPtr(w).hide();
+    }
+}
 
 pub fn newCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
     var buf = text.TextBuffer.fromVoidPtr(data);
@@ -52,12 +58,13 @@ pub fn main() !void {
     app.setScheme(.Gtk);
     app.background(211, 211, 211);
     var win = window.Window.new(100, 100, 800, 600, "Hello");
-    var mymenu = menu.MenuBar.new(0, 0, 800, 40, "");
+    var mymenu = menu.MenuBar.new(0, 0, 800, 35, "");
     var buf = text.TextBuffer.new();
-    var editor = text.TextEditor.new(2, 40, 800 - 2, 600 - 42, "");
+    var editor = text.TextEditor.new(2, 37, 800 - 2, 600 - 37, "");
     editor.asTextDisplay().setBuffer(&buf);
     win.asGroup().end();
     win.asWidget().show();
+    win.asWidget().setCallback(winCb, null);
     mymenu.asMenu().add("&File/New...\t", enums.Shortcut.Ctrl | 'n', .Normal, newCb, buf.toVoidPtr());
     mymenu.asMenu().add("&File/Open...\t", enums.Shortcut.Ctrl | 'o', .MenuDivider, openCb, buf.toVoidPtr());
     mymenu.asMenu().add("&File/Quit...\t", enums.Shortcut.Ctrl | 'q', .Normal, quitCb, win.toVoidPtr());
