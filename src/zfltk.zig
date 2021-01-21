@@ -9,6 +9,8 @@ pub const enums = @import("enums.zig");
 pub const input = @import("input.zig");
 pub const output = @import("output.zig");
 pub const menu = @import("menu.zig");
+pub const text = @import("text.zig");
+pub const dialog = @import("dialog.zig");
 
 pub fn widgetCast(comptime T: type, wid: anytype) T {
     var t = T{ .inner = null };

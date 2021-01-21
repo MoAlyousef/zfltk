@@ -62,7 +62,7 @@ pub const Menu = struct {
 
     pub fn asWidget(self: *const Menu) widget.Widget {
         return widget.Widget{
-            .inner = @ptrCast(?*c.Fl_Widget, self.inner),
+            .inner = @ptrCast(widget.WidgetPtr, self.inner),
         };
     }
 
@@ -125,7 +125,7 @@ pub const MenuBar = struct {
 
     pub fn asWidget(self: *const MenuBar) widget.Widget {
         return widget.Widget{
-            .inner = @ptrCast(?*c.Fl_Widget, self.inner),
+            .inner = @ptrCast(widget.WidgetPtr, self.inner),
         };
     }
 
@@ -178,7 +178,7 @@ pub const Choice = struct {
 
     pub fn asWidget(self: *const Choice) widget.Widget {
         return widget.Widget{
-            .inner = @ptrCast(?*c.Fl_Widget, self.inner),
+            .inner = @ptrCast(widget.WidgetPtr, self.inner),
         };
     }
 
@@ -231,7 +231,7 @@ pub const SysMenuBar = struct {
 
     pub fn asWidget(self: *const SysMenuBar) widget.Widget {
         return widget.Widget{
-            .inner = @ptrCast(?*c.Fl_Widget, self.inner),
+            .inner = @ptrCast(widget.WidgetPtr, self.inner),
         };
     }
 

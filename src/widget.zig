@@ -55,6 +55,10 @@ pub const Widget = struct {
         c.Fl_Widget_show(self.inner);
     }
 
+    pub fn hide(self: *Widget) void {
+        c.Fl_Widget_hide(self.inner);
+    }
+
     pub fn setLabel(self: *Widget, str: [:0]const u8) void {
         c.Fl_Widget_set_label(self.inner, str);
     }
