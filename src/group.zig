@@ -7,7 +7,7 @@ pub const GroupPtr = ?*c.Fl_Group;
 
 pub const Group = struct {
     inner: ?*c.Fl_Group,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Group {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Group {
         const ptr = c.Fl_Group_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Group{
@@ -77,7 +77,7 @@ pub const Group = struct {
 
 pub const Pack = struct {
     inner: ?*c.Fl_Pack,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Pack {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Pack {
         const ptr = c.Fl_Pack_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Pack{
@@ -130,7 +130,7 @@ pub const Pack = struct {
 
 pub const Tabs = struct {
     inner: ?*c.Fl_Tabs,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Tabs {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Tabs {
         const ptr = c.Fl_Tabs_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Tabs{
@@ -203,7 +203,7 @@ pub const Tabs = struct {
 
 pub const Scroll = struct {
     inner: ?*c.Fl_Scroll,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Scroll {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Scroll {
         const ptr = c.Fl_Scroll_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Scroll{

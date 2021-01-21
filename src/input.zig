@@ -5,7 +5,7 @@ const widget = @import("widget.zig");
 
 pub const Input = struct {
     inner: ?*c.Fl_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Input {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Input {
         const ptr = c.Fl_Input_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Input{
@@ -53,14 +53,14 @@ pub const Input = struct {
         return c.Fl_Input_value(self.inner);
     }
 
-    pub fn setValue(self: *Input, val: [:0]const u8) void {
+    pub fn setValue(self: *Input, val: [*c]const u8) void {
         c.Fl_Input_set_value(self.inner, val);
     }
 };
 
 pub const MultilineInput = struct {
     inner: ?*c.Fl_Multiline_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) MultilineInput {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) MultilineInput {
         const ptr = c.Fl_Multiline_Input_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return MultilineInput{
@@ -113,7 +113,7 @@ pub const MultilineInput = struct {
 
 pub const IntInput = struct {
     inner: ?*c.Fl_Int_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) IntInput {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) IntInput {
         const ptr = c.Fl_Int_Input_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return IntInput{
@@ -166,7 +166,7 @@ pub const IntInput = struct {
 
 pub const FloatInput = struct {
     inner: ?*c.Fl_Float_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) FloatInput {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) FloatInput {
         const ptr = c.Fl_Float_Input_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return FloatInput{
@@ -219,7 +219,7 @@ pub const FloatInput = struct {
 
 pub const SecretInput = struct {
     inner: ?*c.Fl_Secret_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) SecretInput {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) SecretInput {
         const ptr = c.Fl_Secret_Input_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return SecretInput{

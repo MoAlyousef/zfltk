@@ -6,7 +6,7 @@ const enums = @import("enums.zig");
 
 pub const Button = struct {
     inner: ?*c.Fl_Button,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Button {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Button {
         const ptr = c.Fl_Button_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Button{
@@ -81,7 +81,7 @@ pub const Button = struct {
 
 pub const RadioButton = struct {
     inner: ?*c.Fl_Radio_Button,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) RadioButton {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) RadioButton {
         const ptr = c.Fl_Radio_Button_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return RadioButton{
@@ -134,7 +134,7 @@ pub const RadioButton = struct {
 
 pub const CheckButton = struct {
     inner: ?*c.Fl_Check_Button,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) CheckButton {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) CheckButton {
         const ptr = c.Fl_Check_Button_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return CheckButton{
@@ -187,7 +187,7 @@ pub const CheckButton = struct {
 
 pub const RoundButton = struct {
     inner: ?*c.Fl_Round_Button,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) RoundButton {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) RoundButton {
         const ptr = c.Fl_Round_Button_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return RoundButton{

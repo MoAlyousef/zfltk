@@ -8,7 +8,7 @@ pub const WidgetPtr = ?*c.Fl_Widget;
 
 pub const Widget = struct {
     inner: ?*c.Fl_Widget,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Widget {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Widget {
         const ptr = c.Fl_Widget_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Widget{
@@ -59,7 +59,7 @@ pub const Widget = struct {
         c.Fl_Widget_hide(self.inner);
     }
 
-    pub fn setLabel(self: *Widget, str: [:0]const u8) void {
+    pub fn setLabel(self: *Widget, str: [*c]const u8) void {
         c.Fl_Widget_set_label(self.inner, str);
     }
 

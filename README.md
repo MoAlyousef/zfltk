@@ -6,10 +6,10 @@ After cloning the repo, run:
 ```
 $ zig build run-simple
 $ zig build run-capi
+$ zig build run-editor
 $ zig build run-input
 $ zig build run-image
 $ zig build run-mixed
-$ zig build run-menu
 ```
 
 ## Usage

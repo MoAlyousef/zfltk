@@ -49,11 +49,11 @@ pub fn event_y() i32 {
 }
 
 pub fn background(r: u8, g: u8, b: u8) void {
-    c.Fl_backround(r, g, b);
+    c.Fl_background(r, g, b);
 }
 
 pub fn background2(r: u8, g: u8, b: u8) void {
-    c.Fl_backround2(r, g, b);
+    c.Fl_background2(r, g, b);
 }
 
 pub fn foreground(r: u8, g: u8, b: u8) void {

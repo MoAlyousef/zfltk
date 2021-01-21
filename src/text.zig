@@ -20,7 +20,7 @@ pub const TextBuffer = struct {
         self.inner = null;
     }
     /// Sets the text of the buffer
-    pub fn setText(self: *TextBuffer, txt: [:0]const u8) void {
+    pub fn setText(self: *TextBuffer, txt: [*c]const u8) void {
         return c.Fl_Text_Buffer_set_text(self.inner, txt);
     }
 
@@ -30,7 +30,7 @@ pub const TextBuffer = struct {
     }
 
     /// Appends to the buffer
-    pub fn append(self: *TextBuffer, text: [:0]const u8) void {
+    pub fn append(self: *TextBuffer, text: [*c]const u8) void {
         return c.Fl_Text_Buffer_append(self.inner, text);
     }
 
@@ -49,12 +49,12 @@ pub const TextBuffer = struct {
     }
 
     /// Inserts text into a position
-    pub fn insert(self: *TextBuffer, pos: u32, text: [:0]const u8) void {
+    pub fn insert(self: *TextBuffer, pos: u32, text: [*c]const u8) void {
         c.Fl_Text_Buffer_insert(self.inner, pos, txt.as_ptr());
     }
 
     /// Replaces text from position ```start``` to ```end```
-    pub fn replace(self: *TextBuffer, start: u32, end: u32, txt: [:0]const u8) void {
+    pub fn replace(self: *TextBuffer, start: u32, end: u32, txt: [*c]const u8) void {
         c.Fl_Text_Buffer_replace(self.inner, start, end, txt);
     }
 
@@ -95,7 +95,7 @@ pub const TextBuffer = struct {
     }
 
     /// Saves a buffer into a file
-    pub fn saveFile(self: *TextBuffer, path: [:0]const u8) !void {
+    pub fn saveFile(self: *TextBuffer, path: [*c]const u8) !void {
         const ret = c.Fl_Text_Buffer_save_file(self.inner, path);
         if (ret != 0) return error.InvalidParameter;
     }
@@ -128,7 +128,7 @@ pub const TextBuffer = struct {
 
 pub const TextDisplay = struct {
     inner: ?*c.Fl_Text_Display,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) TextDisplay {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) TextDisplay {
         const ptr = c.Fl_Text_Display_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return TextDisplay{
@@ -197,7 +197,7 @@ pub const TextDisplay = struct {
         c.Fl_Text_Display_scroll(self.inner, topLineNum, horizOffset);
     }
 
-    pub fn insert(self: *const TextDisplay, text: [:0]const u8) void {
+    pub fn insert(self: *const TextDisplay, text: [*c]const u8) void {
         c.Fl_Text_Display_insert(self.inner, text);
     }
 
@@ -256,7 +256,7 @@ pub const TextDisplay = struct {
 
 pub const TextEditor = struct {
     inner: ?*c.Fl_Text_Editor,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) TextEditor {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) TextEditor {
         const ptr = c.Fl_Text_Editor_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return TextEditor{
@@ -304,5 +304,20 @@ pub const TextEditor = struct {
 
     pub fn draw(self: *TextEditor, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Text_Editor_draw(self.inner, cb, data);
+    }
+
+    /// Copies the text within the TextEditor widget
+    pub fn copy(self: *const TextEditor) void {
+        _ = c.Fl_Text_Editor_kf_copy(self.inner);
+    }
+
+    /// Cuts the text within the TextEditor widget
+    pub fn cut(self: *const TextEditor) void {
+        _ = c.Fl_Text_Editor_kf_cut(self.inner);
+    }
+
+    /// Pastes text from the clipboard into the TextEditor widget
+    pub fn paste(self: *const TextEditor) void {
+        _ = c.Fl_Text_Editor_kf_paste(self.inner);
     }
 };

@@ -5,7 +5,7 @@ const widget = @import("widget.zig");
 
 pub const Box = struct {
     inner: ?*c.Fl_Box,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Box {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Box {
         const ptr = c.Fl_Box_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Box{

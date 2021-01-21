@@ -6,7 +6,7 @@ const group = @import("group.zig");
 
 pub const Window = struct {
     inner: ?*c.Fl_Double_Window,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Window {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Window {
         const ptr = c.Fl_Double_Window_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Window{

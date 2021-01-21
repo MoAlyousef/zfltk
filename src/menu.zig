@@ -30,7 +30,7 @@ pub const MenuFlag = enum(i32) {
 
 pub const Menu = struct {
     inner: ?*c.Fl_Menu_Bar,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Menu {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Menu {
         const ptr = c.Fl_Menu_Bar_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Menu{
@@ -74,11 +74,11 @@ pub const Menu = struct {
         c.Fl_Menu_Bar_draw(self.inner, cb, data);
     }
 
-    pub fn add(self: *Menu, name: [:0]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn add(self: *Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, cb, data, @enumToInt(flag));
     }
 
-    pub fn insert(self: *Menu, idx: u32, name: [:0]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn insert(self: *Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, cb, data, @enumToInt(flag));
     }
 
@@ -93,7 +93,7 @@ pub const Menu = struct {
 
 pub const MenuBar = struct {
     inner: ?*c.Fl_Menu_Bar,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) MenuBar {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) MenuBar {
         const ptr = c.Fl_Menu_Bar_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return MenuBar{
@@ -146,7 +146,7 @@ pub const MenuBar = struct {
 
 pub const Choice = struct {
     inner: ?*c.Fl_Choice,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Choice {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Choice {
         const ptr = c.Fl_Choice_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Choice{
@@ -199,7 +199,7 @@ pub const Choice = struct {
 
 pub const SysMenuBar = struct {
     inner: ?*c.Fl_Sys_Menu_Bar,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) SysMenuBar {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) SysMenuBar {
         const ptr = c.Fl_Sys_Menu_Bar_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return SysMenuBar{

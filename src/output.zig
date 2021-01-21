@@ -5,7 +5,7 @@ const widget = @import("widget.zig");
 
 pub const Output = struct {
     inner: ?*c.Fl_Output,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) Output {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Output {
         const ptr = c.Fl_Output_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return Output{
@@ -53,14 +53,14 @@ pub const Output = struct {
         return c.Fl_Output_value(self.inner);
     }
 
-    pub fn setValue(self: *Output, val: [:0]const u8) void {
+    pub fn setValue(self: *Output, val: [*c]const u8) void {
         c.Fl_Output_set_value(self.inner, val);
     }
 };
 
 pub const MultilineOutput = struct {
     inner: ?*c.Fl_Multiline_Output,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [:0]const u8) MultilineOutput {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) MultilineOutput {
         const ptr = c.Fl_Multiline_Output_new(x, y, w, h, title);
         if (ptr == null) unreachable;
         return MultilineOutput{

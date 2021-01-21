@@ -18,11 +18,11 @@ pub const Image = struct {
         return c.Fl_Image_draw(self.inner, arg2, arg3, arg4, arg5);
     }
 
-    pub fn width(self: *const Image) i32 {
+    pub fn w(self: *const Image) i32 {
         return c.Fl_Image_width(self.inner);
     }
 
-    pub fn height(self: *const Image) i32 {
+    pub fn h(self: *const Image) i32 {
         return c.Fl_Image_height(self.inner);
     }
 
@@ -49,7 +49,7 @@ pub const Image = struct {
 
 pub const SharedImage = struct {
     inner: ?*c.Fl_Shared_Image,
-    pub fn load(path: [:0]const u8) SharedImage {
+    pub fn load(path: [*c]const u8) SharedImage {
         const ptr = c.Fl_Shared_Image_get(path, 0, 0);
         if (ptr == null) unreachable;
         return SharedImage{ .inner = ptr };
