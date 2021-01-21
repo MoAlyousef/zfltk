@@ -22,7 +22,7 @@ const examples = &[_]Example{
     Example.new("image", "examples/image.zig", "Simple image example"),
     Example.new("input", "examples/input.zig", "Simple input example"),
     Example.new("mixed", "examples/mixed.zig", "Mixing both apis"),
-    Example.new("editor", "examples/editor.zig", "Example menu bar"),
+    Example.new("editor", "examples/editor.zig", "More complex example"),
 };
 
 pub fn build(b: *Builder) !void {
