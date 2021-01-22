@@ -57,7 +57,7 @@ pub const Widget = struct {
     }
 
     pub fn emit(self: *Widget, msg: usize) void {
-        self.setCallback(shim, @intToPtr(*c_void, msg));
+        self.setCallback(shim, @intToPtr(?*c_void, msg));
     }
 
     pub fn setColor(self: *Widget, col: enums.Color) void {

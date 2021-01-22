@@ -86,7 +86,7 @@ pub fn wait() bool {
 }
 
 pub fn send(msg: usize) void {
-    c.Fl_awake_msg(@intToPtr(*c_void, msg));
+    c.Fl_awake_msg(@intToPtr(?*c_void, msg));
 }
 
 pub fn recv() ?usize {
