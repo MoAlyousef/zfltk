@@ -147,6 +147,33 @@ pub fn main() !void {
     try app.run();
 }
 ```
+The messaging api can also be used:
+```zig
+const zfltk = @import("zfltk");
+const app = zfltk.app;
+const widget = zfltk.widget;
+const window = zfltk.window;
+const button = zfltk.button;
+const box = zfltk.box;
+const enums = zfltk.enums;
+
+pub fn main() !void {
+    try app.init();
+    app.setScheme(.Gtk);
+    var win = window.Window.new(100, 100, 400, 300, "Hello");
+    var but = button.Button.new(160, 220, 80, 40, "Click Me");
+    var mybox = box.Box.new(10, 10, 380, 180, "");
+    win.asGroup().end();
+    win.asWidget().show();
+    but.asWidget().emit(1);
+    while (app.wait()) {
+        if (app.recv()) |msg| switch (msg) {
+            1 => mybox.asWidget().setLabel("Button clicked"),
+            else => {},
+        };
+    }
+}
+```
 
 Using the C Api directly:
 ```zig
