@@ -71,11 +71,13 @@ pub fn main() !void {
     app.setScheme(.Gtk);
     app.background(211, 211, 211);
     var win = window.Window.new(100, 100, 800, 600, "Editor");
+    win.freePosition();
     var mymenu = menu.MenuBar.new(0, 0, 800, 35, "");
     var buf = text.TextBuffer.new();
     defer buf.delete();
     var editor = text.TextEditor.new(2, 37, 800 - 2, 600 - 37, "");
     editor.asTextDisplay().setBuffer(&buf);
+    editor.asTextDisplay().setLinenumberWidth(24);
     win.asGroup().end();
     win.asWidget().show();
     win.asWidget().setCallback(winCb, null);

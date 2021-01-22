@@ -1,10 +1,15 @@
 const c = @cImport({
     @cInclude("cfl_widget.h");
+    @cInclude("cfl.h");
 });
 const enums = @import("enums.zig");
 const image = @import("image.zig");
 
 pub const WidgetPtr = ?*c.Fl_Widget;
+
+fn shim(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+    c.Fl_awake_msg(data);
+}
 
 pub const Widget = struct {
     inner: ?*c.Fl_Widget,
@@ -49,6 +54,10 @@ pub const Widget = struct {
 
     pub fn setCallback(self: *Widget, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Widget_set_callback(self.inner, cb, data);
+    }
+
+    pub fn emit(self: *Widget, msg: usize) void {
+        self.setCallback(shim, @intToPtr(*c_void, msg));
     }
 
     pub fn setColor(self: *Widget, col: enums.Color) void {

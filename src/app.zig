@@ -4,6 +4,7 @@ const c = @cImport({
 });
 const widget = @import("widget.zig");
 const enums = @import("enums.zig");
+const std = @import("std");
 
 const Scheme = enum {
     Base,
@@ -79,3 +80,15 @@ pub const WidgetTracker = struct {
         c.Fl_Widget_Tracker_delete(self.inner);
     }
 };
+
+pub fn wait() bool {
+    return c.Fl_wait() != 0;
+}
+
+pub fn send(msg: usize) void {
+    c.Fl_awake_msg(@intToPtr(*c_void, msg));
+}
+
+pub fn recv() ?usize {
+    return @ptrToInt(c.Fl_thread_msg());
+}

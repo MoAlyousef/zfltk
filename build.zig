@@ -25,6 +25,8 @@ const examples = &[_]Example{
     Example.new("editor", "examples/editor.zig", "More complex example"),
     Example.new("layout", "examples/layout.zig", "Layout example"),
     Example.new("valuators", "examples/valuators.zig", "valuators example"),
+    Example.new("channels", "examples/channels.zig", "Use messages to handle events"),
+    Example.new("editormsgs", "examples/editormsgs.zig", "Use messages in the editor example"),
 };
 
 pub fn build(b: *Builder) !void {

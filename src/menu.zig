@@ -1,10 +1,15 @@
 const c = @cImport({
+    @cInclude("cfl.h");
     @cInclude("cfl_menu.h");
 });
 const widget = @import("widget.zig");
 const enums = @import("enums.zig");
 
 pub const WidgetPtr = ?*c.Fl_Widget;
+
+fn shim(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+    c.Fl_awake_msg(data);
+}
 
 pub const MenuFlag = enum(i32) {
     /// Normal item
@@ -85,6 +90,14 @@ pub const Menu = struct {
 
     pub fn insert(self: *Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, cb, data, @enumToInt(flag));
+    }
+
+    pub fn add_emit(self: *Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, msg: usize) void {
+        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, shim, @intToPtr(*c_void, msg), @enumToInt(flag));
+    }
+
+    pub fn insert_emit(self: *Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, msg: usize) void {
+        _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, shim, @intToPtr(*c_void, msg), @enumToInt(flag));
     }
 
     pub fn remove(self: *Menu, idx: u32) void {
