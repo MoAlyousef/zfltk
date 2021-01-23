@@ -132,7 +132,7 @@ pub const SvgImage = struct {
         return SvgImage{ .inner = x };
     }
 
-    pub fn fromData(data: []u8) !SvgImage {
+    pub fn fromData(data: [*c]const u8) !SvgImage {
         const x = c.Fl_SVG_Image_from(data);
         if (x == null or c.Fl_SVG_Image_fail(x) < 0) return error.InvalidParemeter;
         return SvgImage{.inner = x};
@@ -177,7 +177,7 @@ pub const JpegImage = struct {
         return JpegImage{ .inner = x };
     }
 
-    pub fn fromData(data: []u8) !JpegImage {
+    pub fn fromData(data: [*c]const u8) !JpegImage {
         const x = c.Fl_JPEG_Image_from(data);
         if (x == null or c.Fl_JPEG_Image_fail(x) < 0) return error.InvalidParemeter;
         return JpegImage{.inner = x};
@@ -222,7 +222,7 @@ pub const BmpImage = struct {
         return BmpImage{ .inner = x };
     }
 
-    pub fn fromData(data: []u8) !BmpImage {
+    pub fn fromData(data: [*c]const u8) !BmpImage {
         const x = c.Fl_BMP_Image_from(data);
         if (x == null or c.Fl_BMP_Image_fail(x) < 0) return error.InvalidParemeter;
         return BmpImage{.inner = x};
@@ -261,13 +261,13 @@ pub const BmpImage = struct {
 
 pub const RgbImage = struct {
     inner: ?*c.Fl_RGB_Image,
-    pub fn new(data: []u8, w: u32, h: u32, depth: u32) !RgbImage {
+    pub fn new(data: [*c]const u8, w: u32, h: u32, depth: u32) !RgbImage {
         const ptr = c.Fl_RGB_Image_new(data, w, h, depth);
         if (ptr == null or c.Fl_RGB_Image_fail(ptr) < 0) return error.InvalidParemeter;
         return RgbImage{ .inner = ptr };
     }
 
-    pub fn fromData(data: []u8, w: u32, h: u32, depth: u32) !RgbImage {
+    pub fn fromData(data: [*c]const u8, w: u32, h: u32, depth: u32) !RgbImage {
         const ptr = c.Fl_RGB_Image_from_data(data, w, h, depth);
         if (ptr == null or c.Fl_RGB_Image_fail(ptr) < 0) return error.InvalidParemeter;
         return RgbImage{ .inner = ptr };
@@ -312,7 +312,7 @@ pub const PngImage = struct {
         return PngImage{ .inner = x };
     }
 
-    pub fn fromData(data: []u8) !PngImage {
+    pub fn fromData(data: [*c]const u8) !PngImage {
         const x = c.Fl_PNG_Image_from(data);
         if (x == null or c.Fl_PNG_Image_fail(x) < 0) return error.InvalidParemeter;
         return PngImage{.inner = x};
@@ -357,7 +357,7 @@ pub const GifImage = struct {
         return GifImage{ .inner = x };
     }
 
-    pub fn fromData(data: []u8) !GifImage {
+    pub fn fromData(data: [*c]const u8) !GifImage {
         const x = c.Fl_GIF_Image_from(data);
         if (x == null or c.Fl_GIF_Image_fail(x) < 0) return error.InvalidParemeter;
         return GifImage{.inner = x};
