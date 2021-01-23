@@ -33,13 +33,13 @@ pub const Group = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Group {
         return Group{
-            .inner = @ptrCast(*c.Fl_Group, w),
+            .inner = @ptrCast(?*c.Fl_Group, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Group {
         return Group{
-            .inner = @ptrCast(*c.Fl_Group, ptr),
+            .inner = @ptrCast(?*c.Fl_Group, ptr),
         };
     }
 
@@ -112,13 +112,13 @@ pub const Pack = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Pack {
         return Pack{
-            .inner = @ptrCast(*c.Fl_Pack, w),
+            .inner = @ptrCast(?*c.Fl_Pack, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Pack {
         return Pack{
-            .inner = @ptrCast(*c.Fl_Pack, ptr),
+            .inner = @ptrCast(?*c.Fl_Pack, ptr),
         };
     }
 
@@ -179,13 +179,13 @@ pub const Tabs = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Tabs {
         return Tabs{
-            .inner = @ptrCast(*c.Fl_Tabs, w),
+            .inner = @ptrCast(?*c.Fl_Tabs, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Tabs {
         return Tabs{
-            .inner = @ptrCast(*c.Fl_Tabs, ptr),
+            .inner = @ptrCast(?*c.Fl_Tabs, ptr),
         };
     }
 
@@ -295,13 +295,13 @@ pub const Scroll = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Scroll {
         return Scroll{
-            .inner = @ptrCast(*c.Fl_Scroll, w),
+            .inner = @ptrCast(?*c.Fl_Scroll, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Scroll {
         return Scroll{
-            .inner = @ptrCast(*c.Fl_Scroll, ptr),
+            .inner = @ptrCast(?*c.Fl_Scroll, ptr),
         };
     }
 

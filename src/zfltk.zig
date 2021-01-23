@@ -12,6 +12,7 @@ pub const menu = @import("menu.zig");
 pub const text = @import("text.zig");
 pub const dialog = @import("dialog.zig");
 pub const valuator = @import("valuator.zig");
+pub const browser = @import("browser.zig");
 
 pub fn widgetCast(comptime T: type, wid: anytype) T {
     var t = T{ .inner = null };

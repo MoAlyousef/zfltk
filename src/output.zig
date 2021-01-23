@@ -25,13 +25,13 @@ pub const Output = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Output {
         return Output{
-            .inner = @ptrCast(*c.Fl_Output, w),
+            .inner = @ptrCast(?*c.Fl_Output, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Output {
         return Output{
-            .inner = @ptrCast(*c.Fl_Output, ptr),
+            .inner = @ptrCast(?*c.Fl_Output, ptr),
         };
     }
 
@@ -96,13 +96,13 @@ pub const MultilineOutput = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) MultilineOutput {
         return MultilineOutput{
-            .inner = @ptrCast(*c.Fl_Multiline_Output, w),
+            .inner = @ptrCast(?*c.Fl_Multiline_Output, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) MultilineOutput {
         return MultilineOutput{
-            .inner = @ptrCast(*c.Fl_Multiline_Output, ptr),
+            .inner = @ptrCast(?*c.Fl_Multiline_Output, ptr),
         };
     }
 

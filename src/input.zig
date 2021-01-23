@@ -25,13 +25,13 @@ pub const Input = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Input {
         return Input{
-            .inner = @ptrCast(*c.Fl_Input, w),
+            .inner = @ptrCast(?*c.Fl_Input, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Input {
         return Input{
-            .inner = @ptrCast(*c.Fl_Input, ptr),
+            .inner = @ptrCast(?*c.Fl_Input, ptr),
         };
     }
 
@@ -96,13 +96,13 @@ pub const MultilineInput = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) MultilineInput {
         return MultilineInput{
-            .inner = @ptrCast(*c.Fl_Multiline_Input, w),
+            .inner = @ptrCast(?*c.Fl_Multiline_Input, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) MultilineInput {
         return MultilineInput{
-            .inner = @ptrCast(*c.Fl_Multiline_Input, ptr),
+            .inner = @ptrCast(?*c.Fl_Multiline_Input, ptr),
         };
     }
 
@@ -153,13 +153,13 @@ pub const IntInput = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) IntInput {
         return IntInput{
-            .inner = @ptrCast(*c.Fl_Int_Input, w),
+            .inner = @ptrCast(?*c.Fl_Int_Input, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) IntInput {
         return IntInput{
-            .inner = @ptrCast(*c.Fl_Int_Input, ptr),
+            .inner = @ptrCast(?*c.Fl_Int_Input, ptr),
         };
     }
 
@@ -210,13 +210,13 @@ pub const FloatInput = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) FloatInput {
         return FloatInput{
-            .inner = @ptrCast(*c.Fl_Float_Input, w),
+            .inner = @ptrCast(?*c.Fl_Float_Input, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) FloatInput {
         return FloatInput{
-            .inner = @ptrCast(*c.Fl_Float_Input, ptr),
+            .inner = @ptrCast(?*c.Fl_Float_Input, ptr),
         };
     }
 
@@ -267,13 +267,13 @@ pub const SecretInput = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) SecretInput {
         return SecretInput{
-            .inner = @ptrCast(*c.Fl_Secret_Input, w),
+            .inner = @ptrCast(?*c.Fl_Secret_Input, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) SecretInput {
         return SecretInput{
-            .inner = @ptrCast(*c.Fl_Secret_Input, ptr),
+            .inner = @ptrCast(?*c.Fl_Secret_Input, ptr),
         };
     }
 

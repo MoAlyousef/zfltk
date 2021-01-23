@@ -25,13 +25,13 @@ pub const Valuator = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Valuator {
         return Valuator{
-            .inner = @ptrCast(*c.Fl_Slider, w),
+            .inner = @ptrCast(?*c.Fl_Slider, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Valuator {
         return Valuator{
-            .inner = @ptrCast(*c.Fl_Slider, ptr),
+            .inner = @ptrCast(?*c.Fl_Slider, ptr),
         };
     }
 
@@ -152,13 +152,13 @@ pub const Slider = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Slider {
         return Slider{
-            .inner = @ptrCast(*c.Fl_Slider, w),
+            .inner = @ptrCast(?*c.Fl_Slider, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Slider {
         return Slider{
-            .inner = @ptrCast(*c.Fl_Slider, ptr),
+            .inner = @ptrCast(?*c.Fl_Slider, ptr),
         };
     }
 
@@ -218,13 +218,13 @@ pub const Dial = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Dial {
         return Dial{
-            .inner = @ptrCast(*c.Fl_Dial, w),
+            .inner = @ptrCast(?*c.Fl_Dial, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Dial {
         return Dial{
-            .inner = @ptrCast(*c.Fl_Dial, ptr),
+            .inner = @ptrCast(?*c.Fl_Dial, ptr),
         };
     }
 
@@ -282,13 +282,13 @@ pub const Counter = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Counter {
         return Counter{
-            .inner = @ptrCast(*c.Fl_Counter, w),
+            .inner = @ptrCast(?*c.Fl_Counter, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Counter {
         return Counter{
-            .inner = @ptrCast(*c.Fl_Counter, ptr),
+            .inner = @ptrCast(?*c.Fl_Counter, ptr),
         };
     }
 
@@ -354,13 +354,13 @@ pub const Scrollbar = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Scrollbar {
         return Scrollbar{
-            .inner = @ptrCast(*c.Fl_Scrollbar, w),
+            .inner = @ptrCast(?*c.Fl_Scrollbar, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Scrollbar {
         return Scrollbar{
-            .inner = @ptrCast(*c.Fl_Scrollbar, ptr),
+            .inner = @ptrCast(?*c.Fl_Scrollbar, ptr),
         };
     }
 
@@ -411,13 +411,13 @@ pub const Adjuster = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Adjuster {
         return Adjuster{
-            .inner = @ptrCast(*c.Fl_Adjuster, w),
+            .inner = @ptrCast(?*c.Fl_Adjuster, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Adjuster {
         return Adjuster{
-            .inner = @ptrCast(*c.Fl_Adjuster, ptr),
+            .inner = @ptrCast(?*c.Fl_Adjuster, ptr),
         };
     }
 
@@ -468,13 +468,13 @@ pub const Roller = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Roller {
         return Roller{
-            .inner = @ptrCast(*c.Fl_Roller, w),
+            .inner = @ptrCast(?*c.Fl_Roller, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Roller {
         return Roller{
-            .inner = @ptrCast(*c.Fl_Roller, ptr),
+            .inner = @ptrCast(?*c.Fl_Roller, ptr),
         };
     }
 

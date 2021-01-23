@@ -17,12 +17,12 @@ pub fn fltkInit() !void {
 
 // Button callback
 pub fn butCb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
-    c.Fl_Box_set_label(@ptrCast(*c.Fl_Box, data), "Hello World!");
-    c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), c.Fl_Color_Cyan);
+    c.Fl_Box_set_label(@ptrCast(?*c.Fl_Box, data), "Hello World!");
+    c.Fl_Button_set_color(@ptrCast(?*c.Fl_Button, w), c.Fl_Color_Cyan);
 }
 
 pub fn main() !void {
-    try fltk_init();
+    try fltkInit();
     c.Fl_set_scheme("gtk+");
     var win = c.Fl_Window_new(100, 100, 400, 300, "Hello");
     var but = c.Fl_Button_new(160, 220, 80, 40, "Click me!");

@@ -33,13 +33,13 @@ pub const Widget = struct {
 
     pub fn fromWidgetPtr(wid: WidgetPtr) Widget {
         return Widget{
-            .inner = @ptrCast(*c.Fl_Widget, wid),
+            .inner = @ptrCast(?*c.Fl_Widget, wid),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Widget {
         return Widget{
-            .inner = @ptrCast(*c.Fl_Widget, ptr),
+            .inner = @ptrCast(?*c.Fl_Widget, ptr),
         };
     }
 
@@ -162,5 +162,52 @@ pub const Widget = struct {
         } else {
             c.Fl_Widget_set_deimage(self.inner, null);
         }
+    }
+
+    pub fn trigger(self: *const Widget) CallbackTrigger {
+        return c.Fl_Widget_trigger(self.inner);
+    }
+
+    pub fn parent(self: *const Widget) group.Group {
+        return group.Group{ .inner = c.Fl_Widget_parent(self.inner) };
+    }
+
+    pub fn selectionColor(self: *Widget) enums.Color {
+        return c.Fl_Widget_selection_color(self.inner);
+    }
+
+    pub fn setSelectionColor(self: *Widget, color: enums.Color) void {
+        c.Fl_Widget_set_selection_color(self.inner, color);
+    }
+
+    pub fn doCallback(self: *Widget) void {
+        c.Fl_Widget_do_callback(self.inner);
+    }
+
+    pub fn clearVisiblFocus(self: *Widget) void {
+        c.Fl_Widget_clear_visible_focus(self.inner);
+    }
+
+    pub fn visibleFocus(self: *Widget, v: bool) void {
+        c.Fl_Widget_visible_focus(self.inner, v);
+    }
+
+    pub fn getAlign(self: *const Widget) i32 {
+        return c.Fl_Widget_align(self.inner);
+    }
+
+    pub fn setLabelLype(self: *Widget, typ: enums.LabelType) void {
+        c.Fl_Widget_set_label_type(self.inner, @enumToInt(typ));
+    }
+
+    pub fn tooltip(self: *const Widget) [*c]const u8 {
+        return c.Fl_Widget_tooltip(self.inner);
+    }
+
+    pub fn setTooltip(self: *Widget, txt: [*c]const u8) void {
+        c.Fl_Widget_set_tooltip(
+            self.inner,
+            txt,
+        );
     }
 };

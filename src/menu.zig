@@ -56,13 +56,13 @@ pub const Menu = struct {
 
     pub fn fromWidgetPtr(w: ?*c.Fl_Widget) Menu {
         return Menu{
-            .inner = @ptrCast(*c.Fl_Menu_Bar, w),
+            .inner = @ptrCast(?*c.Fl_Menu_Bar, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Menu {
         return Menu{
-            .inner = @ptrCast(*c.Fl_Menu_Bar, ptr),
+            .inner = @ptrCast(?*c.Fl_Menu_Bar, ptr),
         };
     }
 
@@ -147,13 +147,13 @@ pub const MenuBar = struct {
 
     pub fn fromWidgetPtr(w: ?*c.Fl_Widget) MenuBar {
         return MenuBar{
-            .inner = @ptrCast(*c.Fl_Menu_Bar, w),
+            .inner = @ptrCast(?*c.Fl_Menu_Bar, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) MenuBar {
         return MenuBar{
-            .inner = @ptrCast(*c.Fl_Menu_Bar, ptr),
+            .inner = @ptrCast(?*c.Fl_Menu_Bar, ptr),
         };
     }
 
@@ -204,13 +204,13 @@ pub const Choice = struct {
 
     pub fn fromWidgetPtr(w: ?*c.Fl_Widget) Choice {
         return Menu{
-            .inner = @ptrCast(*c.Fl_Choice, w),
+            .inner = @ptrCast(?*c.Fl_Choice, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Choice {
         return Choice{
-            .inner = @ptrCast(*c.Fl_Choice, ptr),
+            .inner = @ptrCast(?*c.Fl_Choice, ptr),
         };
     }
 
@@ -261,13 +261,13 @@ pub const SysMenuBar = struct {
 
     pub fn fromWidgetPtr(w: ?*c.Fl_Widget) SysMenuBar {
         return SysMenuBar{
-            .inner = @ptrCast(*c.Fl_Sys_Menu_Bar, w),
+            .inner = @ptrCast(?*c.Fl_Sys_Menu_Bar, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) SysMenuBar {
         return SysMenuBar{
-            .inner = @ptrCast(*c.Fl_Sys_Menu_Bar, ptr),
+            .inner = @ptrCast(?*c.Fl_Sys_Menu_Bar, ptr),
         };
     }
 

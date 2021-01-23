@@ -26,13 +26,13 @@ pub const Button = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Button {
         return Button{
-            .inner = @ptrCast(*c.Fl_Button, w),
+            .inner = @ptrCast(?*c.Fl_Button, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Button {
         return Button{
-            .inner = @ptrCast(*c.Fl_Button, ptr),
+            .inner = @ptrCast(?*c.Fl_Button, ptr),
         };
     }
 
@@ -105,13 +105,13 @@ pub const RadioButton = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) RadioButton {
         return RadioButton{
-            .inner = @ptrCast(*c.Fl_RadioButton, w),
+            .inner = @ptrCast(?*c.Fl_RadioButton, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) RadioButton {
         return RadioButton{
-            .inner = @ptrCast(*c.Fl_RadioButton, ptr),
+            .inner = @ptrCast(?*c.Fl_RadioButton, ptr),
         };
     }
 
@@ -162,13 +162,13 @@ pub const CheckButton = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) CheckButton {
         return CheckButton{
-            .inner = @ptrCast(*c.Fl_CheckButton, w),
+            .inner = @ptrCast(?*c.Fl_CheckButton, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) CheckButton {
         return CheckButton{
-            .inner = @ptrCast(*c.Fl_CheckButton, ptr),
+            .inner = @ptrCast(?*c.Fl_CheckButton, ptr),
         };
     }
 
@@ -219,13 +219,13 @@ pub const RoundButton = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) RoundButton {
         return RoundButton{
-            .inner = @ptrCast(*c.Fl_RoundButton, w),
+            .inner = @ptrCast(?*c.Fl_RoundButton, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) RoundButton {
         return RoundButton{
-            .inner = @ptrCast(*c.Fl_RoundButton, ptr),
+            .inner = @ptrCast(?*c.Fl_RoundButton, ptr),
         };
     }
 

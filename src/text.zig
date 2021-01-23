@@ -155,13 +155,13 @@ pub const TextDisplay = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) TextDisplay {
         return TextDisplay{
-            .inner = @ptrCast(*c.Fl_Text_Display, w),
+            .inner = @ptrCast(?*c.Fl_Text_Display, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) TextDisplay {
         return TextDisplay{
-            .inner = @ptrCast(*c.Fl_Text_Display, ptr),
+            .inner = @ptrCast(?*c.Fl_Text_Display, ptr),
         };
     }
 
@@ -287,13 +287,13 @@ pub const TextEditor = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) TextEditor {
         return TextEditor{
-            .inner = @ptrCast(*c.Fl_Text_Editor, w),
+            .inner = @ptrCast(?*c.Fl_Text_Editor, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) TextEditor {
         return TextEditor{
-            .inner = @ptrCast(*c.Fl_Text_Editor, ptr),
+            .inner = @ptrCast(?*c.Fl_Text_Editor, ptr),
         };
     }
 

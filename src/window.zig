@@ -26,13 +26,13 @@ pub const Window = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Window {
         return Window{
-            .inner = @ptrCast(*c.Fl_Double_Window, w),
+            .inner = @ptrCast(?*c.Fl_Double_Window, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Window {
         return Window{
-            .inner = @ptrCast(*c.Fl_Double_Window, ptr),
+            .inner = @ptrCast(?*c.Fl_Double_Window, ptr),
         };
     }
 

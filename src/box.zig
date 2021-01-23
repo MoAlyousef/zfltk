@@ -25,13 +25,13 @@ pub const Box = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Box {
         return Box{
-            .inner = @ptrCast(*c.Fl_Box, w),
+            .inner = @ptrCast(?*c.Fl_Box, w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*c_void) Box {
         return Box{
-            .inner = @ptrCast(*c.Fl_Box, ptr),
+            .inner = @ptrCast(?*c.Fl_Box, ptr),
         };
     }
 

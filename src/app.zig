@@ -65,7 +65,7 @@ pub fn foreground(r: u8, g: u8, b: u8) void {
 pub const WidgetTracker = struct {
     inner: ?*c.Fl_Widget_Tracker,
     pub fn new(w: widget.Widget) WidgetTracker {
-        const ptr = c.Fl_Widget_Tracker_new(@ptrCast(*c.Fl_Widget, w.inner));
+        const ptr = c.Fl_Widget_Tracker_new(@ptrCast(?*c.Fl_Widget, w.inner));
         if (ptr == null) unreachable;
         return WidgetTracker{
             .inner = ptr,
