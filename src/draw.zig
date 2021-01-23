@@ -1,7 +1,7 @@
 const c = @cImport({
     @cInclude("cfl_draw.h");
 });
-const Color = @import("enums.zig").Color;
+const u32 = @import("enums.zig").u32;
 const Font = @import("enums.zig").Font;
 const FrameType = @import("enums.zig").FrameType;
 const Cursor = @import("enums.zig").Cursor;
@@ -66,8 +66,8 @@ pub const Offscreen = struct {
 };
 
 /// Shows a color map
-pub fn show_colormap(old_color: Color) Color {
-    c.Fl_show_colormap(@enumToInt(old_color));
+pub fn show_colormap(old_color: u32) u32 {
+    c.Fl_show_colormap(old_color);
 }
 
 /// Sets the color using rgb values
@@ -76,7 +76,7 @@ pub fn set_color_rgb(r: u8, g: u8, b: u8) void {
 }
 
 /// Gets the last used color
-pub fn get_color() Color {
+pub fn get_color() u32 {
     return c.Fl_get_color();
 }
 
@@ -96,8 +96,8 @@ pub fn draw_rect(x: i32, y: i32, w: i32, h: i32) void {
 }
 
 /// Draws a rectangle with border color
-pub fn draw_rect_with_color(x: i32, y: i32, w: i32, h: i32, color: Color) void {
-    c.Fl_rect_with_color(x, y, w, h, @enumToInt(color));
+pub fn draw_rect_with_color(x: i32, y: i32, w: i32, h: i32, color: u32) void {
+    c.Fl_rect_with_color(x, y, w, h, color);
 }
 
 /// Draws a non-filled 3-sided polygon
@@ -106,8 +106,8 @@ pub fn draw_loop(x1: i32, y1: i32, x2: i32, y2: i32, x3: i32, y3: i32) void {
 }
 
 /// Draws a filled rectangle
-pub fn draw_rect_fill(x: i32, y: i32, w: i32, h: i32, color: Color) void {
-    c.Fl_rectf_with_color(x, y, w, h, @enumToInt(color));
+pub fn draw_rect_fill(x: i32, y: i32, w: i32, h: i32, color: u32) void {
+    c.Fl_rectf_with_color(x, y, w, h, color);
 }
 
 /// Draws a focus rectangle
@@ -121,8 +121,8 @@ pub fn set_draw_rgb_color(r: u8, g: u8, b: u8) void {
 }
 
 /// Sets the drawing color
-pub fn set_draw_color(color: Color) void {
-    c.Fl_set_color_int(@enumToInt(color));
+pub fn set_draw_color(color: u32) void {
+    c.Fl_set_color_int(color);
 }
 
 /// Draws a circle
@@ -446,8 +446,8 @@ pub fn draw_frame2(string: [*c]const u8, x: i32, y: i32, width: i32, height: i32
 }
 
 /// Draws a box given the box type, size, position and color
-pub fn draw_box(box_type: FrameType, x: i32, y: i32, w: i32, h: i32, color: Color) void {
-    c.Fl_draw_box(box_type, x, y, w, h, @enumToInt(color));
+pub fn draw_box(box_type: FrameType, x: i32, y: i32, w: i32, h: i32, color: u32) void {
+    c.Fl_draw_box(box_type, x, y, w, h, color);
 }
 
 /// Checks whether platform supports true alpha blending for RGBA images
@@ -476,6 +476,6 @@ pub fn set_cursor(cursor: Cursor) void {
 }
 
 /// Sets the cursor style
-pub fn set_cursor_with_color(cursor: Cursor, fg: Color, bg: Color) void {
+pub fn set_cursor_with_color(cursor: Cursor, fg: u32, bg: u32) void {
     c.Fl_set_cursor2(@enumToInt(cursor), @enumToInt(fg), @enumToInt(bg));
 }

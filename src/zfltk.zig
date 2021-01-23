@@ -13,6 +13,8 @@ pub const text = @import("text.zig");
 pub const dialog = @import("dialog.zig");
 pub const valuator = @import("valuator.zig");
 pub const browser = @import("browser.zig");
+pub const table = @import("table.zig");
+pub const tree = @import("tree.zig");
 pub const draw = @import("draw.zig");
 
 pub fn widgetCast(comptime T: type, wid: anytype) T {

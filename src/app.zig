@@ -92,3 +92,7 @@ pub fn send(msg: usize) void {
 pub fn recv() ?usize {
     return @ptrToInt(c.Fl_thread_msg());
 }
+
+pub fn rgb_color(r: u8, g: u8, b: u8) u32 {
+    return c.Fl_get_rgb_color(r, g, b);
+}

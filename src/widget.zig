@@ -60,8 +60,8 @@ pub const Widget = struct {
         self.setCallback(shim, @intToPtr(?*c_void, msg));
     }
 
-    pub fn setColor(self: *Widget, col: enums.Color) void {
-        c.Fl_Widget_set_color(self.inner, @enumToInt(col));
+    pub fn setColor(self: *Widget, col: u32) void {
+        c.Fl_Widget_set_color(self.inner, col);
     }
 
     pub fn show(self: *Widget) void {

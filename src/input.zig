@@ -65,8 +65,8 @@ pub const Input = struct {
         c.Fl_Input_set_text_font(self.inner, @enumToInt(font));
     }
 
-    pub fn setTextColor(self: *Input, col: Color) void {
-        c.Fl_Input_set_text_color(self.inner, @enumToInt(col));
+    pub fn setTextColor(self: *Input, col: u32) void {
+        c.Fl_Input_set_text_color(self.inner, col);
     }
 
     pub fn setTextSize(self: *Input, sz: u32) void {

@@ -27,7 +27,7 @@ pub fn butCb(ev: i32, data: ?*c_void) callconv(.C) i32 {
 pub fn main() !void {
     try app.init();
     var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var inp = input.Input.new(10, 10, 380, 40, "Enter name:");
+    var inp = input.Input.new(10, 10, 380, 40, "");
     var mybox = box.Box.new(10, 20, 380, 200, "");
     var but = button.Button.new(160, 200, 80, 40, "Greet!");
     win.asGroup().end();

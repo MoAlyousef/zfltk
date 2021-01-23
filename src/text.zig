@@ -196,8 +196,8 @@ pub const TextDisplay = struct {
         c.Fl_Text_Display_set_text_font(self.inner, @enumToInt(font));
     }
 
-    pub fn setTextColor(self: *TextDisplay, col: Color) void {
-        c.Fl_Text_Display_set_text_color(self.inner, @enumToInt(col));
+    pub fn setTextColor(self: *TextDisplay, col: u32) void {
+        c.Fl_Text_Display_set_text_color(self.inner, col);
     }
 
     pub fn setTextSize(self: *TextDisplay, sz: u32) void {

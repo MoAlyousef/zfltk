@@ -116,8 +116,8 @@ pub const Menu = struct {
         c.Fl_Menu_Bar_set_text_font(self.inner, @enumToInt(font));
     }
 
-    pub fn setTextColor(self: *Menu, col: Color) void {
-        c.Fl_Menu_Bar_set_text_color(self.inner, @enumToInt(col));
+    pub fn setTextColor(self: *Menu, col: u32) void {
+        c.Fl_Menu_Bar_set_text_color(self.inner, col);
     }
 
     pub fn setTextSize(self: *Menu, sz: u32) void {
@@ -314,8 +314,8 @@ pub const MenuItem = struct {
         return @intToEnum(enums.Color, c.Fl_Menu_Item_label_color(self.inner));
     }
 
-    pub fn setLabelColor(self: *MenuItem, col: enums.Color) void {
-        c.Fl_Menu_Item_set_label_color(self.inner, @enumToInt(col));
+    pub fn setLabelColor(self: *MenuItem, col: u32) void {
+        c.Fl_Menu_Item_set_label_color(self.inner, col);
     }
 
     pub fn labelFont(self: *const MenuItem) enums.Font {
