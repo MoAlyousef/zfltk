@@ -253,3 +253,7 @@ pub const RoundButton = struct {
         c.Fl_Round_Button_draw(self.inner, cb, data);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

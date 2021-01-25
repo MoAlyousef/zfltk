@@ -130,3 +130,7 @@ pub const MultilineOutput = struct {
         c.Fl_Multiline_Output_draw(self.inner, cb, data);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

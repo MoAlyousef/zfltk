@@ -301,3 +301,7 @@ pub const SecretInput = struct {
         c.Fl_Secret_Input_draw(self.inner, cb, data);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

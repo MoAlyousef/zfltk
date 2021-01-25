@@ -329,3 +329,7 @@ pub const Scroll = struct {
         c.Fl_Scroll_draw(self.inner, cb, data);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

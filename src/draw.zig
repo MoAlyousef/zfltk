@@ -479,3 +479,7 @@ pub fn set_cursor(cursor: Cursor) void {
 pub fn set_cursor_with_color(cursor: Cursor, fg: u32, bg: u32) void {
     c.Fl_set_cursor2(@enumToInt(cursor), @enumToInt(fg), @enumToInt(bg));
 }
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

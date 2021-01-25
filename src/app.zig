@@ -96,3 +96,7 @@ pub fn recv() ?usize {
 pub fn rgb_color(r: u8, g: u8, b: u8) u32 {
     return c.Fl_get_rgb_color(r, g, b);
 }
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

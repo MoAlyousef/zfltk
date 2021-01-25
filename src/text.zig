@@ -336,3 +336,7 @@ pub const TextEditor = struct {
         _ = c.Fl_Text_Editor_kf_paste(self.inner);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

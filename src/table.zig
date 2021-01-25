@@ -111,3 +111,6 @@ pub const TableRow = struct {
     }
 };
 
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

@@ -342,3 +342,7 @@ pub const MenuItem = struct {
         c.Fl_Menu_Item_hide(self.inner);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

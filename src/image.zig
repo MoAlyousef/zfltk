@@ -431,3 +431,7 @@ pub const TiledImage = struct {
         return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

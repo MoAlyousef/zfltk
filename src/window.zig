@@ -84,3 +84,7 @@ pub const Window = struct {
         return c.Fl_Double_Window_fullscreen(self.inner, @boolToInt(val));
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

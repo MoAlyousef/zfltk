@@ -108,3 +108,7 @@ pub fn input(x: i32, y: i32, txt: [*c]const u8, deflt: [*c]const u8) [*c]const u
 pub fn password(x: i32, y: i32, txt: [*c]const u8, deflt: [*c]const u8) [*c]const u8 {
     return c.Fl_password(x, y, txt, deflt);
 }
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

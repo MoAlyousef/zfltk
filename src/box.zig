@@ -53,3 +53,7 @@ pub const Box = struct {
         c.Fl_Box_draw(self.inner, cb, data);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

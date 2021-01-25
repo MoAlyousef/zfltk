@@ -502,3 +502,7 @@ pub const Roller = struct {
         c.Fl_Roller_draw(self.inner, cb, data);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

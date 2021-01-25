@@ -424,3 +424,7 @@ pub const FileBrowser = struct {
         c.Fl_File_Browser_draw(self.inner, cb, data);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

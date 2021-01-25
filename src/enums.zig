@@ -272,3 +272,7 @@ pub const TextCursor = enum(u8) {
     Heavy,
     Simple,
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

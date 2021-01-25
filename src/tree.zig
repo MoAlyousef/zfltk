@@ -76,3 +76,7 @@ pub const TreeItem = struct {
         return @ptrCast(?*c_void, self.inner);
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

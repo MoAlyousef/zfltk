@@ -211,3 +211,7 @@ pub const Widget = struct {
         );
     }
 };
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}

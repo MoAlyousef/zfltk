@@ -23,3 +23,7 @@ pub fn widgetCast(comptime T: type, wid: anytype) T {
         .inner = @ptrCast(@TypeOf(t.inner), wid.inner),
     };
 }
+
+test "" {
+    @import("std").testing.refAllDecls(@This());
+}
