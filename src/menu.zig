@@ -92,12 +92,12 @@ pub const Menu = struct {
         _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, cb, data, @enumToInt(flag));
     }
 
-    pub fn add_emit(self: *Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, msg: usize) void {
-        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, shim, @intToPtr(*c_void, msg), @enumToInt(flag));
+    pub fn add_emit(self: *Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, shim, @intToPtr(?*c_void, @bitCast(usize, msg)), @enumToInt(flag));
     }
 
-    pub fn insert_emit(self: *Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, msg: usize) void {
-        _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, shim, @intToPtr(*c_void, msg), @enumToInt(flag));
+    pub fn insert_emit(self: *Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+        _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, shim, @intToPtr(?*c_void, @bitCast(usize, msg)), @enumToInt(flag));
     }
 
     pub fn remove(self: *Menu, idx: u32) void {

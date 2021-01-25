@@ -23,7 +23,7 @@ pub const Message = enum(usize) {
 // Also logic can be added to prompt the user to save their work
 pub fn winCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
     if (app.event() == enums.Event.Close) {
-        app.send(@enumToInt(Message.Quit));
+        app.send(Message, .Quit);
     }
 }
 
@@ -43,22 +43,70 @@ pub fn main() !void {
     win.asWidget().show();
     win.asWidget().setCallback(winCb, null);
 
-    mymenu.asMenu().add_emit("&File/New...\t", enums.Shortcut.Ctrl | 'n', .Normal, @enumToInt(Message.New));
-    mymenu.asMenu().add_emit("&File/Open...\t", enums.Shortcut.Ctrl | 'o', .Normal, @enumToInt(Message.Open));
-    mymenu.asMenu().add_emit("&File/Save...\t", enums.Shortcut.Ctrl | 's', .MenuDivider, @enumToInt(Message.Save));
-    mymenu.asMenu().add_emit("&File/Quit...\t", enums.Shortcut.Ctrl | 'q', .Normal, @enumToInt(Message.Quit));
-    mymenu.asMenu().add_emit("&Edit/Cut...\t", enums.Shortcut.Ctrl | 'x', .Normal, @enumToInt(Message.Cut));
-    mymenu.asMenu().add_emit("&Edit/Copy...\t", enums.Shortcut.Ctrl | 'c', .Normal, @enumToInt(Message.Copy));
-    mymenu.asMenu().add_emit("&Edit/Paste...\t", enums.Shortcut.Ctrl | 'v', .Normal, @enumToInt(Message.Paste));
-    mymenu.asMenu().add_emit("&Help/About...\t", enums.Shortcut.Ctrl | 'q', .Normal, @enumToInt(Message.About));
+    mymenu.asMenu().add_emit(
+        "&File/New...\t",
+        enums.Shortcut.Ctrl | 'n',
+        .Normal,
+        Message,
+        .New,
+    );
+    mymenu.asMenu().add_emit(
+        "&File/Open...\t",
+        enums.Shortcut.Ctrl | 'o',
+        .Normal,
+        Message,
+        .Open,
+    );
+    mymenu.asMenu().add_emit(
+        "&File/Save...\t",
+        enums.Shortcut.Ctrl | 's',
+        .MenuDivider,
+        Message,
+        .Save,
+    );
+    mymenu.asMenu().add_emit(
+        "&File/Quit...\t",
+        enums.Shortcut.Ctrl | 'q',
+        .Normal,
+        Message,
+        .Quit,
+    );
+    mymenu.asMenu().add_emit(
+        "&Edit/Cut...\t",
+        enums.Shortcut.Ctrl | 'x',
+        .Normal,
+        Message,
+        .Cut,
+    );
+    mymenu.asMenu().add_emit(
+        "&Edit/Copy...\t",
+        enums.Shortcut.Ctrl | 'c',
+        .Normal,
+        Message,
+        .Copy,
+    );
+    mymenu.asMenu().add_emit(
+        "&Edit/Paste...\t",
+        enums.Shortcut.Ctrl | 'v',
+        .Normal,
+        Message,
+        .Paste,
+    );
+    mymenu.asMenu().add_emit(
+        "&Help/About...\t",
+        enums.Shortcut.Ctrl | 'q',
+        .Normal,
+        Message,
+        .About,
+    );
 
     var item = mymenu.asMenu().findItem("&File/Quit...\t");
     item.setLabelColor(enums.Color.Red);
 
     while (app.wait()) {
-        if (app.recv()) |msg| switch (msg) {
-            @enumToInt(Message.New) => buf.setText(""),
-            @enumToInt(Message.Open) => {
+        if (app.recv(Message)) |msg| switch (msg) {
+            .New => buf.setText(""),
+            .Open => {
                 var dlg = dialog.NativeFileDialog.new(.BrowseFile);
                 dlg.setFilter("*.{txt,zig}");
                 dlg.show();
@@ -67,7 +115,7 @@ pub fn main() !void {
                     _ = buf.loadFile(fname) catch unreachable;
                 }
             },
-            @enumToInt(Message.Save) => {
+            .Save => {
                 var dlg = dialog.NativeFileDialog.new(.BrowseSaveFile);
                 dlg.setFilter("*.{txt,zig}");
                 dlg.show();
@@ -76,12 +124,11 @@ pub fn main() !void {
                     _ = buf.saveFile(fname) catch unreachable;
                 }
             },
-            @enumToInt(Message.Quit) => win.asWidget().hide(),
-            @enumToInt(Message.Cut) => editor.cut(),
-            @enumToInt(Message.Copy) => editor.copy(),
-            @enumToInt(Message.Paste) => editor.paste(),
-            @enumToInt(Message.About) => dialog.message(300, 200, "This editor was built using fltk and zig!"),
-            else => {},
+            .Quit => win.asWidget().hide(),
+            .Cut => editor.cut(),
+            .Copy => editor.copy(),
+            .Paste => editor.paste(),
+            .About => dialog.message(300, 200, "This editor was built using fltk and zig!"),
         };
     }
 }

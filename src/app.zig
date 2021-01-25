@@ -85,12 +85,17 @@ pub fn wait() bool {
     return c.Fl_wait() != 0;
 }
 
-pub fn send(msg: usize) void {
-    c.Fl_awake_msg(@intToPtr(?*c_void, msg));
+pub fn send(comptime T: type, t: T) void {
+    c.Fl_awake_msg(@intToPtr(?*c_void, @bitCast(usize, t)));
 }
 
-pub fn recv() ?usize {
-    return @ptrToInt(c.Fl_thread_msg());
+pub fn recv(comptime T: type) ?T {
+    var temp = c.Fl_thread_msg();
+    if (temp) |ptr| {
+        const v = @ptrToInt(ptr);
+        return @intToEnum(T, v);
+    } 
+    return null;
 }
 
 pub fn rgb_color(r: u8, g: u8, b: u8) u32 {

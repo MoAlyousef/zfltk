@@ -56,8 +56,8 @@ pub const Widget = struct {
         c.Fl_Widget_set_callback(self.inner, cb, data);
     }
 
-    pub fn emit(self: *Widget, msg: usize) void {
-        self.setCallback(shim, @intToPtr(?*c_void, msg));
+    pub fn emit(self: *Widget, comptime T: type, msg: T) void {
+        self.setCallback(shim, @intToPtr(?*c_void, @bitCast(usize, msg)));
     }
 
     pub fn setColor(self: *Widget, col: u32) void {

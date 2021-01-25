@@ -9,14 +9,19 @@ const window = zfltk.window;
 const button = zfltk.button;
 const std = @import("std");
 
+const ButtonMessage = enum(usize) {
+    Pushed = 1,
+    Released,
+};
+
 pub fn butCb(ev: i32, data: ?*c_void) callconv(.C) i32 {
     switch (@intToEnum(Event, ev)) {
         Event.Push => {
-            app.send(1);
+            app.send(ButtonMessage, .Pushed);
             return 1;
         },
         Event.Released => {
-            app.send(2);
+            app.send(ButtonMessage, .Released);
             return 1;
         },
         else => return 0,    
@@ -34,16 +39,15 @@ pub fn main() !void {
     win.asWidget().show();
     but.handle(butCb, null);
     while (app.wait()) {
-        if (app.recv()) |msg| switch (msg) {
-            1 => {
+        if (app.recv(ButtonMessage)) |msg| switch (msg) {
+            .Pushed => {
                 var buf: [100]u8 = undefined;
                 const name = try std.fmt.bufPrintZ(buf[0..], "Hello {s}!", .{inp.value()});
                 mybox.asWidget().setLabel(name);
             },
-            2 => {
+            .Released => {
                 mybox.asWidget().setLabel("");
             },
-            else => {},
         };
     }
 }

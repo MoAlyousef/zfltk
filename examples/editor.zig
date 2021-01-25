@@ -82,22 +82,62 @@ pub fn main() !void {
     win.asWidget().show();
     win.asWidget().setCallback(winCb, null);
 
-    mymenu.asMenu().add("&File/New...\t", enums.Shortcut.Ctrl | 'n',
-         .Normal, newCb, buf.toVoidPtr());
-    mymenu.asMenu().add("&File/Open...\t", enums.Shortcut.Ctrl | 'o',
-         .Normal, openCb, buf.toVoidPtr());
-    mymenu.asMenu().add("&File/Save...\t", enums.Shortcut.Ctrl | 's',
-         .MenuDivider, saveCb, buf.toVoidPtr());
-    mymenu.asMenu().add("&File/Quit...\t", enums.Shortcut.Ctrl | 'q',
-         .Normal, quitCb, win.toVoidPtr());
-    mymenu.asMenu().add("&Edit/Cut...\t", enums.Shortcut.Ctrl | 'x',
-         .Normal, cutCb, editor.toVoidPtr());
-    mymenu.asMenu().add("&Edit/Copy...\t", enums.Shortcut.Ctrl | 'c',
-         .Normal, copyCb, editor.toVoidPtr());
-    mymenu.asMenu().add("&Edit/Paste...\t", enums.Shortcut.Ctrl | 'v',
-         .Normal, pasteCb, editor.toVoidPtr());
-    mymenu.asMenu().add("&Help/About...\t", enums.Shortcut.Ctrl | 'q',
-         .Normal, helpCb, null);
+    mymenu.asMenu().add(
+        "&File/New...\t",
+        enums.Shortcut.Ctrl | 'n',
+        .Normal,
+        newCb,
+        buf.toVoidPtr(),
+    );
+    mymenu.asMenu().add(
+        "&File/Open...\t",
+        enums.Shortcut.Ctrl | 'o',
+        .Normal,
+        openCb,
+        buf.toVoidPtr(),
+    );
+    mymenu.asMenu().add(
+        "&File/Save...\t",
+        enums.Shortcut.Ctrl | 's',
+        .MenuDivider,
+        saveCb,
+        buf.toVoidPtr(),
+    );
+    mymenu.asMenu().add(
+        "&File/Quit...\t",
+        enums.Shortcut.Ctrl | 'q',
+        .Normal,
+        quitCb,
+        win.toVoidPtr(),
+    );
+    mymenu.asMenu().add(
+        "&Edit/Cut...\t",
+        enums.Shortcut.Ctrl | 'x',
+        .Normal,
+        cutCb,
+        editor.toVoidPtr(),
+    );
+    mymenu.asMenu().add(
+        "&Edit/Copy...\t",
+        enums.Shortcut.Ctrl | 'c',
+        .Normal,
+        copyCb,
+        editor.toVoidPtr(),
+    );
+    mymenu.asMenu().add(
+        "&Edit/Paste...\t",
+        enums.Shortcut.Ctrl | 'v',
+        .Normal,
+        pasteCb,
+        editor.toVoidPtr(),
+    );
+    mymenu.asMenu().add(
+        "&Help/About...\t",
+        enums.Shortcut.Ctrl | 'q',
+        .Normal,
+        helpCb,
+        null,
+    );
     
     var item = mymenu.asMenu().findItem("&File/Quit...\t");
     item.setLabelColor(enums.Color.Red);
