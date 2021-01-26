@@ -126,13 +126,10 @@ const widget = zfltk.widget;
 const window = zfltk.window;
 const button = zfltk.button;
 const box = zfltk.box;
-const enums = zfltk.enums;
 
 pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
     var mybox = widget.Widget.fromVoidPtr(data);
     mybox.setLabel("Hello World!");
-    var but = button.Button.fromWidgetPtr(w); // You can still use a Widget.fromWidgetPtr
-    but.asWidget().setColor(enums.Color.Cyan);
 }
 
 pub fn main() !void {
@@ -151,11 +148,13 @@ The messaging api can also be used:
 ```zig
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const widget = zfltk.widget;
 const window = zfltk.window;
 const button = zfltk.button;
 const box = zfltk.box;
-const enums = zfltk.enums;
+
+pub const Message = enum(usize) {
+    ButtonPushed = 1,
+};
 
 pub fn main() !void {
     try app.init();
@@ -165,11 +164,10 @@ pub fn main() !void {
     var mybox = box.Box.new(10, 10, 380, 180, "");
     win.asGroup().end();
     win.asWidget().show();
-    but.asWidget().emit(1);
+    but.asWidget().emit(Message, .ButtonPushed);
     while (app.wait()) {
-        if (app.recv()) |msg| switch (msg) {
-            1 => mybox.asWidget().setLabel("Button clicked"),
-            else => {},
+        if (app.recv(Message)) |msg| switch (msg) {
+            .ButtonPushed => mybox.asWidget().setLabel("Button clicked"),
         };
     }
 }
@@ -186,8 +184,8 @@ const c = @cImport({
 });
 
 pub fn butCb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
-    c.Fl_Box_set_label(@ptrCast(*c.Fl_Box, data), "Hello World!");
-    c.Fl_Button_set_color(@ptrCast(*c.Fl_Button, w), c.Fl_Color_Cyan);
+    c.Fl_Box_set_label(@ptrCast(?*c.Fl_Box, data), "Hello World!");
+    c.Fl_Button_set_color(@ptrCast(?*c.Fl_Button, w), c.Fl_Color_Cyan);
 }
 
 pub fn main() void {
