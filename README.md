@@ -4,6 +4,7 @@ A Zig wrapper for the FLTK gui library.
 ## Running the examples
 After cloning the repo, run:
 ```
+$ cd zfltk
 $ zig build run-simple
 $ zig build run-capi
 $ zig build run-editor
