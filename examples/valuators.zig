@@ -11,12 +11,12 @@ pub fn main() !void {
     app.setScheme(.Gtk);
     var win = window.Window.new(100, 100, 400, 300, "Hello");
     var pack = group.Pack.new(0, 0, 400, 300, "");
-    pack.asWidget().setType(@enumToInt(group.PackType.Vertical));
+    pack.asWidget().setType(group.PackType, .Vertical);
     pack.setSpacing(40);
     var slider = valuator.Slider.new(0, 0, 0, 40, "Slider");
-    slider.asWidget().setType(@enumToInt(valuator.SliderType.HorizontalNice));
+    slider.asWidget().setType(valuator.SliderType, .HorizontalNice);
     const scrollbar = valuator.Scrollbar.new(0, 0, 0, 40, "Scrollbar");
-    scrollbar.asWidget().setType(@enumToInt(valuator.ScrollbarType.HorizontalNice));
+    scrollbar.asWidget().setType(valuator.ScrollbarType, .HorizontalNice);
     const counter = valuator.Counter.new(0, 0, 0, 40, "Counter");
     const adjuster = valuator.Adjuster.new(0, 0, 0, 40, "Adjuster");
     pack.asGroup().end();

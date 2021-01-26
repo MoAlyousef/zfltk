@@ -104,8 +104,12 @@ pub const Widget = struct {
         return c.Fl_Widget_label(self.inner);
     }
 
-    pub fn setType(self: *Widget, typ: i32) void {
-        c.Fl_Widget_set_type(self.inner, typ);
+    pub fn getType(self: *Widget, comptime T: type) T {
+        return @intToEnum(c.Fl_Widget_set_type(self.inner));
+    }
+
+    pub fn setType(self: *Widget, comptime T: type, t: T) void {
+        c.Fl_Widget_set_type(self.inner, @enumToInt(t));
     }
 
     pub fn color(self: *const Widget) enums.Color {

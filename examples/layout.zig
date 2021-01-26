@@ -11,7 +11,7 @@ pub fn main() !void {
     app.setScheme(.Gtk);
     var win = window.Window.new(100, 100, 400, 300, "Hello");
     var pack = group.Pack.new(0, 0, 400, 300, "");
-    pack.asWidget().setType(@enumToInt(group.PackType.Vertical));
+    pack.asWidget().setType(group.PackType, .Vertical);
     pack.setSpacing(40);
     @import("std").debug.warn("{}\n", .{pack.spacing()});
     var but1 = button.Button.new(0, 0, 0, 40, "Button 1");
