@@ -69,6 +69,26 @@ pub const Group = struct {
         c.Fl_Group_end(self.inner);
     }
 
+    pub fn find(self: *const Group, w: *widget.Widget) u32 {
+        return c.Fl_Group_find(self.inner, w.*.raw());
+    }
+
+    pub fn add(self: *Group, w: *widget.Widget) void {
+        return c.Fl_Group_add(self.inner, w.*.raw());
+    }
+
+    pub fn insert(self: *Group, w: *widget.Widget, index: u32) void {
+        return c.Fl_Group_insert(self.inner, w.*.raw(), index);
+    }
+
+    pub fn remove(self: *Group, w: *widget.Widget) void {
+        return c.Fl_Group_remove(self.inner, w.*.raw());
+    }
+
+    pub fn resizable(self: *const Group, w: *widget.Widget) void {
+        return c.Fl_Group_resizable(self.inner, w.*.raw());
+    }
+
     pub fn clear(self: *Group) void {
         c.Fl_Group_clear(self.inner);
     }
@@ -211,26 +231,6 @@ pub const Tabs = struct {
 
     pub fn draw(self: *Tabs, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Tabs_draw(self.inner, cb, data);
-    }
-
-    pub fn find(self: *const Group, widget: *widget.Widget) u32 {
-        return c.Fl_Group_find(self.inner, widget.raw());
-    }
-
-    pub fn add(self: *Group, widget: *widget.Widget) void {
-        return c.Fl_Group_add(self.inner, widget.raw());
-    }
-
-    pub fn insert(self: *Group, widget: *widget.Widget, index: u32) void {
-        return c.Fl_Group_insert(self.inner, widget.raw(), index);
-    }
-
-    pub fn remove(self: *Group, widget: *widget.Widget) void {
-        return c.Fl_Group_remove(self.inner, widget.raw());
-    }
-
-    pub fn resizable(self: *const Group, widget: *widget.Widget) void {
-        return c.Fl_Group_resizable(self.inner, widget.raw());
     }
 
     /// Gets the currently visible group
