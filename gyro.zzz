@@ -1,0 +1,14 @@
+pkgs:
+  zfltk:
+    version: 0.1.0
+    description: "Zig bindings for the FLTK gui library"
+    license: MIT
+    source_url: "https://github.com/MoAlyousef/zfltk"
+    tags:
+      gui
+      fltk
+
+    root: src/zfltk.zig
+    files:
+      README.md
+      LICENSE
