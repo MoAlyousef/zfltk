@@ -58,7 +58,7 @@ pub fn build(b: *Builder) !void {
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
                 "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
-                "-DOPTION_USE_SYSTEM_LIBZLIB=OFF",
+                "-DOPTION_USE_SYSTEM_ZLIB=OFF",
             });
             try fltkz_config.step.make();
         } else {
@@ -73,7 +73,7 @@ pub fn build(b: *Builder) !void {
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
                 "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
-                "-DOPTION_USE_SYSTEM_LIBZLIB=OFF",
+                "-DOPTION_USE_SYSTEM_ZLIB=OFF",
                 "-DOPTION_USE_PANGO=ON", // enable if rtl/cjk font support is needed
             });
             try fltkz_config.step.make();
