@@ -45,11 +45,11 @@ pub const Output = struct {
         };
     }
 
-    pub fn handle(self: *Output, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Output, cb: fn (w: *widget.Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Output_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Output, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Output, cb: fn (w: *widget.Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Output_draw(self.inner, cb, data);
     }
 
@@ -122,11 +122,11 @@ pub const MultilineOutput = struct {
         };
     }
 
-    pub fn handle(self: *MultilineOutput, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *MultilineOutput, cb: fn (w: *widget.Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Multiline_Output_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *MultilineOutput, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *MultilineOutput, cb: fn (w: *widget.Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Multiline_Output_draw(self.inner, cb, data);
     }
 };

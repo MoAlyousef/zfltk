@@ -14,7 +14,8 @@ const ButtonMessage = enum(usize) {
     Released,
 };
 
-pub fn butCb(ev: i32, data: ?*c_void) callconv(.C) i32 {
+pub fn butCb(w: *widget.Widget, ev: i32, data: ?*c_void) callconv(.C) i32 {
+    _ = w;
     _ = data;
     switch (@intToEnum(Event, ev)) {
         Event.Push => {
