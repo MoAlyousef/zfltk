@@ -45,11 +45,11 @@ pub const Input = struct {
         };
     }
 
-    pub fn handle(self: *Input, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Input, cb: fn (w: ?*c.Fl_Input, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Input_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Input, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Input, cb: fn (w: ?*c.Fl_Input, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Input_draw(self.inner, cb, data);
     }
 
@@ -122,11 +122,11 @@ pub const MultilineInput = struct {
         };
     }
 
-    pub fn handle(self: *MultilineInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *MultilineInput, cb: fn (w: ?*c.Fl_Multiline_Input, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Multiline_Input_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *MultilineInput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *MultilineInput, cb: fn (w: ?*c.Fl_Multiline_Input, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Multiline_Input_draw(self.inner, cb, data);
     }
 };
@@ -179,11 +179,11 @@ pub const IntInput = struct {
         };
     }
 
-    pub fn handle(self: *IntInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *IntInput, cb: fn (w: ?*c.Fl_Int_Input, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Int_Input_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *IntInput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *IntInput, cb: fn (w: ?*c.Fl_Int_Input, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Int_Input_draw(self.inner, cb, data);
     }
 };
@@ -236,11 +236,11 @@ pub const FloatInput = struct {
         };
     }
 
-    pub fn handle(self: *FloatInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *FloatInput, cb: fn (w: ?*c.Fl_Float_Input, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Float_Input_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *FloatInput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *FloatInput, cb: fn (w: ?*c.Fl_Float_Input, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Float_Input_draw(self.inner, cb, data);
     }
 };
@@ -293,11 +293,11 @@ pub const SecretInput = struct {
         };
     }
 
-    pub fn handle(self: *SecretInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *SecretInput, cb: fn (w: ?*c.Fl_Secret_Input, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Secret_Input_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *SecretInput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *SecretInput, cb: fn (w: ?*c.Fl_Secret_Input, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Secret_Input_draw(self.inner, cb, data);
     }
 };

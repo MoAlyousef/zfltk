@@ -4,6 +4,8 @@ const c = @cImport({
 const widget = @import("widget.zig");
 const enums = @import("enums.zig");
 
+pub const ButtonPtr = ?*c.Fl_Button;
+
 pub const Button = struct {
     inner: ?*c.Fl_Button,
     pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Button {
@@ -46,11 +48,11 @@ pub const Button = struct {
         };
     }
 
-    pub fn handle(self: *Button, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Button, cb: fn (w: ?*c.Fl_Button, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Button_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Button, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Button, cb: fn (w: ?*c.Fl_Button, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Button_draw(self.inner, cb, data);
     }
 
@@ -131,11 +133,11 @@ pub const RadioButton = struct {
         };
     }
 
-    pub fn handle(self: *RadioButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *RadioButton, cb: fn (w: ?*c.Fl_Radio_Button, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Radio_Button_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *RadioButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *RadioButton, cb: fn (w: ?*c.Fl_Radio_Button, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Radio_Button_draw(self.inner, cb, data);
     }
 };
@@ -188,11 +190,11 @@ pub const CheckButton = struct {
         };
     }
 
-    pub fn handle(self: *CheckButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *CheckButton, cb: fn (w: ?*c.Fl_Check_Button, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Check_Button_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *CheckButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *CheckButton, cb: fn (w: ?*c.Fl_Check_Button, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Check_Button_draw(self.inner, cb, data);
     }
 };
@@ -245,11 +247,11 @@ pub const RoundButton = struct {
         };
     }
 
-    pub fn handle(self: *RoundButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *RoundButton, cb: fn (w: ?*c.Fl_Round_Button, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Round_Button_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *RoundButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *RoundButton, cb: fn (w: ?*c.Fl_Round_Button, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Round_Button_draw(self.inner, cb, data);
     }
 };
