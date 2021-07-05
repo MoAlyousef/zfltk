@@ -35,7 +35,7 @@ pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
 
-    _ = fs.cwd().openDir("vendor/lib", .{}) catch |err| {
+    _ = fs.cwd().openDir("vendor/lib", .{}) catch |_| {
         const fltkz_init = b.addSystemCommand(&[_][]const u8{
             "git",
             "submodule",
