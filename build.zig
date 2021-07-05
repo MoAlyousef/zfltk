@@ -43,6 +43,7 @@ pub fn build(b: *Builder) !void {
             "update",
             "--init",
             "--recursive",
+            "--depth=1",
         });
         try fltkz_init.step.make();
 
