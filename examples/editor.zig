@@ -10,6 +10,7 @@ const dialog = zfltk.dialog;
 // To avoid exiting when hitting escape.
 // Also logic can be added to prompt the user to save their work
 pub fn winCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = data;
     if (app.event() == enums.Event.Close) {
         widget.Widget.fromWidgetPtr(w).hide();
     }
@@ -21,6 +22,7 @@ pub fn newCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
 }
 
 pub fn openCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
     var dlg = dialog.NativeFileDialog.new(.BrowseFile);
     dlg.setFilter("*.{txt,zig}");
     dlg.show();
@@ -32,6 +34,7 @@ pub fn openCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
 }
 
 pub fn saveCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
     var dlg = dialog.NativeFileDialog.new(.BrowseSaveFile);
     dlg.setFilter("*.{txt,zig}");
     dlg.show();
@@ -43,26 +46,32 @@ pub fn saveCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
 }
 
 pub fn quitCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
     var win = widget.Widget.fromVoidPtr(data);
     win.hide();
 }
 
 pub fn cutCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
     const editor = text.TextEditor.fromVoidPtr(data);
     editor.cut();
 }
 
 pub fn copyCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
     const editor = text.TextEditor.fromVoidPtr(data);
     editor.copy();
 }
 
 pub fn pasteCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
     const editor = text.TextEditor.fromVoidPtr(data);
     editor.paste();
 }
 
 pub fn helpCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
+    _ = data;
     dialog.message(300, 200, "This editor was built using fltk and zig!");
 }
 

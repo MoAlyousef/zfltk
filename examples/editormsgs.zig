@@ -22,6 +22,8 @@ pub const Message = enum(usize) {
 // To avoid exiting when hitting escape.
 // Also logic can be added to prompt the user to save their work
 pub fn winCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
+    _ = data;
     if (app.event() == enums.Event.Close) {
         app.send(Message, .Quit);
     }
