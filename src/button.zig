@@ -46,11 +46,11 @@ pub const Button = struct {
         };
     }
 
-    pub fn handle(self: *Button, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Button, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Button_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Button, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Button, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Button_draw(self.inner, cb, data);
     }
 
@@ -131,11 +131,11 @@ pub const RadioButton = struct {
         };
     }
 
-    pub fn handle(self: *RadioButton, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *RadioButton, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Radio_Button_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *RadioButton, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *RadioButton, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Radio_Button_draw(self.inner, cb, data);
     }
 };
@@ -188,11 +188,11 @@ pub const CheckButton = struct {
         };
     }
 
-    pub fn handle(self: *CheckButton, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *CheckButton, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Check_Button_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *CheckButton, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *CheckButton, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Check_Button_draw(self.inner, cb, data);
     }
 };
@@ -245,11 +245,11 @@ pub const RoundButton = struct {
         };
     }
 
-    pub fn handle(self: *RoundButton, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *RoundButton, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Round_Button_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *RoundButton, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *RoundButton, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Round_Button_draw(self.inner, cb, data);
     }
 };

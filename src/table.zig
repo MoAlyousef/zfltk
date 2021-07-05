@@ -45,11 +45,11 @@ pub const Table = struct {
         };
     }
 
-    pub fn handle(self: *Table, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Table, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Table_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Table, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Table, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Table_draw(self.inner, cb, data);
     }
 };
@@ -102,11 +102,11 @@ pub const TableRow = struct {
         };
     }
 
-    pub fn handle(self: *TableRow, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *TableRow, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Table_Row_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *TableRow, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *TableRow, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Table_Row_draw(self.inner, cb, data);
     }
 };

@@ -52,11 +52,11 @@ pub const Window = struct {
         };
     }
 
-    pub fn handle(self: *Double_Window, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Double_Window, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Double_Window_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Double_Window, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Double_Window, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Double_Window_draw(self.inner, cb, data);
     }
 

@@ -45,11 +45,11 @@ pub const Tree = struct {
         };
     }
 
-    pub fn handle(self: *Tree, cb: fn (ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Tree, cb: fn (w: ?*Widget, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Tree_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Tree, cb: fn (data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Tree, cb: fn (w: ?*Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Tree_draw(self.inner, cb, data);
     }
 };
