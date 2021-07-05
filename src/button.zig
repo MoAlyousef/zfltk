@@ -4,8 +4,6 @@ const c = @cImport({
 const widget = @import("widget.zig");
 const enums = @import("enums.zig");
 
-pub const ButtonPtr = ?*c.Fl_Button;
-
 pub const Button = struct {
     inner: ?*c.Fl_Button,
     pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Button {
