@@ -17,6 +17,7 @@ pub fn winCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
 }
 
 pub fn newCb(w: menu.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
     var buf = text.TextBuffer.fromVoidPtr(data);
     buf.setText("");
 }
