@@ -223,8 +223,8 @@ pub fn draw_rectf(x: i32, y: i32, w: i32, h: i32) void {
 pub fn draw_rectf_with_rgb(
     x: i32,
     y: i32,
-    width: i32,
-    height: i32,
+    w: i32,
+    h: i32,
     color_r: u8,
     color_g: u8,
     color_b: u8,
@@ -385,8 +385,8 @@ pub fn height() i32 {
 }
 
 /// Sets the line spacing for the current font
-pub fn set_height(f: Font, size: u32) void {
-    c.Fl_set_height(@enumToInt(f), size);
+pub fn set_height(f: Font, sz: u32) void {
+    c.Fl_set_height(@enumToInt(f), sz);
 }
 
 /// Returns the recommended distance above the bottom of a height() tall box to
@@ -426,7 +426,7 @@ pub fn draw_text(txt: [*c]const u8, x: i32, y: i32) void {
 
 /// Draws a string starting at the given x, y location with width and height and alignment
 pub fn draw_text2(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32, al: i32) void {
-    c.Fl_draw_text2(s, x, y, w, h, al);
+    c.Fl_draw_text2(string, x, y, w, h, al);
 }
 
 /// Draws a string starting at the given x, y location, rotated to an angle
@@ -436,13 +436,13 @@ pub fn draw_text_angled(angle: i32, txt: [*c]const u8, x: i32, y: i32) void {
 
 /// Draws a frame with text
 pub fn draw_frame(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32) void {
-    c.Fl_frame(s, x, y, w, h);
+    c.Fl_frame(string, x, y, w, h);
 }
 
 /// Draws a frame with text.
 /// Differs from frame() by the order of the line segments
 pub fn draw_frame2(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32) void {
-    c.Fl_frame2(s, x, y, w, h);
+    c.Fl_frame2(string, x, y, w, h);
 }
 
 /// Draws a box given the box type, size, position and color
