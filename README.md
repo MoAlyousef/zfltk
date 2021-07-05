@@ -52,7 +52,6 @@ pub fn build(b: *Builder) void {
         exe.linkSystemLibrary("winspool");
         exe.linkSystemLibrary("user32");
         exe.linkSystemLibrary("kernel32");
-        exe.linkSystemLibrary("odbc32");
         exe.linkSystemLibrary("gdiplus");
     } else if (target.isDarwin()) {
         exe.linkFramework("Carbon");
@@ -130,6 +129,7 @@ const button = zfltk.button;
 const box = zfltk.box;
 
 pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
     var mybox = widget.Widget.fromVoidPtr(data);
     mybox.setLabel("Hello World!");
 }
@@ -214,6 +214,8 @@ const button = zfltk.button;
 const std = @import("std");
 
 pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+    _ = w;
+    _ = data;
     std.debug.warn("{},{}\n", .{c.Fl_event_x(), c.Fl_event_y()});
 }
 
