@@ -8,6 +8,7 @@ const enums = @import("enums.zig");
 pub const WidgetPtr = ?*c.Fl_Widget;
 
 fn shim(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+    _ = w;
     c.Fl_awake_msg(data);
 }
 

@@ -93,7 +93,7 @@ pub const Browser = struct {
     }
 
     pub fn text(self: *const Browser, line: u32) [*c]const u8 {
-        return text = c.Fl_Browser_text(self.inner, line);
+        return c.Fl_Browser_text(self.inner, line);
     }
 
     pub fn setText(self: *Browser, line: u32, txt: [*c]const u8) void {
@@ -108,8 +108,8 @@ pub const Browser = struct {
         return c.Fl_Browser_text_size(self.inner);
     }
 
-    pub fn setTextSize(self: *Browser, c: u32) void {
-        return c.Fl_Browser_set_text_size(self.inner, c);
+    pub fn setTextSize(self: *Browser, val: u32) void {
+        return c.Fl_Browser_set_text_size(self.inner, val);
     }
 
     pub fn topline(self: *Browser, line: u32) void {

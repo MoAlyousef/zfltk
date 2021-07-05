@@ -46,7 +46,7 @@ pub const Offscreen = struct {
     }
 
     /// Ends drawing in the offscreen
-    pub fn end(self: *const Offscreen) void {
+    pub fn end() void {
         c.Fl_end_offscreen();
     }
 
@@ -131,8 +131,8 @@ pub fn draw_circle(x: f64, y: f64, r: f64) void {
 }
 
 /// Draws an arc
-pub fn draw_arc(x: i32, y: i32, width: i32, height: i32, a: f64, b: f64) void {
-    c.Fl_arc(x, y, width, height, a, b);
+pub fn draw_arc(x: i32, y: i32, w: i32, h: i32, a: f64, b: f64) void {
+    c.Fl_arc(x, y, w, h, a, b);
 }
 
 /// Draws an arc
@@ -141,8 +141,8 @@ pub fn draw_arc2(x: f64, y: f64, r: f64, start: f64, end: f64) void {
 }
 
 /// Draws a filled pie
-pub fn draw_pie(x: i32, y: i32, width: i32, height: i32, a: f64, b: f64) void {
-    c.Fl_pie(x, y, width, height, a, b);
+pub fn draw_pie(x: i32, y: i32, w: i32, h: i32, a: f64, b: f64) void {
+    c.Fl_pie(x, y, w, h, a, b);
 }
 
 /// Sets the line style
@@ -229,7 +229,7 @@ pub fn draw_rectf_with_rgb(
     color_g: u8,
     color_b: u8,
 ) void {
-    c.Fl_rectf_with_rgb(x, y, width, height, color_r, color_g, color_b);
+    c.Fl_rectf_with_rgb(x, y, w, h, color_r, color_g, color_b);
 }
 
 /// Fills a 3-sided polygon. The polygon must be convex
@@ -385,8 +385,8 @@ pub fn height() i32 {
 }
 
 /// Sets the line spacing for the current font
-pub fn set_height(font: Font, size: u32) void {
-    c.Fl_set_height(@enumToInt(font), size);
+pub fn set_height(f: Font, size: u32) void {
+    c.Fl_set_height(@enumToInt(f), size);
 }
 
 /// Returns the recommended distance above the bottom of a height() tall box to
@@ -405,8 +405,8 @@ pub fn width2(txt: [*c]const u8, n: i32) f64 {
 }
 
 /// Returns the typographical width of a single character
-pub fn char_width(c: u8) f64 {
-    return c.Fl_width3(c);
+pub fn char_width(val: u8) f64 {
+    return c.Fl_width3(val);
 }
 
 /// Converts text from Windows/X11 latin1 character set to local encoding
@@ -425,8 +425,8 @@ pub fn draw_text(txt: [*c]const u8, x: i32, y: i32) void {
 }
 
 /// Draws a string starting at the given x, y location with width and height and alignment
-pub fn draw_text2(string: [*c]const u8, x: i32, y: i32, width: i32, height: i32, al: i32) void {
-    c.Fl_draw_text2(s, x, y, width, height, al);
+pub fn draw_text2(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32, al: i32) void {
+    c.Fl_draw_text2(s, x, y, w, h, al);
 }
 
 /// Draws a string starting at the given x, y location, rotated to an angle
@@ -435,14 +435,14 @@ pub fn draw_text_angled(angle: i32, txt: [*c]const u8, x: i32, y: i32) void {
 }
 
 /// Draws a frame with text
-pub fn draw_frame(string: [*c]const u8, x: i32, y: i32, width: i32, height: i32) void {
-    c.Fl_frame(s, x, y, width, height);
+pub fn draw_frame(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32) void {
+    c.Fl_frame(s, x, y, w, h);
 }
 
 /// Draws a frame with text.
 /// Differs from frame() by the order of the line segments
-pub fn draw_frame2(string: [*c]const u8, x: i32, y: i32, width: i32, height: i32) void {
-    c.Fl_frame2(s, x, y, width, height);
+pub fn draw_frame2(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32) void {
+    c.Fl_frame2(s, x, y, w, h);
 }
 
 /// Draws a box given the box type, size, position and color

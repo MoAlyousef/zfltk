@@ -37,8 +37,8 @@ pub const TextBuffer = struct {
     }
 
     /// Appends to the buffer
-    pub fn append(self: *TextBuffer, text: [*c]const u8) void {
-        return c.Fl_Text_Buffer_append(self.inner, text);
+    pub fn append(self: *TextBuffer, str: [*c]const u8) void {
+        return c.Fl_Text_Buffer_append(self.inner, str);
     }
 
     /// Get the length of the buffer
@@ -56,8 +56,8 @@ pub const TextBuffer = struct {
     }
 
     /// Inserts text into a position
-    pub fn insert(self: *TextBuffer, pos: u32, text: [*c]const u8) void {
-        c.Fl_Text_Buffer_insert(self.inner, pos, txt.as_ptr());
+    pub fn insert(self: *TextBuffer, pos: u32, str: [*c]const u8) void {
+        c.Fl_Text_Buffer_insert(self.inner, pos, str.as_ptr());
     }
 
     /// Replaces text from position ```start``` to ```end```
@@ -184,8 +184,8 @@ pub const TextDisplay = struct {
     }
 
     pub fn buffer(self: *const TextDisplay) TextBuffer {
-        const buffer = c.Fl_Text_Display_get_buffer(self.inner);
-        return TextBuffer{ .inner = buffer };
+        const buf = c.Fl_Text_Display_get_buffer(self.inner);
+        return TextBuffer{ .inner = buf };
     }
 
     pub fn setBuffer(self: *TextDisplay, buf: *TextBuffer) void {

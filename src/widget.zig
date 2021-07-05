@@ -8,6 +8,7 @@ const image = @import("image.zig");
 pub const WidgetPtr = ?*c.Fl_Widget;
 
 fn shim(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+    _ = w;
     c.Fl_awake_msg(data);
 }
 
@@ -105,7 +106,7 @@ pub const Widget = struct {
     }
 
     pub fn getType(self: *Widget, comptime T: type) T {
-        return @intToEnum(c.Fl_Widget_set_type(self.inner));
+        return @intToEnum(c.Fl_Widget_set_type(self.inner), T);
     }
 
     pub fn setType(self: *Widget, comptime T: type, t: T) void {
@@ -125,7 +126,7 @@ pub const Widget = struct {
     }
 
     pub fn labelFont(self: *const Widget) enums.Font {
-        return @intToEnum(c.Fl_Widget_label_font(self.inner));
+        return @intToEnum(c.Fl_Widget_label_font(self.inner), enums.Font);
     }
 
     pub fn setLabelFont(self: *Widget, font: enums.Font) void {
@@ -180,8 +181,8 @@ pub const Widget = struct {
         return c.Fl_Widget_selection_color(self.inner);
     }
 
-    pub fn setSelectionColor(self: *Widget, color: enums.Color) void {
-        c.Fl_Widget_set_selection_color(self.inner, color);
+    pub fn setSelectionColor(self: *Widget, col: enums.Color) void {
+        c.Fl_Widget_set_selection_color(self.inner, col);
     }
 
     pub fn doCallback(self: *Widget) void {

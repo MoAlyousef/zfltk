@@ -56,7 +56,7 @@ pub const Align = struct {
     pub const ImageMask = 320;
 };
 
-pub const LabelType = enum {
+pub const LabelType = enum(i32) {
     Normal = 0,
     None,
     Shadow,
