@@ -77,11 +77,11 @@ pub const Menu = struct {
         };
     }
 
-    pub fn handle(self: *Menu, cb: fn (w: *widget.WidgetPtr, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Menu, cb: fn (w: WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Menu_Bar_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Menu, cb: fn (w: *widget.WidgetPtr, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Menu, cb: fn (w: WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Menu_Bar_draw(self.inner, cb, data);
     }
 
@@ -174,11 +174,11 @@ pub const MenuBar = struct {
         };
     }
 
-    pub fn handle(self: *MenuBar, cb: fn (w: *widget.WidgetPtr, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *MenuBar, cb: fn (w: WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Menu_Bar_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *MenuBar, cb: fn (w: *widget.WidgetPtr, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *MenuBar, cb: fn (w: WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Menu_Bar_draw(self.inner, cb, data);
     }
 };
@@ -231,11 +231,11 @@ pub const Choice = struct {
         };
     }
 
-    pub fn handle(self: *Menu, cb: fn (w: *widget.WidgetPtr, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Menu, cb: fn (w: WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Choice_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Menu, cb: fn (w: *widget.WidgetPtr, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Menu, cb: fn (w: WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Choice_draw(self.inner, cb, data);
     }
 };
@@ -288,11 +288,11 @@ pub const SysMenuBar = struct {
         };
     }
 
-    pub fn handle(self: *Menu, cb: fn (w: *widget.WidgetPtr, ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Menu, cb: fn (w: WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Sys_Menu_Bar_handle(self.inner, cb, data);
     }
 
-    pub fn draw(self: *Menu, cb: fn (w: *widget.WidgetPtr, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Menu, cb: fn (w: WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Sys_Menu_Bar_draw(self.inner, cb, data);
     }
 };
