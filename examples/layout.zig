@@ -14,9 +14,9 @@ pub fn main() !void {
     pack.asWidget().setType(group.PackType, .Vertical);
     pack.setSpacing(40);
     @import("std").debug.warn("{}\n", .{pack.spacing()});
-    button.Button.new(0, 0, 0, 40, "Button 1");
-    button.Button.new(0, 0, 0, 40, "Button 2");
-    button.Button.new(0, 0, 0, 40, "Button 3");
+    _ = button.Button.new(0, 0, 0, 40, "Button 1");
+    _ = button.Button.new(0, 0, 0, 40, "Button 2");
+    _ = button.Button.new(0, 0, 0, 40, "Button 3");
     pack.asGroup().end();
     win.asGroup().end();
     win.asWidget().show();

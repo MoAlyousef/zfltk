@@ -17,8 +17,8 @@ pub fn main() !void {
     slider.asWidget().setType(valuator.SliderType, .HorizontalNice);
     const scrollbar = valuator.Scrollbar.new(0, 0, 0, 40, "Scrollbar");
     scrollbar.asWidget().setType(valuator.ScrollbarType, .HorizontalNice);
-    valuator.Counter.new(0, 0, 0, 40, "Counter");
-    valuator.Adjuster.new(0, 0, 0, 40, "Adjuster");
+    _ = valuator.Counter.new(0, 0, 0, 40, "Counter");
+    _ = valuator.Adjuster.new(0, 0, 0, 40, "Adjuster");
     pack.asGroup().end();
     win.asGroup().end();
     win.asWidget().show();
