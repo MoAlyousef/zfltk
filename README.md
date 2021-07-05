@@ -53,6 +53,7 @@ pub fn build(b: *Builder) void {
         exe.linkSystemLibrary("user32");
         exe.linkSystemLibrary("kernel32");
         exe.linkSystemLibrary("odbc32");
+        exe.linkSystemLibrary("gdiplus");
     } else if (target.isDarwin()) {
         exe.linkFramework("Carbon");
         exe.linkFramework("Cocoa");

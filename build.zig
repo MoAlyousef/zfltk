@@ -56,6 +56,9 @@ pub fn build(b: *Builder) !void {
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DCMAKE_INSTALL_PREFIX=vendor/lib",
                 "-DFLTK_BUILD_TEST=OFF",
+                "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
+                "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
+                "-DOPTION_USE_SYSTEM_LIBZLIB=OFF",
             });
             try fltkz_config.step.make();
         } else {
@@ -68,6 +71,9 @@ pub fn build(b: *Builder) !void {
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DCMAKE_INSTALL_PREFIX=vendor/lib",
                 "-DFLTK_BUILD_TEST=OFF",
+                "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
+                "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
+                "-DOPTION_USE_SYSTEM_LIBZLIB=OFF",
                 "-DOPTION_USE_PANGO=ON", // enable if rtl/cjk font support is needed
             });
             try fltkz_config.step.make();
@@ -123,6 +129,7 @@ pub fn build(b: *Builder) !void {
             exe.linkSystemLibrary("user32");
             exe.linkSystemLibrary("kernel32");
             exe.linkSystemLibrary("odbc32");
+            exe.linkSystemLibrary("gdiplus");
         } else if (target.isDarwin()) {
             exe.linkFramework("Carbon");
             exe.linkFramework("Cocoa");
