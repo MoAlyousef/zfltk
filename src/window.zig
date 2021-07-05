@@ -53,11 +53,11 @@ pub const Window = struct {
     }
 
     pub fn handle(self: *Double_Window, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Double_Window_handle(self.inner, cb, data);
+        c.Fl_Double_Window_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Double_Window, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Double_Window_draw(self.inner, cb, data);
+        c.Fl_Double_Window_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     pub fn sizeRange(self: *Window, min_w: i32, min_h: i32, max_w: i32, max_h: i32) void {

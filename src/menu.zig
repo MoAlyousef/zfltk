@@ -78,11 +78,11 @@ pub const Menu = struct {
     }
 
     pub fn handle(self: *Menu, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Menu_Bar_handle(self.inner, cb, data);
+        c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Menu, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Menu_Bar_draw(self.inner, cb, data);
+        c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     pub fn add(self: *Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
@@ -175,11 +175,11 @@ pub const MenuBar = struct {
     }
 
     pub fn handle(self: *MenuBar, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Menu_Bar_handle(self.inner, cb, data);
+        c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *MenuBar, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Menu_Bar_draw(self.inner, cb, data);
+        c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -232,11 +232,11 @@ pub const Choice = struct {
     }
 
     pub fn handle(self: *Menu, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Choice_handle(self.inner, cb, data);
+        c.Fl_Choice_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Menu, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Choice_draw(self.inner, cb, data);
+        c.Fl_Choice_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -289,11 +289,11 @@ pub const SysMenuBar = struct {
     }
 
     pub fn handle(self: *Menu, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Sys_Menu_Bar_handle(self.inner, cb, data);
+        c.Fl_Sys_Menu_Bar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Menu, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Sys_Menu_Bar_draw(self.inner, cb, data);
+        c.Fl_Sys_Menu_Bar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 

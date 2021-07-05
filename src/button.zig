@@ -47,11 +47,11 @@ pub const Button = struct {
     }
 
     pub fn handle(self: *Button, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Button_handle(self.inner, cb, data);
+        c.Fl_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Button, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Button_draw(self.inner, cb, data);
+        c.Fl_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     pub fn shortcut(self: *const Button) i32 {
@@ -132,11 +132,11 @@ pub const RadioButton = struct {
     }
 
     pub fn handle(self: *RadioButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Radio_Button_handle(self.inner, cb, data);
+        c.Fl_Radio_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *RadioButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Radio_Button_draw(self.inner, cb, data);
+        c.Fl_Radio_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -189,11 +189,11 @@ pub const CheckButton = struct {
     }
 
     pub fn handle(self: *CheckButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Check_Button_handle(self.inner, cb, data);
+        c.Fl_Check_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *CheckButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Check_Button_draw(self.inner, cb, data);
+        c.Fl_Check_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -246,11 +246,11 @@ pub const RoundButton = struct {
     }
 
     pub fn handle(self: *RoundButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Round_Button_handle(self.inner, cb, data);
+        c.Fl_Round_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *RoundButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Round_Button_draw(self.inner, cb, data);
+        c.Fl_Round_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 

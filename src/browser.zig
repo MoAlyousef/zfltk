@@ -46,11 +46,11 @@ pub const Browser = struct {
     }
 
     pub fn handle(self: *Browser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Browser_handle(self.inner, cb, data);
+        c.Fl_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Browser, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Browser_draw(self.inner, cb, data);
+        c.Fl_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     pub fn remove(self: *Browser, line: u32) void {
@@ -246,11 +246,11 @@ pub const SelectBrowser = struct {
     }
 
     pub fn handle(self: *SelectBrowser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Select_Browser_handle(self.inner, cb, data);
+        c.Fl_Select_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *SelectBrowser, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Select_Browser_draw(self.inner, cb, data);
+        c.Fl_Select_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -303,11 +303,11 @@ pub const HoldBrowser = struct {
     }
 
     pub fn handle(self: *HoldBrowser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Hold_Browser_handle(self.inner, cb, data);
+        c.Fl_Hold_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *HoldBrowser, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Hold_Browser_draw(self.inner, cb, data);
+        c.Fl_Hold_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -360,11 +360,11 @@ pub const MultiBrowser = struct {
     }
 
     pub fn handle(self: *MultiBrowser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Multi_Browser_handle(self.inner, cb, data);
+        c.Fl_Multi_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *MultiBrowser, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Multi_Browser_draw(self.inner, cb, data);
+        c.Fl_Multi_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -417,11 +417,11 @@ pub const FileBrowser = struct {
     }
 
     pub fn handle(self: *FileBrowser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_File_Browser_handle(self.inner, cb, data);
+        c.Fl_File_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *FileBrowser, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_File_Browser_draw(self.inner, cb, data);
+        c.Fl_File_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 

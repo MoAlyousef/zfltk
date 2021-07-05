@@ -46,11 +46,11 @@ pub const Output = struct {
     }
 
     pub fn handle(self: *Output, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Output_handle(self.inner, cb, data);
+        c.Fl_Output_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Output, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Output_draw(self.inner, cb, data);
+        c.Fl_Output_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     pub fn value(self: *const Output) [*c]const u8 {
@@ -123,11 +123,11 @@ pub const MultilineOutput = struct {
     }
 
     pub fn handle(self: *MultilineOutput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Multiline_Output_handle(self.inner, cb, data);
+        c.Fl_Multiline_Output_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *MultilineOutput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Multiline_Output_draw(self.inner, cb, data);
+        c.Fl_Multiline_Output_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 

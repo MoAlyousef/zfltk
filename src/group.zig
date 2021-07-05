@@ -54,11 +54,11 @@ pub const Group = struct {
     }
 
     pub fn handle(self: *Group, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Group_handle(self.inner, cb, data);
+        c.Fl_Group_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Group, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Group_draw(self.inner, cb, data);
+        c.Fl_Group_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     pub fn begin(self: *Group) void {
@@ -160,11 +160,11 @@ pub const Pack = struct {
     }
 
     pub fn handle(self: *Pack, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Pack_handle(self.inner, cb, data);
+        c.Fl_Pack_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Pack, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Pack_draw(self.inner, cb, data);
+        c.Fl_Pack_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     /// Get the spacing of the pack
@@ -227,11 +227,11 @@ pub const Tabs = struct {
     }
 
     pub fn handle(self: *Tabs, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Tabs_handle(self.inner, cb, data);
+        c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Tabs, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Tabs_draw(self.inner, cb, data);
+        c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     /// Gets the currently visible group
@@ -323,11 +323,11 @@ pub const Scroll = struct {
     }
 
     pub fn handle(self: *Scroll, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Scroll_handle(self.inner, cb, data);
+        c.Fl_Scroll_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Scroll, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Scroll_draw(self.inner, cb, data);
+        c.Fl_Scroll_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 

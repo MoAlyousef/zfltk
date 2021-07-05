@@ -46,11 +46,11 @@ pub const Valuator = struct {
     }
 
     pub fn handle(self: *Valuator, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Slider_handle(self.inner, cb, data);
+        c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Valuator, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Slider_draw(self.inner, cb, data);
+        c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     /// Set bounds of a valuator
@@ -179,11 +179,11 @@ pub const Slider = struct {
     }
 
     pub fn handle(self: *Slider, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Slider_handle(self.inner, cb, data);
+        c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Slider, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Slider_draw(self.inner, cb, data);
+        c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -245,11 +245,11 @@ pub const Dial = struct {
     }
 
     pub fn handle(self: *Dial, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Dial_handle(self.inner, cb, data);
+        c.Fl_Dial_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Dial, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Dial_draw(self.inner, cb, data);
+        c.Fl_Dial_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -309,11 +309,11 @@ pub const Counter = struct {
     }
 
     pub fn handle(self: *Counter, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Counter_handle(self.inner, cb, data);
+        c.Fl_Counter_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Counter, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Counter_draw(self.inner, cb, data);
+        c.Fl_Counter_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -381,11 +381,11 @@ pub const Scrollbar = struct {
     }
 
     pub fn handle(self: *Scrollbar, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Scrollbar_handle(self.inner, cb, data);
+        c.Fl_Scrollbar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Scrollbar, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Scrollbar_draw(self.inner, cb, data);
+        c.Fl_Scrollbar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -438,11 +438,11 @@ pub const Adjuster = struct {
     }
 
     pub fn handle(self: *Adjuster, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Adjuster_handle(self.inner, cb, data);
+        c.Fl_Adjuster_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Adjuster, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Adjuster_draw(self.inner, cb, data);
+        c.Fl_Adjuster_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -495,11 +495,11 @@ pub const Roller = struct {
     }
 
     pub fn handle(self: *Roller, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Roller_handle(self.inner, cb, data);
+        c.Fl_Roller_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Roller, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Roller_draw(self.inner, cb, data);
+        c.Fl_Roller_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 

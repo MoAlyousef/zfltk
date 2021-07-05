@@ -46,11 +46,11 @@ pub const Table = struct {
     }
 
     pub fn handle(self: *Table, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Table_handle(self.inner, cb, data);
+        c.Fl_Table_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Table, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Table_draw(self.inner, cb, data);
+        c.Fl_Table_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
@@ -103,11 +103,11 @@ pub const TableRow = struct {
     }
 
     pub fn handle(self: *TableRow, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Table_Row_handle(self.inner, cb, data);
+        c.Fl_Table_Row_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *TableRow, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Table_Row_draw(self.inner, cb, data);
+        c.Fl_Table_Row_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 

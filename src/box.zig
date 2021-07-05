@@ -46,11 +46,11 @@ pub const Box = struct {
     }
 
     pub fn handle(self: *Box, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
-        c.Fl_Box_handle(self.inner, cb, data);
+        c.Fl_Box_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
     pub fn draw(self: *Box, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
-        c.Fl_Box_draw(self.inner, cb, data);
+        c.Fl_Box_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
