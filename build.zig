@@ -36,7 +36,7 @@ pub fn build(b: *Builder) !void {
     const mode = b.standardReleaseOptions();
 
     _ = fs.cwd().openDir("vendor/lib", .{}) catch |err| {
-        std.debug.print("Warning: {e}\n", .{err});
+        std.debug.print("Warning: {e}\n. The cfltk library will be grabbed and built from source!", .{err});
         const fltkz_init = b.addSystemCommand(&[_][]const u8{
             "git",
             "submodule",
