@@ -36,18 +36,19 @@ pub fn build(b: *Builder) !void {
     const mode = b.standardReleaseOptions();
 
     _ = fs.cwd().openDir("vendor/lib", .{}) catch |err| {
-        std.debug.print("Warning: {e}\n", .{err});
-        const fltkz_init = b.addSystemCommand(&[_][]const u8{
+        std.debug.print("Warning: {e}. The cfltk library will be grabbed and built from source!\n", .{err});
+        const zfltk_init = b.addSystemCommand(&[_][]const u8{
             "git",
             "submodule",
             "update",
             "--init",
             "--recursive",
+            "--depth=1",
         });
-        try fltkz_init.step.make();
+        try zfltk_init.step.make();
 
         if (target.isWindows() or target.isDarwin()) {
-            const fltkz_config = b.addSystemCommand(&[_][]const u8{
+            const zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
                 "vendor/bin",
@@ -60,9 +61,9 @@ pub fn build(b: *Builder) !void {
                 "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
                 "-DOPTION_USE_SYSTEM_ZLIB=OFF",
             });
-            try fltkz_config.step.make();
+            try zfltk_config.step.make();
         } else {
-            const fltkz_config = b.addSystemCommand(&[_][]const u8{
+            const zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
                 "vendor/bin",
@@ -76,10 +77,10 @@ pub fn build(b: *Builder) !void {
                 "-DOPTION_USE_SYSTEM_ZLIB=OFF",
                 "-DOPTION_USE_PANGO=ON", // enable if rtl/cjk font support is needed
             });
-            try fltkz_config.step.make();
+            try zfltk_config.step.make();
         }
 
-        const fltkz_build = b.addSystemCommand(&[_][]const u8{
+        const zfltk_build = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--build",
             "vendor/bin",
@@ -87,15 +88,15 @@ pub fn build(b: *Builder) !void {
             "Release",
             "--parallel",
         });
-        try fltkz_build.step.make();
+        try zfltk_build.step.make();
 
         // This only needs to run once!
-        const fltkz_install = b.addSystemCommand(&[_][]const u8{
+        const zfltk_install = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--install",
             "vendor/bin",
         });
-        try fltkz_install.step.make();
+        try zfltk_install.step.make();
     };
 
     const examples_step = b.step("examples", "build the examples");
