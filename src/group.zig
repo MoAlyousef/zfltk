@@ -97,7 +97,7 @@ pub const Group = struct {
         c.Fl_Group_children(self.inner);
     }
 
-    pub fn child(self: *const Group, idx: u32) !Widget {
+    pub fn child(self: *const Group, idx: u32) !widget.Widget {
         const ptr = c.Fl_Group_child(self.inner, idx);
         if (ptr == 0) unreachable;
         return Widget{
@@ -250,7 +250,7 @@ pub const Tabs = struct {
     }
 
     /// Gets the tab label alignment.
-    pub fn tab_align(self: *const Tab) i32 {
+    pub fn tab_align(self: *const Tabs) i32 {
         return c.Fl_Tabs_tab_align(self.inner);
     }
 };

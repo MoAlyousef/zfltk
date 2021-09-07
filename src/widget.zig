@@ -3,6 +3,7 @@ const c = @cImport({
     @cInclude("cfl.h");
 });
 const enums = @import("enums.zig");
+const group = @import("group.zig");
 const image = @import("image.zig");
 
 pub const WidgetPtr = ?*c.Fl_Widget;
@@ -14,8 +15,8 @@ fn shim(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
 
 pub const Widget = struct {
     inner: ?*c.Fl_Widget,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Widget {
-        const ptr = c.Fl_Widget_new(x, y, w, h, title);
+    pub fn new(coord_x: i32, coord_y: i32, width: i32, height: i32, title: [*c]const u8) Widget {
+        const ptr = c.Fl_Widget_new(coord_x, coord_y, width, height, title);
         if (ptr == null) unreachable;
         return Widget{
             .inner = ptr,
@@ -145,8 +146,8 @@ pub const Widget = struct {
         c.Fl_Widget_set_align(self.inner, a);
     }
 
-    pub fn setTrigger(self: *Widget, trigger: i32) void {
-        c.Fl_Widget_set_trigger(self.inner, trigger);
+    pub fn setTrigger(self: *Widget, callbackTrigger: i32) void {
+        c.Fl_Widget_set_trigger(self.inner, callbackTrigger);
     }
 
     pub fn setBox(self: *Widget, boxtype: enums.BoxType) void {
@@ -169,7 +170,7 @@ pub const Widget = struct {
         }
     }
 
-    pub fn trigger(self: *const Widget) CallbackTrigger {
+    pub fn trigger(self: *const Widget) i32 {
         return c.Fl_Widget_trigger(self.inner);
     }
 

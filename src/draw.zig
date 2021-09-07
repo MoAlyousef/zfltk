@@ -1,7 +1,6 @@
 const c = @cImport({
     @cInclude("cfl_draw.h");
 });
-const u32 = @import("enums.zig").u32;
 const Font = @import("enums.zig").Font;
 const FrameType = @import("enums.zig").FrameType;
 const Cursor = @import("enums.zig").Cursor;
@@ -38,7 +37,7 @@ pub const Region = ?*c_void;
 pub const Offscreen = struct {
     inner: ?*c_void,
     pub fn new(w: i32, h: i32) Offscreen {
-        return Offscree{ .inner = c.Fl_create_offscreen(w, h) };
+        return Offscreen{ .inner = c.Fl_create_offscreen(w, h) };
     }
     /// Begins drawing in the offscreen
     pub fn begin(self: *const Offscreen) void {
@@ -146,10 +145,10 @@ pub fn draw_pie(x: i32, y: i32, w: i32, h: i32, a: f64, b: f64) void {
 }
 
 /// Sets the line style
-pub fn set_line_style(style: LineStyle, width: i32) void {
+pub fn set_line_style(style: LineStyle, thickness: i32) void {
     c.Fl_line_style(
         style,
-        width,
+        thickness,
         null,
     );
 }

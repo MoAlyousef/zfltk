@@ -3,6 +3,7 @@ const c = @cImport({
 });
 const widget = @import("widget.zig");
 const group = @import("group.zig");
+const enums = @import("enums.zig");
 
 pub const Window = struct {
     inner: ?*c.Fl_Double_Window,
@@ -52,11 +53,11 @@ pub const Window = struct {
         };
     }
 
-    pub fn handle(self: *Double_Window, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Window, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
         c.Fl_Double_Window_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Double_Window, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Window, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
         c.Fl_Double_Window_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 

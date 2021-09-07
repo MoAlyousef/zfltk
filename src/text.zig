@@ -2,6 +2,7 @@ const c = @cImport({
     @cInclude("cfl_text.h");
 });
 const widget = @import("widget.zig");
+const enums = @import("enums.zig");
 
 pub const TextBuffer = struct {
     inner: ?*c.Fl_Text_Buffer,

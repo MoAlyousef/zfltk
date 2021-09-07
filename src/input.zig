@@ -2,6 +2,7 @@ const c = @cImport({
     @cInclude("cfl_input.h");
 });
 const widget = @import("widget.zig");
+const enums = @import("enums.zig");
 
 pub const Input = struct {
     inner: ?*c.Fl_Input,

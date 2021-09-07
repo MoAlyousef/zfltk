@@ -128,6 +128,17 @@ pub const BoxType = enum(i32) {
     FreeBoxType,
 };
 
+pub const BrowserScrollbar = enum(i32) {
+    BrowserScrollbarNone = 0,
+    BrowserScrollbarHorizontal = 1,
+    BrowserScrollbarVertical = 2,
+    BrowserScrollbarBoth = 3,
+    BrowserScrollbarAlwaysOn = 4,
+    BrowserScrollbarHorizontalAlways = 5,
+    BrowserScrollbarVerticalAlways = 6,
+    BrowserScrollbarBothAlways = 7,
+};
+
 pub const Event = enum(i32) {
     NoEvent = 0,
     Push,

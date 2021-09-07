@@ -2,6 +2,8 @@ const c = @cImport({
     @cInclude("cfl_browser.h");
 });
 const widget = @import("widget.zig");
+const valuator = @import("valuator.zig");
+const enums = @import("enums.zig");
 
 pub const Browser = struct {
     inner: ?*c.Fl_Browser,
@@ -168,11 +170,11 @@ pub const Browser = struct {
         return c.Fl_Browser_set_hposition(self.inner, pos);
     }
 
-    pub fn hasScrollbar(self: *const Browser) BrowserScrollbar {
+    pub fn hasScrollbar(self: *const Browser) enums.BrowserScrollbar {
         return c.Fl_Browser_has_scrollbar(self.inner);
     }
 
-    pub fn setHasScrollbar(self: *Browser, mode: BrowserScrollbar) void {
+    pub fn setHasScrollbar(self: *Browser, mode: enums.BrowserScrollbar) void {
         return c.Fl_Browser_set_has_scrollbar(self.inner, mode);
     }
 
