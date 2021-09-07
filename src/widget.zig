@@ -78,8 +78,8 @@ pub const Widget = struct {
         c.Fl_Widget_set_label(self.inner, str);
     }
 
-    pub fn resize(self: *Widget, x: i32, y: i32, w: i32, h: i32) void {
-        c.Fl_Widget_resize(self.inner, x, y, w, h);
+    pub fn resize(self: *Widget, coord_x: i32, coord_y: i32, width: i32, height: i32) void {
+        c.Fl_Widget_resize(self.inner, coord_x, coord_y, width, height);
     }
 
     pub fn redraw(self: *Widget) void {

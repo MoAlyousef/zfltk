@@ -100,7 +100,7 @@ pub const Group = struct {
     pub fn child(self: *const Group, idx: u32) !widget.Widget {
         const ptr = c.Fl_Group_child(self.inner, idx);
         if (ptr == 0) unreachable;
-        return Widget{
+        return widget.Widget{
             .inner = ptr,
         };
     }
