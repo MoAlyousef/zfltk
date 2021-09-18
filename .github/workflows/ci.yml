@@ -20,7 +20,6 @@ jobs:
          fi
         shell: bash
       - uses: actions/checkout@v2
-      - uses: seanmiddleditch/gha-setup-ninja@master
       - uses: goto-bus-stop/setup-zig@v1
         with:
           version: master
@@ -28,7 +27,7 @@ jobs:
       - name: Build
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            git submodule update --init --recursive  && cmake -Svendor/cfltk -Bvendor/bin -DCMAKE_INSTALL_PREFIX=vendor/lib -DCMAKE_BUILD_TYPE=Release -GNinja -DFLTK_BUILD_TEST=OFF -DOPTION_USE_SYSTEM_LIBPNG=OFF -DOPTION_USE_SYSTEM_LIBJPEG=OFF -DOPTION_USE_SYSTEM_ZLIB=OFF && cmake --build vendor/bin --target install && zig build -Dtarget=x86_64-windows-gnu
+            git submodule update --init --recursive  && cmake -Svendor/cfltk -Bvendor/bin -DCMAKE_INSTALL_PREFIX=vendor/lib -DCMAKE_BUILD_TYPE=Release -DFLTK_BUILD_TEST=OFF -DOPTION_USE_SYSTEM_LIBPNG=OFF -DOPTION_USE_SYSTEM_LIBJPEG=OFF -DOPTION_USE_SYSTEM_ZLIB=OFF && cmake --build vendor/bin --target install && zig build
           else
             zig build
           fi
