@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            set CC="zig cc" && set CXX="zig c++"
+            export CC="zig cc" && export CXX="zig c++"
           fi
           zig build
         shell: bash
