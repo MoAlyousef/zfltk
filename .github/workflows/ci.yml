@@ -30,3 +30,4 @@ jobs:
             set CC="zig cc" && set CXX="zig c++"
           fi
           zig build
+        shell: bash
