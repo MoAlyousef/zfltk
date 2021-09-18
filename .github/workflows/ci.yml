@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Download deps
@@ -20,16 +20,9 @@ jobs:
          fi
         shell: bash
       - uses: actions/checkout@v2
-      - uses: seanmiddleditch/gha-setup-ninja@master
       - uses: goto-bus-stop/setup-zig@v1
         with:
           version: master
 
       - name: Build
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            git submodule update --init --recursive  && export CC="zig cc -target x86_64-windows-gnu" && export CXX="zig c++ -target x86_64-windows-gnu" && cmake -GNinja -Svendor/cfltk -Bvendor/bin -DOPTION_USE_GDIPLUS=OFF -DCMAKE_INSTALL_PREFIX=vendor/lib -DCMAKE_BUILD_TYPE=Release -DFLTK_BUILD_TEST=OFF -DOPTION_USE_SYSTEM_LIBPNG=OFF -DOPTION_USE_SYSTEM_LIBJPEG=OFF -DOPTION_USE_SYSTEM_ZLIB=OFF && cmake --build vendor/bin --config Release --target install && zig build -Dtarget=x86_64-windows-gnu
-          else
-            zig build
-          fi
-        shell: bash
+        run: zig build
