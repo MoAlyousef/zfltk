@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Download deps
@@ -25,4 +25,8 @@ jobs:
           version: master
 
       - name: Build
-        run: zig build
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            set CC="zig cc" && set CXX="zig c++"
+          fi
+          zig build
