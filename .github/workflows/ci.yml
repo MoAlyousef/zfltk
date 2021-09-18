@@ -27,7 +27,8 @@ jobs:
       - name: Build
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            export CC="zig cc" && export CXX="zig c++"
+            export CC="zig cc" && export CXX="zig c++" && zig build -target x86_64-windows-gnu
+          else
+            zig build
           fi
-          zig build
         shell: bash
