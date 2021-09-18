@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            export CC="zig cc -target x86_64-windows-gnu" && export CXX="zig c++ -target x86_64-windows-gnu" && zig build -Dtarget=x86_64-windows-gnu
+            git submodule update --init --recursive  && cmake -Svendor/cfltk -Bvendor/bin -DCMAKE_INSTALL_PREFIX=vendor/lib -DCMAKE_BUILD_TYPE=Release -GNinja -DFLTK_BUILD_TEST=OFF -DOPTION_USE_SYSTEM_LIBPNG=OFF -DOPTION_USE_SYSTEM_LIBJPEG=OFF -DOPTION_USE_SYSTEM_ZLIB=OFF && cmake --build vendor/bin --target install && zig build -Dtarget=x86_64-windows-gnu
           else
             zig build
           fi
