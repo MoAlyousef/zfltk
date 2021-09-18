@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            git submodule update --init --recursive  && cmake -Svendor/cfltk -Bvendor/bin -DCMAKE_INSTALL_PREFIX=vendor/lib -DCMAKE_BUILD_TYPE=Release -DFLTK_BUILD_TEST=OFF -DOPTION_USE_SYSTEM_LIBPNG=OFF -DOPTION_USE_SYSTEM_LIBJPEG=OFF -DOPTION_USE_SYSTEM_ZLIB=OFF && cmake --build vendor/bin --config Release --target install && zig build
+            git submodule update --init --recursive  && cmake -Svendor/cfltk -Bvendor/bin -DOPTION_USE_GDIPLUS=OFF -DCMAKE_INSTALL_PREFIX=vendor/lib -DCMAKE_BUILD_TYPE=Release -DFLTK_BUILD_TEST=OFF -DOPTION_USE_SYSTEM_LIBPNG=OFF -DOPTION_USE_SYSTEM_LIBJPEG=OFF -DOPTION_USE_SYSTEM_ZLIB=OFF && cmake --build vendor/bin --config Release --target install && zig build
           else
             zig build
           fi
