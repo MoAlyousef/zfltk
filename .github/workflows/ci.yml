@@ -25,4 +25,9 @@ jobs:
           version: master
 
       - name: Build
-        run: zig build
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
+            zig build
+          else
+            zig build -target x86_64-windows-gnu
+          fi
