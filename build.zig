@@ -153,6 +153,7 @@ pub fn build(b: *Builder) !void {
             exe.linkSystemLibrary("cairo");
             exe.linkSystemLibrary("pangocairo-1.0");
             exe.linkSystemLibrary("c++");
+            exe.linkSystemLibrary("unwind");
         }
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);
