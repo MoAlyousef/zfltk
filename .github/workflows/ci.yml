@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Download deps
@@ -25,10 +25,4 @@ jobs:
           version: master
 
       - name: Build
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
-            zig build run-simple
-          else
-            zig build run-simple -target x86_64-windows-gnu
-          fi
+        run: zig build
