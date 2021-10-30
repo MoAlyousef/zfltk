@@ -13,6 +13,10 @@ $ zig build run-image
 $ zig build run-mixed
 ```
 
+For Windows, you can use the gnu toolchain:
+```
+$ zig build <args> -target x86_64-windows-gnu
+```
 ## Usage
 Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
 ```
@@ -53,7 +57,7 @@ pub fn build(b: *Builder) void {
         exe.linkSystemLibrary("user32");
         exe.linkSystemLibrary("kernel32");
         exe.linkSystemLibrary("odbc32");
-        exe.linkSystemLibrary("gdiplus");
+        // exe.linkSystemLibrary("gdiplus");
     } else if (target.isDarwin()) {
         exe.linkFramework("Carbon");
         exe.linkFramework("Cocoa");
