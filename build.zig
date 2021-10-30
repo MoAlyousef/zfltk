@@ -130,11 +130,13 @@ pub fn build(b: *Builder) !void {
             exe.linkSystemLibrary("user32");
             exe.linkSystemLibrary("kernel32");
             exe.linkSystemLibrary("odbc32");
+            exe.linkSystemLibrary("stdc++");
             // exe.linkSystemLibrary("gdiplus");
         } else if (target.isDarwin()) {
             exe.linkFramework("Carbon");
             exe.linkFramework("Cocoa");
             exe.linkFramework("ApplicationServices");
+            exe.linkSystemLibrary("c++");
         } else {
             exe.linkSystemLibrary("pthread");
             exe.linkSystemLibrary("X11");
@@ -150,6 +152,7 @@ pub fn build(b: *Builder) !void {
             exe.linkSystemLibrary("gobject-2.0");
             exe.linkSystemLibrary("cairo");
             exe.linkSystemLibrary("pangocairo-1.0");
+            exe.linkSystemLibrary("stdc++");
         }
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);
