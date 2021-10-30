@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
-            zig build
+            zig build run-simple
           else
-            zig build -target x86_64-windows-gnu
+            zig build run-simple -target x86_64-windows-gnu
           fi
