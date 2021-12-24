@@ -30,14 +30,14 @@ pub const Button = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Button {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Button {
         return Button{
             .inner = @ptrCast(?*c.Fl_Button, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Button) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Button) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Button) widget.Widget {
@@ -46,11 +46,11 @@ pub const Button = struct {
         };
     }
 
-    pub fn handle(self: *Button, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Button, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Button, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Button, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -109,14 +109,14 @@ pub const RadioButton = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) RadioButton {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) RadioButton {
         return RadioButton{
             .inner = @ptrCast(?*c.Fl_RadioButton, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *RadioButton) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *RadioButton) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const RadioButton) widget.Widget {
@@ -131,11 +131,11 @@ pub const RadioButton = struct {
         };
     }
 
-    pub fn handle(self: *RadioButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *RadioButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Radio_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *RadioButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *RadioButton, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Radio_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -166,14 +166,14 @@ pub const CheckButton = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) CheckButton {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) CheckButton {
         return CheckButton{
             .inner = @ptrCast(?*c.Fl_CheckButton, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *CheckButton) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *CheckButton) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const CheckButton) widget.Widget {
@@ -188,11 +188,11 @@ pub const CheckButton = struct {
         };
     }
 
-    pub fn handle(self: *CheckButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *CheckButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Check_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *CheckButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *CheckButton, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Check_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -223,14 +223,14 @@ pub const RoundButton = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) RoundButton {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) RoundButton {
         return RoundButton{
             .inner = @ptrCast(?*c.Fl_RoundButton, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *RoundButton) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *RoundButton) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const RoundButton) widget.Widget {
@@ -245,11 +245,11 @@ pub const RoundButton = struct {
         };
     }
 
-    pub fn handle(self: *RoundButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *RoundButton, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Round_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *RoundButton, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *RoundButton, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Round_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };

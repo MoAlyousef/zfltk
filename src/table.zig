@@ -29,14 +29,14 @@ pub const Table = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Table {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Table {
         return Table{
             .inner = @ptrCast(?*c.Fl_Table, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Table) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Table) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Table) widget.Widget {
@@ -45,11 +45,11 @@ pub const Table = struct {
         };
     }
 
-    pub fn handle(self: *Table, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Table, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Table_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Table, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Table, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Table_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -80,14 +80,14 @@ pub const TableRow = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) TableRow {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) TableRow {
         return TableRow{
             .inner = @ptrCast(?*c.Fl_Table_Row, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *TableRow) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *TableRow) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const TableRow) widget.Widget {
@@ -102,11 +102,11 @@ pub const TableRow = struct {
         };
     }
 
-    pub fn handle(self: *TableRow, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *TableRow, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Table_Row_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *TableRow, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *TableRow, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Table_Row_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };

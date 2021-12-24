@@ -31,11 +31,11 @@ pub const LineStyle = enum(i32) {
 };
 
 /// Opaque type around Fl_Region
-pub const Region = ?*c_void;
+pub const Region = ?*anyopaque;
 
 /// Opaque type around Fl_Offscreen
 pub const Offscreen = struct {
-    inner: ?*c_void,
+    inner: ?*anyopaque,
     pub fn new(w: i32, h: i32) Offscreen {
         return Offscreen{ .inner = c.Fl_create_offscreen(w, h) };
     }

@@ -24,14 +24,14 @@ pub const Image = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Image {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Image {
         return Image{
             .inner = @ptrCast(?*c.Fl_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Image) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Image) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn delete(self: *Image) void {
@@ -109,14 +109,14 @@ pub const SharedImage = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) SharedImage {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) SharedImage {
         return SharedImage{
             .inner = @ptrCast(?*c.Fl_Shared_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *SharedImage) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *SharedImage) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asImage(self: *const SharedImage) Image {
@@ -154,14 +154,14 @@ pub const SvgImage = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) SvgImage {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) SvgImage {
         return SvgImage{
             .inner = @ptrCast(?*c.Fl_SVG_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *SvgImage) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *SvgImage) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asImage(self: *const SvgImage) Image {
@@ -199,14 +199,14 @@ pub const JpegImage = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) JpegImage {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) JpegImage {
         return JpegImage{
             .inner = @ptrCast(?*c.Fl_JPEG_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *JpegImage) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *JpegImage) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asImage(self: *const JpegImage) Image {
@@ -244,14 +244,14 @@ pub const BmpImage = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) BmpImage {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) BmpImage {
         return BmpImage{
             .inner = @ptrCast(?*c.Fl_BMP_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *BmpImage) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *BmpImage) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asImage(self: *const BmpImage) Image {
@@ -289,14 +289,14 @@ pub const RgbImage = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) RgbImage {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) RgbImage {
         return RgbImage{
             .inner = @ptrCast(?*c.Fl_RGB_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *RgbImage) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *RgbImage) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asImage(self: *const RgbImage) Image {
@@ -334,14 +334,14 @@ pub const PngImage = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) PngImage {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) PngImage {
         return PngImage{
             .inner = @ptrCast(?*c.Fl_PNG_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *PngImage) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *PngImage) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asImage(self: *const PngImage) Image {
@@ -379,14 +379,14 @@ pub const GifImage = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) GifImage {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) GifImage {
         return GifImage{
             .inner = @ptrCast(?*c.Fl_GIF_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *GifImage) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *GifImage) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asImage(self: *const GifImage) Image {
@@ -417,14 +417,14 @@ pub const TiledImage = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) TiledImage {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) TiledImage {
         return TiledImage{
             .inner = @ptrCast(?*c.Fl_Tiled_Image, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *TiledImage) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *TiledImage) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asImage(self: *const TiledImage) Image {

@@ -86,7 +86,7 @@ pub fn wait() bool {
 }
 
 pub fn send(comptime T: type, t: T) void {
-    c.Fl_awake_msg(@intToPtr(?*c_void, @bitCast(usize, t)));
+    c.Fl_awake_msg(@intToPtr(?*anyopaque, @bitCast(usize, t)));
 }
 
 pub fn recv(comptime T: type) ?T {

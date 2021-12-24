@@ -29,14 +29,14 @@ pub const Valuator = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Valuator {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Valuator {
         return Valuator{
             .inner = @ptrCast(?*c.Fl_Slider, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Valuator) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Valuator) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Valuator) widget.Widget {
@@ -45,11 +45,11 @@ pub const Valuator = struct {
         };
     }
 
-    pub fn handle(self: *Valuator, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Valuator, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Valuator, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Valuator, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -156,14 +156,14 @@ pub const Slider = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Slider {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Slider {
         return Slider{
             .inner = @ptrCast(?*c.Fl_Slider, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Slider) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Slider) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Slider) widget.Widget {
@@ -178,11 +178,11 @@ pub const Slider = struct {
         };
     }
 
-    pub fn handle(self: *Slider, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Slider, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Slider, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Slider, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -222,14 +222,14 @@ pub const Dial = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Dial {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Dial {
         return Dial{
             .inner = @ptrCast(?*c.Fl_Dial, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Dial) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Dial) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Dial) widget.Widget {
@@ -244,11 +244,11 @@ pub const Dial = struct {
         };
     }
 
-    pub fn handle(self: *Dial, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Dial, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Dial_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Dial, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Dial, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Dial_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -286,14 +286,14 @@ pub const Counter = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Counter {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Counter {
         return Counter{
             .inner = @ptrCast(?*c.Fl_Counter, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Counter) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Counter) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Counter) widget.Widget {
@@ -308,11 +308,11 @@ pub const Counter = struct {
         };
     }
 
-    pub fn handle(self: *Counter, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Counter, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Counter_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Counter, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Counter, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Counter_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -358,14 +358,14 @@ pub const Scrollbar = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Scrollbar {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Scrollbar {
         return Scrollbar{
             .inner = @ptrCast(?*c.Fl_Scrollbar, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Scrollbar) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Scrollbar) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Scrollbar) widget.Widget {
@@ -380,11 +380,11 @@ pub const Scrollbar = struct {
         };
     }
 
-    pub fn handle(self: *Scrollbar, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Scrollbar, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Scrollbar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Scrollbar, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Scrollbar, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Scrollbar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -415,14 +415,14 @@ pub const Adjuster = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Adjuster {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Adjuster {
         return Adjuster{
             .inner = @ptrCast(?*c.Fl_Adjuster, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Adjuster) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Adjuster) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Adjuster) widget.Widget {
@@ -437,11 +437,11 @@ pub const Adjuster = struct {
         };
     }
 
-    pub fn handle(self: *Adjuster, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Adjuster, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Adjuster_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Adjuster, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Adjuster, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Adjuster_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -472,14 +472,14 @@ pub const Roller = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Roller {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Roller {
         return Roller{
             .inner = @ptrCast(?*c.Fl_Roller, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Roller) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Roller) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Roller) widget.Widget {
@@ -494,11 +494,11 @@ pub const Roller = struct {
         };
     }
 
-    pub fn handle(self: *Roller, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Roller, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Roller_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Roller, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Roller, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Roller_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };

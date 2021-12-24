@@ -12,14 +12,14 @@ pub const TextBuffer = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) TextBuffer {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) TextBuffer {
         return TextBuffer{
             .inner = @ptrCast(?*c.Fl_Text_Buffer, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *TextBuffer) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *TextBuffer) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn delete(self: *TextBuffer) void {
@@ -160,14 +160,14 @@ pub const TextDisplay = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) TextDisplay {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) TextDisplay {
         return TextDisplay{
             .inner = @ptrCast(?*c.Fl_Text_Display, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *TextDisplay) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *TextDisplay) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const TextDisplay) widget.Widget {
@@ -176,11 +176,11 @@ pub const TextDisplay = struct {
         };
     }
 
-    pub fn handle(self: *TextDisplay, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *TextDisplay, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Text_Display_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *TextDisplay, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *TextDisplay, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Text_Display_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -292,14 +292,14 @@ pub const TextEditor = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) TextEditor {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) TextEditor {
         return TextEditor{
             .inner = @ptrCast(?*c.Fl_Text_Editor, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *TextEditor) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *TextEditor) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const TextEditor) widget.Widget {
@@ -314,11 +314,11 @@ pub const TextEditor = struct {
         };
     }
 
-    pub fn handle(self: *TextEditor, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *TextEditor, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Text_Editor_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *TextEditor, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *TextEditor, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Text_Editor_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 

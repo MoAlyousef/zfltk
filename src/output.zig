@@ -30,14 +30,14 @@ pub const Output = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Output {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Output {
         return Output{
             .inner = @ptrCast(?*c.Fl_Output, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *MultilineOutput) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *MultilineOutput) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Output) widget.Widget {
@@ -46,11 +46,11 @@ pub const Output = struct {
         };
     }
 
-    pub fn handle(self: *Output, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Output, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Output_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Output, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Output, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Output_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -101,14 +101,14 @@ pub const MultilineOutput = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) MultilineOutput {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) MultilineOutput {
         return MultilineOutput{
             .inner = @ptrCast(?*c.Fl_Multiline_Output, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *MultilineOutput) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *MultilineOutput) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const MultilineOutput) widget.Widget {
@@ -123,11 +123,11 @@ pub const MultilineOutput = struct {
         };
     }
 
-    pub fn handle(self: *MultilineOutput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *MultilineOutput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Multiline_Output_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *MultilineOutput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *MultilineOutput, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Multiline_Output_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };

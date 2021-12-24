@@ -9,7 +9,7 @@ const window = zfltk.window;
 const button = zfltk.button;
 const std = @import("std");
 
-pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
     _ = w;
     _ = data;
     std.debug.warn("{},{}\n", .{c.Fl_event_x(), c.Fl_event_y()});

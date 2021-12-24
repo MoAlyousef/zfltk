@@ -8,7 +8,7 @@ const image = @import("image.zig");
 
 pub const WidgetPtr = ?*c.Fl_Widget;
 
-fn shim(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+fn shim(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     _ = w;
     c.Fl_awake_msg(data);
 }
@@ -39,14 +39,14 @@ pub const Widget = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Widget {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Widget {
         return Widget{
             .inner = @ptrCast(?*c.Fl_Widget, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Widget) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Widget) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn delete(self: *Widget) void {
@@ -54,12 +54,12 @@ pub const Widget = struct {
         self.inner = null;
     }
 
-    pub fn setCallback(self: *Widget, cb: fn (w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn setCallback(self: *Widget, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Widget_set_callback(self.inner, cb, data);
     }
 
     pub fn emit(self: *Widget, comptime T: type, msg: T) void {
-        self.setCallback(shim, @intToPtr(?*c_void, @bitCast(usize, msg)));
+        self.setCallback(shim, @intToPtr(?*anyopaque, @bitCast(usize, msg)));
     }
 
     pub fn setColor(self: *Widget, col: u32) void {

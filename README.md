@@ -133,7 +133,7 @@ const window = zfltk.window;
 const button = zfltk.button;
 const box = zfltk.box;
 
-pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
     _ = w;
     var mybox = widget.Widget.fromVoidPtr(data);
     mybox.setLabel("Hello World!");
@@ -190,7 +190,7 @@ const c = @cImport({
     @cInclude("cfl_window.h"); // Fl_Window
 });
 
-pub fn butCb(w: ?*c.Fl_Widget, data: ?*c_void) callconv(.C) void {
+pub fn butCb(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     c.Fl_Box_set_label(@ptrCast(?*c.Fl_Box, data), "Hello World!");
     c.Fl_Button_set_color(@ptrCast(?*c.Fl_Button, w), c.Fl_Color_Cyan);
 }
@@ -218,7 +218,7 @@ const window = zfltk.window;
 const button = zfltk.button;
 const std = @import("std");
 
-pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
     _ = w;
     _ = data;
     std.debug.warn("{},{}\n", .{c.Fl_event_x(), c.Fl_event_y()});

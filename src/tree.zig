@@ -29,14 +29,14 @@ pub const Tree = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Tree {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Tree {
         return Tree{
             .inner = @ptrCast(?*c.Fl_Tree, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Tree) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Tree) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Tree) widget.Widget {
@@ -45,11 +45,11 @@ pub const Tree = struct {
         };
     }
 
-    pub fn handle(self: *Tree, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Tree, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Tree_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Tree, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Tree, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Tree_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -66,14 +66,14 @@ pub const TreeItem = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) TreeItem {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) TreeItem {
         return TreeItem{
             .inner = @ptrCast(?*c.Fl_Tree_Item, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *TreeItem) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *TreeItem) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 };
 

@@ -29,14 +29,14 @@ pub const Box = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Box {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Box {
         return Box{
             .inner = @ptrCast(?*c.Fl_Box, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Box) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Box) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Box) widget.Widget {
@@ -45,11 +45,11 @@ pub const Box = struct {
         };
     }
 
-    pub fn handle(self: *Box, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Box, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Box_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Box, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Box, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Box_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };

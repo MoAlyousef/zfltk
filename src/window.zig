@@ -31,14 +31,14 @@ pub const Window = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Window {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Window {
         return Window{
             .inner = @ptrCast(?*c.Fl_Double_Window, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Window) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Window) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Window) widget.Widget {
@@ -53,11 +53,11 @@ pub const Window = struct {
         };
     }
 
-    pub fn handle(self: *Window, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Window, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Double_Window_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Window, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Window, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Double_Window_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 

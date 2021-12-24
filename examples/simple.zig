@@ -6,7 +6,7 @@ const button = zfltk.button;
 const box = zfltk.box;
 const enums = zfltk.enums;
 
-pub fn butCb(w: widget.WidgetPtr, data: ?*c_void) callconv(.C) void {
+pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
     var mybox = widget.Widget.fromVoidPtr(data);
     mybox.setLabel("Hello World!");
     var but = button.Button.fromWidgetPtr(w); // You can still use a Widget.fromWidgetPtr

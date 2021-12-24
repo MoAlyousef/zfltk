@@ -30,14 +30,14 @@ pub const Input = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) Input {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Input {
         return Input{
             .inner = @ptrCast(?*c.Fl_Input, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *Input) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *Input) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const Input) widget.Widget {
@@ -46,11 +46,11 @@ pub const Input = struct {
         };
     }
 
-    pub fn handle(self: *Input, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *Input, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Input, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *Input, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -101,14 +101,14 @@ pub const MultilineInput = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) MultilineInput {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) MultilineInput {
         return MultilineInput{
             .inner = @ptrCast(?*c.Fl_Multiline_Input, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *MultilineInput) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *MultilineInput) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const MultilineInput) widget.Widget {
@@ -123,11 +123,11 @@ pub const MultilineInput = struct {
         };
     }
 
-    pub fn handle(self: *MultilineInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *MultilineInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Multiline_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *MultilineInput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *MultilineInput, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Multiline_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -158,14 +158,14 @@ pub const IntInput = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) IntInput {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) IntInput {
         return IntInput{
             .inner = @ptrCast(?*c.Fl_Int_Input, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *IntInput) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *IntInput) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const IntInput) widget.Widget {
@@ -180,11 +180,11 @@ pub const IntInput = struct {
         };
     }
 
-    pub fn handle(self: *IntInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *IntInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Int_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *IntInput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *IntInput, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Int_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -215,14 +215,14 @@ pub const FloatInput = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) FloatInput {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) FloatInput {
         return FloatInput{
             .inner = @ptrCast(?*c.Fl_Float_Input, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *FloatInput) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *FloatInput) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const FloatInput) widget.Widget {
@@ -237,11 +237,11 @@ pub const FloatInput = struct {
         };
     }
 
-    pub fn handle(self: *FloatInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *FloatInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Float_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *FloatInput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *FloatInput, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Float_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -272,14 +272,14 @@ pub const SecretInput = struct {
         };
     }
 
-    pub fn fromVoidPtr(ptr: ?*c_void) SecretInput {
+    pub fn fromVoidPtr(ptr: ?*anyopaque) SecretInput {
         return SecretInput{
             .inner = @ptrCast(?*c.Fl_Secret_Input, ptr),
         };
     }
 
-    pub fn toVoidPtr(self: *SecretInput) ?*c_void {
-        return @ptrCast(?*c_void, self.inner);
+    pub fn toVoidPtr(self: *SecretInput) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
     }
 
     pub fn asWidget(self: *const SecretInput) widget.Widget {
@@ -294,11 +294,11 @@ pub const SecretInput = struct {
         };
     }
 
-    pub fn handle(self: *SecretInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*c_void) callconv(.C) i32, data: ?*c_void) void {
+    pub fn handle(self: *SecretInput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Secret_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *SecretInput, cb: fn (w: widget.WidgetPtr,  data: ?*c_void) callconv(.C) void, data: ?*c_void) void {
+    pub fn draw(self: *SecretInput, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Secret_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
