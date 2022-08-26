@@ -25,4 +25,4 @@ jobs:
           version: 0.10.0-dev.3017+da94227f7
 
       - name: Build
-        run: zig build
+        run: zig build run-simple
