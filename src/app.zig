@@ -38,6 +38,29 @@ pub fn setScheme(scheme: Scheme) void {
     c.Fl_set_scheme(temp);
 }
 
+// Set the boxtype's draw callback
+pub fn setBoxTypeEx(box: enums.BoxType, f: fn(i32, i32, i32, i32, u32) void, ox: i32, oy: i32, ow: i32, oh: i32) void {
+    c.Fl_set_box_type_cb(
+        @enumToInt(box),
+        // The function must be casted into an exported function before passing
+        @ptrCast(fn(i32, i32, i32, i32, u32) callconv(.C) void, f),
+        ox, oy, ow, oh
+    );
+}
+
+// Simplified version of setBoxTypeEx to keep code a bit cleaner when offsets
+// are unneeded
+pub fn setBoxType(box: enums.BoxType, f: fn(i32, i32, i32, i32, u32) void) void {
+    setBoxTypeEx(box, f, 0, 0, 0, 0);
+}
+
+// Overriding the boxtype's draw is probably more likely to be a usecase than
+// copying an existing box, and because C++ allows multiple APIs to have the
+// same function name, one must be renamed to allow it to be used in Zig
+pub fn copyBoxType(destBox: enums.BoxType, srcBox: enums.BoxType) void {
+    c.Fl_set_box_type(@enumToInt(destBox), @enumToInt(srcBox));
+}
+
 pub fn event() enums.Event {
     return @intToEnum(enums.Event, c.Fl_event());
 }
