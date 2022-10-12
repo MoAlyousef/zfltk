@@ -13,7 +13,7 @@ pub const Box = struct {
         };
     }
 
-    pub fn raw(self: *Box) ?*c.Fl_Box {
+    pub fn raw(self: *const Box) ?*c.Fl_Box {
         return self.inner;
     }
 
@@ -35,7 +35,7 @@ pub const Box = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Box) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Box) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -45,15 +45,15 @@ pub const Box = struct {
         };
     }
 
-    pub fn handle(self: *Box, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Box, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Box_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Box, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Box, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Box_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

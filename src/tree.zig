@@ -13,7 +13,7 @@ pub const Tree = struct {
         };
     }
 
-    pub fn raw(self: *Tree) ?*c.Fl_Tree {
+    pub fn raw(self: *const Tree) ?*c.Fl_Tree {
         return self.inner;
     }
 
@@ -35,7 +35,7 @@ pub const Tree = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Tree) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Tree) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -45,18 +45,18 @@ pub const Tree = struct {
         };
     }
 
-    pub fn handle(self: *Tree, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Tree, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Tree_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Tree, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Tree, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Tree_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
 pub const TreeItem = struct {
     inner: ?*c.Fl_Tree_Item,
-    pub fn raw(self: *TreeItem) ?*c.Fl_Tree_Item {
+    pub fn raw(self: *const TreeItem) ?*c.Fl_Tree_Item {
         return self.inner;
     }
 
@@ -72,11 +72,11 @@ pub const TreeItem = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *TreeItem) ?*anyopaque {
+    pub fn toVoidPtr(self: *const TreeItem) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

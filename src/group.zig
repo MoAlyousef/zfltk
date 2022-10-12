@@ -21,7 +21,7 @@ pub const Group = struct {
         };
     }
 
-    pub fn raw(self: *Group) ?*c.Fl_Group {
+    pub fn raw(self: *const Group) ?*c.Fl_Group {
         return self.inner;
     }
 
@@ -43,7 +43,7 @@ pub const Group = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Group) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Group) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -53,19 +53,19 @@ pub const Group = struct {
         };
     }
 
-    pub fn handle(self: *Group, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Group, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Group_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Group, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Group, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Group_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
-    pub fn begin(self: *Group) void {
+    pub fn begin(self: *const Group) void {
         c.Fl_Group_begin(self.inner);
     }
 
-    pub fn end(self: *Group) void {
+    pub fn end(self: *const Group) void {
         c.Fl_Group_end(self.inner);
     }
 
@@ -73,15 +73,15 @@ pub const Group = struct {
         return c.Fl_Group_find(self.inner, w.*.raw());
     }
 
-    pub fn add(self: *Group, w: *widget.Widget) void {
+    pub fn add(self: *const Group, w: *widget.Widget) void {
         return c.Fl_Group_add(self.inner, w.*.raw());
     }
 
-    pub fn insert(self: *Group, w: *widget.Widget, index: u32) void {
+    pub fn insert(self: *const Group, w: *widget.Widget, index: u32) void {
         return c.Fl_Group_insert(self.inner, w.*.raw(), index);
     }
 
-    pub fn remove(self: *Group, w: *widget.Widget) void {
+    pub fn remove(self: *const Group, w: *widget.Widget) void {
         return c.Fl_Group_remove(self.inner, w.*.raw());
     }
 
@@ -89,7 +89,7 @@ pub const Group = struct {
         return c.Fl_Group_resizable(self.inner, w.*.raw());
     }
 
-    pub fn clear(self: *Group) void {
+    pub fn clear(self: *const Group) void {
         c.Fl_Group_clear(self.inner);
     }
 
@@ -121,7 +121,7 @@ pub const Pack = struct {
         };
     }
 
-    pub fn raw(self: *Pack) ?*c.Fl_Pack {
+    pub fn raw(self: *const Pack) ?*c.Fl_Pack {
         return self.inner;
     }
 
@@ -143,7 +143,7 @@ pub const Pack = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Pack) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Pack) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -159,11 +159,11 @@ pub const Pack = struct {
         };
     }
 
-    pub fn handle(self: *Pack, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Pack, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Pack_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Pack, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Pack, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Pack_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -173,7 +173,7 @@ pub const Pack = struct {
     }
 
     /// Set the spacing of the pack
-    pub fn setSpacing(self: *Pack, s: i32) void {
+    pub fn setSpacing(self: *const Pack, s: i32) void {
         c.Fl_Pack_set_spacing(self.inner, s);
     }
 };
@@ -188,7 +188,7 @@ pub const Tabs = struct {
         };
     }
 
-    pub fn raw(self: *Tabs) ?*c.Fl_Tabs {
+    pub fn raw(self: *const Tabs) ?*c.Fl_Tabs {
         return self.inner;
     }
 
@@ -210,7 +210,7 @@ pub const Tabs = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Tabs) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Tabs) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -226,26 +226,26 @@ pub const Tabs = struct {
         };
     }
 
-    pub fn handle(self: *Tabs, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Tabs, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Tabs, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Tabs, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     /// Gets the currently visible group
-    pub fn value(self: *Tabs) Group {
+    pub fn value(self: *const Tabs) Group {
         return Group{ .inner = c.Fl_Tabs_value(self.inner) };
     }
 
     /// Sets the currently visible group
-    pub fn set_value(self: *Tabs, w: *const Group) void {
+    pub fn set_value(self: *const Tabs, w: *const Group) void {
         _ = c.Fl_Tabs_set_value(self.inner, w);
     }
 
     /// Sets the tab label alignment
-    pub fn set_tab_align(self: *Tabs, a: i32) void {
+    pub fn set_tab_align(self: *const Tabs, a: i32) void {
         c.Fl_Tabs_set_tab_align(self.inner, a);
     }
 
@@ -284,7 +284,7 @@ pub const Scroll = struct {
         };
     }
 
-    pub fn raw(self: *Scroll) ?*c.Fl_Scroll {
+    pub fn raw(self: *const Scroll) ?*c.Fl_Scroll {
         return self.inner;
     }
 
@@ -306,7 +306,7 @@ pub const Scroll = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Scroll) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Scroll) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -322,15 +322,15 @@ pub const Scroll = struct {
         };
     }
 
-    pub fn handle(self: *Scroll, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Scroll, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Scroll_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Scroll, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Scroll, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Scroll_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

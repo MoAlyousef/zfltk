@@ -15,7 +15,7 @@ pub const Browser = struct {
         };
     }
 
-    pub fn raw(self: *Browser) ?*c.Fl_Browser {
+    pub fn raw(self: *const Browser) ?*c.Fl_Browser {
         return self.inner;
     }
 
@@ -37,7 +37,7 @@ pub const Browser = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Browser) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Browser) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -47,34 +47,34 @@ pub const Browser = struct {
         };
     }
 
-    pub fn handle(self: *Browser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Browser, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Browser, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Browser, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
-    pub fn remove(self: *Browser, line: u32) void {
+    pub fn remove(self: *const Browser, line: u32) void {
         return c.Fl_Browser_remove(self.inner, line);
     }
 
-    pub fn add(self: *Browser, item: [*c]const u8) void {
+    pub fn add(self: *const Browser, item: [*c]const u8) void {
         return c.Fl_Browser_add(self.inner, item);
     }
 
-    pub fn insert(self: *Browser, line: u32, item: [*c]const u8) void {
+    pub fn insert(self: *const Browser, line: u32, item: [*c]const u8) void {
         return c.Fl_Browser_insert(self.inner, line, item);
     }
-    pub fn moveItem(self: *Browser, to: u32, from: u32) void {
+    pub fn moveItem(self: *const Browser, to: u32, from: u32) void {
         return c.Fl_Browser_move_item(self.inner, to, from);
     }
 
-    pub fn swap(self: *Browser, a: u32, b: u32) void {
+    pub fn swap(self: *const Browser, a: u32, b: u32) void {
         return c.Fl_Browser_swap(self.inner, a, b);
     }
 
-    pub fn clear(self: *Browser) void {
+    pub fn clear(self: *const Browser) void {
         return c.Fl_Browser_clear(self.inner);
     }
 
@@ -82,11 +82,11 @@ pub const Browser = struct {
         return c.Fl_Browser_size(self.inner);
     }
 
-    pub fn setSize(self: *Browser, w: i32, h: i32) void {
+    pub fn setSize(self: *const Browser, w: i32, h: i32) void {
         return c.Fl_Browser_set_size(self.inner, w, h);
     }
 
-    pub fn select(self: *Browser, line: u32) void {
+    pub fn select(self: *const Browser, line: u32) void {
         if (line <= self.size()) return c.Fl_Browser_select(self.inner, line);
     }
 
@@ -98,11 +98,11 @@ pub const Browser = struct {
         return c.Fl_Browser_text(self.inner, line);
     }
 
-    pub fn setText(self: *Browser, line: u32, txt: [*c]const u8) void {
+    pub fn setText(self: *const Browser, line: u32, txt: [*c]const u8) void {
         return c.Fl_Browser_set_text(self.inner, line, txt);
     }
 
-    pub fn load(self: *Browser, path: [*c]const u8) void {
+    pub fn load(self: *const Browser, path: [*c]const u8) void {
         return c.Fl_Browser_load_file(self.inner, path);
     }
 
@@ -110,19 +110,19 @@ pub const Browser = struct {
         return c.Fl_Browser_text_size(self.inner);
     }
 
-    pub fn setTextSize(self: *Browser, val: u32) void {
+    pub fn setTextSize(self: *const Browser, val: u32) void {
         return c.Fl_Browser_set_text_size(self.inner, val);
     }
 
-    pub fn topline(self: *Browser, line: u32) void {
+    pub fn topline(self: *const Browser, line: u32) void {
         return c.Fl_Browser_topline(self.inner, line);
     }
 
-    pub fn bottomline(self: *Browser, line: u32) void {
+    pub fn bottomline(self: *const Browser, line: u32) void {
         return c.Fl_Browser_bottomline(self.inner, line);
     }
 
-    pub fn middleline(self: *Browser, line: u32) void {
+    pub fn middleline(self: *const Browser, line: u32) void {
         return c.Fl_Browser_middleline(self.inner, line);
     }
 
@@ -130,7 +130,7 @@ pub const Browser = struct {
         return c.Fl_Browser_format_char(self.inner);
     }
 
-    pub fn setFormatChar(self: *Browser, char: u8) void {
+    pub fn setFormatChar(self: *const Browser, char: u8) void {
         return c.Fl_Browser_set_format_char(self.inner, char);
     }
 
@@ -138,11 +138,11 @@ pub const Browser = struct {
         return c.Fl_Browser_column_char(self.inner);
     }
 
-    pub fn setColumnChar(self: *Browser, char: u8) void {
+    pub fn setColumnChar(self: *const Browser, char: u8) void {
         return c.Fl_Browser_set_column_char(self.inner, char);
     }
 
-    pub fn setColumnWidths(self: *Browser, arr: [:0]const i32) void {
+    pub fn setColumnWidths(self: *const Browser, arr: [*:0]const i32) void {
         return c.Fl_Browser_set_column_widths(self.inner, arr);
     }
 
@@ -150,7 +150,7 @@ pub const Browser = struct {
         return c.Fl_Browser_displayed(self.inner, line) != 0;
     }
 
-    pub fn makeVisible(self: *Browser, line: u32) void {
+    pub fn makeVisible(self: *const Browser, line: u32) void {
         return c.Fl_Browser_make_visible(self.inner, line);
     }
 
@@ -158,7 +158,7 @@ pub const Browser = struct {
         return c.Fl_Browser_position(self.inner);
     }
 
-    pub fn setPosition(self: *Browser, pos: u32) void {
+    pub fn setPosition(self: *const Browser, pos: u32) void {
         return c.Fl_Browser_set_position(self.inner, pos);
     }
 
@@ -166,7 +166,7 @@ pub const Browser = struct {
         return c.Fl_Browser_hposition(self.inner);
     }
 
-    pub fn setHposition(self: *Browser, pos: u32) void {
+    pub fn setHposition(self: *const Browser, pos: u32) void {
         return c.Fl_Browser_set_hposition(self.inner, pos);
     }
 
@@ -174,7 +174,7 @@ pub const Browser = struct {
         return c.Fl_Browser_has_scrollbar(self.inner);
     }
 
-    pub fn setHasScrollbar(self: *Browser, mode: enums.BrowserScrollbar) void {
+    pub fn setHasScrollbar(self: *const Browser, mode: enums.BrowserScrollbar) void {
         return c.Fl_Browser_set_has_scrollbar(self.inner, mode);
     }
 
@@ -182,11 +182,11 @@ pub const Browser = struct {
         return c.Fl_Browser_scrollbar_size(self.inner);
     }
 
-    pub fn setScrollbarSize(self: *Browser, new_size: u32) void {
+    pub fn setScrollbarSize(self: *const Browser, new_size: u32) void {
         return c.Fl_Browser_set_scrollbar_size(self.inner, new_size);
     }
 
-    pub fn sort(self: *Browser) void {
+    pub fn sort(self: *const Browser) void {
         return c.Fl_Browser_sort(self.inner);
     }
 
@@ -209,7 +209,7 @@ pub const SelectBrowser = struct {
         };
     }
 
-    pub fn raw(self: *SelectBrowser) ?*c.Fl_Select_Browser {
+    pub fn raw(self: *const SelectBrowser) ?*c.Fl_Select_Browser {
         return self.inner;
     }
 
@@ -231,7 +231,7 @@ pub const SelectBrowser = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *SelectBrowser) ?*anyopaque {
+    pub fn toVoidPtr(self: *const SelectBrowser) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -247,11 +247,11 @@ pub const SelectBrowser = struct {
         };
     }
 
-    pub fn handle(self: *SelectBrowser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const SelectBrowser, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Select_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *SelectBrowser, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const SelectBrowser, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Select_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -266,7 +266,7 @@ pub const HoldBrowser = struct {
         };
     }
 
-    pub fn raw(self: *HoldBrowser) ?*c.Fl_Hold_Browser {
+    pub fn raw(self: *const HoldBrowser) ?*c.Fl_Hold_Browser {
         return self.inner;
     }
 
@@ -288,7 +288,7 @@ pub const HoldBrowser = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *HoldBrowser) ?*anyopaque {
+    pub fn toVoidPtr(self: *const HoldBrowser) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -304,11 +304,11 @@ pub const HoldBrowser = struct {
         };
     }
 
-    pub fn handle(self: *HoldBrowser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const HoldBrowser, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Hold_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *HoldBrowser, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const HoldBrowser, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Hold_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -323,7 +323,7 @@ pub const MultiBrowser = struct {
         };
     }
 
-    pub fn raw(self: *MultiBrowser) ?*c.Fl_Multi_Browser {
+    pub fn raw(self: *const MultiBrowser) ?*c.Fl_Multi_Browser {
         return self.inner;
     }
 
@@ -345,7 +345,7 @@ pub const MultiBrowser = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *MultiBrowser) ?*anyopaque {
+    pub fn toVoidPtr(self: *const MultiBrowser) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -361,11 +361,11 @@ pub const MultiBrowser = struct {
         };
     }
 
-    pub fn handle(self: *MultiBrowser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const MultiBrowser, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Multi_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *MultiBrowser, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const MultiBrowser, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Multi_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -380,7 +380,7 @@ pub const FileBrowser = struct {
         };
     }
 
-    pub fn raw(self: *FileBrowser) ?*c.Fl_File_Browser {
+    pub fn raw(self: *const FileBrowser) ?*c.Fl_File_Browser {
         return self.inner;
     }
 
@@ -402,7 +402,7 @@ pub const FileBrowser = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *FileBrowser) ?*anyopaque {
+    pub fn toVoidPtr(self: *const FileBrowser) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -418,15 +418,15 @@ pub const FileBrowser = struct {
         };
     }
 
-    pub fn handle(self: *FileBrowser, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const FileBrowser, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_File_Browser_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *FileBrowser, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const FileBrowser, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_File_Browser_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

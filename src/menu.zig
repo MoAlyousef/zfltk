@@ -45,7 +45,7 @@ pub const Menu = struct {
         };
     }
 
-    pub fn raw(self: *Menu) ?*c.Fl_Menu_Bar {
+    pub fn raw(self: *const Menu) ?*c.Fl_Menu_Bar {
         return self.inner;
     }
 
@@ -67,7 +67,7 @@ pub const Menu = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Menu) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Menu) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -77,51 +77,51 @@ pub const Menu = struct {
         };
     }
 
-    pub fn handle(self: *Menu, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Menu, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Menu, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Menu, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
-    pub fn add(self: *Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn add(self: *const Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, cb, data, @enumToInt(flag));
     }
 
-    pub fn insert(self: *Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn insert(self: *const Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, cb, data, @enumToInt(flag));
     }
 
-    pub fn add_emit(self: *Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
-        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, shim, @intToPtr(?*anyopaque, @bitCast(usize, msg)), @enumToInt(flag));
+    pub fn add_emit(self: *const Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, shim, @intToPtr(?*anyopaque, @enumToInt(msg)), @enumToInt(flag));
     }
 
-    pub fn insert_emit(self: *Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+    pub fn insert_emit(self: *const Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
         _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, shim, @intToPtr(?*anyopaque, @bitCast(usize, msg)), @enumToInt(flag));
     }
 
-    pub fn remove(self: *Menu, idx: u32) void {
+    pub fn remove(self: *const Menu, idx: u32) void {
         _ = c.Fl_Menu_Bar_remove(self.inner, idx);
     }
 
-    pub fn findItem(self: *Menu, path: [*c]const u8) MenuItem {
+    pub fn findItem(self: *const Menu, path: [*c]const u8) MenuItem {
         return MenuItem{ .inner = c.Fl_Menu_Bar_get_item(self.inner, path) };
     }
 
-    pub fn clear(self: *Menu) void {
+    pub fn clear(self: *const Menu) void {
         c.Fl_Menu_Bar_clear(self.inner);
     }
 
-    pub fn setTextFont(self: *Menu, font: enums.Font) void {
+    pub fn setTextFont(self: *const Menu, font: enums.Font) void {
         c.Fl_Menu_Bar_set_text_font(self.inner, @enumToInt(font));
     }
 
-    pub fn setTextColor(self: *Menu, col: u32) void {
-        c.Fl_Menu_Bar_set_text_color(self.inner, col);
+    pub fn setTextColor(self: *const Menu, col: enums.Color) void {
+        c.Fl_Menu_Bar_set_text_color(self.inner, col.inner());
     }
 
-    pub fn setTextSize(self: *Menu, sz: u32) void {
+    pub fn setTextSize(self: *const Menu, sz: u32) void {
         c.Fl_Menu_Bar_set_text_size(self.inner, sz);
     }
 };
@@ -136,7 +136,7 @@ pub const MenuBar = struct {
         };
     }
 
-    pub fn raw(self: *MenuBar) ?*c.Fl_Menu_Bar {
+    pub fn raw(self: *const MenuBar) ?*c.Fl_Menu_Bar {
         return self.inner;
     }
 
@@ -158,7 +158,7 @@ pub const MenuBar = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *MenuBar) ?*anyopaque {
+    pub fn toVoidPtr(self: *const MenuBar) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -174,11 +174,11 @@ pub const MenuBar = struct {
         };
     }
 
-    pub fn handle(self: *MenuBar, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const MenuBar, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *MenuBar, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const MenuBar, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -193,7 +193,7 @@ pub const Choice = struct {
         };
     }
 
-    pub fn raw(self: *Choice) ?*c.Fl_Choice {
+    pub fn raw(self: *const Choice) ?*c.Fl_Choice {
         return self.inner;
     }
 
@@ -215,7 +215,7 @@ pub const Choice = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Choice) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Choice) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -231,11 +231,11 @@ pub const Choice = struct {
         };
     }
 
-    pub fn handle(self: *Menu, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Menu, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Choice_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Menu, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Menu, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Choice_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -250,7 +250,7 @@ pub const SysMenuBar = struct {
         };
     }
 
-    pub fn raw(self: *SysMenuBar) ?*c.Fl_Sys_Menu_Bar {
+    pub fn raw(self: *const SysMenuBar) ?*c.Fl_Sys_Menu_Bar {
         return self.inner;
     }
 
@@ -272,7 +272,7 @@ pub const SysMenuBar = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *SysMenuBar) ?*anyopaque {
+    pub fn toVoidPtr(self: *const SysMenuBar) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -288,42 +288,42 @@ pub const SysMenuBar = struct {
         };
     }
 
-    pub fn handle(self: *Menu, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Menu, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Sys_Menu_Bar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Menu, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Menu, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Sys_Menu_Bar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
 pub const MenuItem = struct {
     inner: ?*c.Fl_Menu_Item,
-    pub fn setCallback(self: *MenuItem, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn setCallback(self: *const MenuItem, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Menu_Item_set_callback(self.inner, cb, data);
     }
 
-    pub fn setLabel(self: *MenuItem, str: [*c]const u8) void {
+    pub fn setLabel(self: *const MenuItem, str: [*c]const u8) void {
         c.Fl_Menu_Item_set_label(self.inner, str);
     }
 
     pub fn color(self: *const MenuItem) enums.Color {
-        return @intToEnum(enums.Color, c.Fl_Menu_Item_color(self.inner));
+        return enums.Color.from_rgbi(c.Fl_Menu_Item_color(self.inner));
     }
 
     pub fn labelColor(self: *const MenuItem) enums.Color {
-        return @intToEnum(enums.Color, c.Fl_Menu_Item_label_color(self.inner));
+        return enums.Color.from_rgbi(c.Fl_Menu_Item_label_color(self.inner));
     }
 
-    pub fn setLabelColor(self: *MenuItem, col: u32) void {
-        c.Fl_Menu_Item_set_label_color(self.inner, col);
+    pub fn setLabelColor(self: *const MenuItem, col: enums.Color) void {
+        c.Fl_Menu_Item_set_label_color(self.inner, col.inner());
     }
 
     pub fn labelFont(self: *const MenuItem) enums.Font {
         return @intToEnum(enums.Font, c.Fl_Menu_Item_label_font(self.inner));
     }
 
-    pub fn setLabelFont(self: *MenuItem, font: enums.Font) void {
+    pub fn setLabelFont(self: *const MenuItem, font: enums.Font) void {
         c.Fl_Menu_Item_set_label_font(self.inner, @enumToInt(font));
     }
 
@@ -331,19 +331,19 @@ pub const MenuItem = struct {
         c.Fl_Menu_Item_label_size(self.inner);
     }
 
-    pub fn setLabelSize(self: *MenuItem, sz: i32) void {
+    pub fn setLabelSize(self: *const MenuItem, sz: i32) void {
         c.Fl_Menu_Item_set_label_size(self.inner, sz);
     }
 
-    pub fn show(self: *MenuItem) void {
+    pub fn show(self: *const MenuItem) void {
         c.Fl_Menu_Item_show(self.inner);
     }
 
-    pub fn hide(self: *MenuItem) void {
+    pub fn hide(self: *const MenuItem) void {
         c.Fl_Menu_Item_hide(self.inner);
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

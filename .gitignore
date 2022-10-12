@@ -7,3 +7,4 @@ zig-cache/
 vendor/bin
 vendor/lib
 temp.zig
+zig-out/

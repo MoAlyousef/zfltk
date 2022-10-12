@@ -14,7 +14,7 @@ pub const Output = struct {
         };
     }
 
-    pub fn raw(self: *Output) ?*c.Fl_Output {
+    pub fn raw(self: *const Output) ?*c.Fl_Output {
         return self.inner;
     }
 
@@ -36,7 +36,7 @@ pub const Output = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *MultilineOutput) ?*anyopaque {
+    pub fn toVoidPtr(self: *const MultilineOutput) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -46,11 +46,11 @@ pub const Output = struct {
         };
     }
 
-    pub fn handle(self: *Output, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Output, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Output_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Output, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Output, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Output_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -58,19 +58,19 @@ pub const Output = struct {
         return c.Fl_Output_value(self.inner);
     }
 
-    pub fn setValue(self: *Output, val: [*c]const u8) void {
+    pub fn setValue(self: *const Output, val: [*c]const u8) void {
         c.Fl_Output_set_value(self.inner, val);
     }
 
-    pub fn setTextFont(self: *Output, font: enums.Font) void {
+    pub fn setTextFont(self: *const Output, font: enums.Font) void {
         c.Fl_Output_set_text_font(self.inner, @enumToInt(font));
     }
 
-    pub fn setTextColor(self: *Output, col: u32) void {
-        c.Fl_Output_set_text_color(self.inner, col);
+    pub fn setTextColor(self: *const Output, col: enums.Color) void {
+        c.Fl_Output_set_text_color(self.inner, col.inner());
     }
 
-    pub fn setTextSize(self: *Output, sz: u32) void {
+    pub fn setTextSize(self: *const Output, sz: u32) void {
         c.Fl_Output_set_text_size(self.inner, sz);
     }
 };
@@ -85,7 +85,7 @@ pub const MultilineOutput = struct {
         };
     }
 
-    pub fn raw(self: *MultilineOutput) ?*c.Fl_Multiline_Output {
+    pub fn raw(self: *const MultilineOutput) ?*c.Fl_Multiline_Output {
         return self.inner;
     }
 
@@ -107,7 +107,7 @@ pub const MultilineOutput = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *MultilineOutput) ?*anyopaque {
+    pub fn toVoidPtr(self: *const MultilineOutput) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -123,15 +123,15 @@ pub const MultilineOutput = struct {
         };
     }
 
-    pub fn handle(self: *MultilineOutput, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const MultilineOutput, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Multiline_Output_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *MultilineOutput, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const MultilineOutput, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Multiline_Output_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

@@ -29,7 +29,7 @@ pub fn run() !void {
 }
 
 pub fn setScheme(scheme: Scheme) void {
-    var temp = switch (scheme) {
+    var temp: [*:0]const u8 = switch (scheme) {
         .Base => "base",
         .Gtk => "gtk+",
         .Plastic => "plastic",
@@ -39,18 +39,15 @@ pub fn setScheme(scheme: Scheme) void {
 }
 
 // Set the boxtype's draw callback
-pub fn setBoxTypeEx(box: enums.BoxType, f: fn(i32, i32, i32, i32, u32) void, ox: i32, oy: i32, ow: i32, oh: i32) void {
-    c.Fl_set_box_type_cb(
-        @enumToInt(box),
-        // The function must be casted into an exported function before passing
-        @ptrCast(fn(i32, i32, i32, i32, u32) callconv(.C) void, f),
-        ox, oy, ow, oh
-    );
+pub fn setBoxTypeEx(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, u32) void, ox: i32, oy: i32, ow: i32, oh: i32) void {
+    c.Fl_set_box_type_cb(@enumToInt(box),
+    // The function must be casted into an exported function before passing
+    @ptrCast(fn (i32, i32, i32, i32, u32) callconv(.C) void, f), ox, oy, ow, oh);
 }
 
 // Simplified version of setBoxTypeEx to keep code a bit cleaner when offsets
 // are unneeded
-pub fn setBoxType(box: enums.BoxType, f: fn(i32, i32, i32, i32, u32) void) void {
+pub fn setBoxType(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, u32) void) void {
     setBoxTypeEx(box, f, 0, 0, 0, 0);
 }
 
@@ -109,7 +106,7 @@ pub fn wait() bool {
 }
 
 pub fn send(comptime T: type, t: T) void {
-    c.Fl_awake_msg(@intToPtr(?*anyopaque, @bitCast(usize, t)));
+    c.Fl_awake_msg(@intToPtr(?*anyopaque, @enumToInt(t)));
 }
 
 pub fn recv(comptime T: type) ?T {
@@ -117,7 +114,7 @@ pub fn recv(comptime T: type) ?T {
     if (temp) |ptr| {
         const v = @ptrToInt(ptr);
         return @intToEnum(T, v);
-    } 
+    }
     return null;
 }
 
@@ -125,6 +122,6 @@ pub fn rgb_color(r: u8, g: u8, b: u8) u32 {
     return c.Fl_get_rgb_color(r, g, b);
 }
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

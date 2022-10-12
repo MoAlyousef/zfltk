@@ -13,7 +13,7 @@ pub const Valuator = struct {
         };
     }
 
-    pub fn raw(self: *Valuator) ?*c.Fl_Slider {
+    pub fn raw(self: *const Valuator) ?*c.Fl_Slider {
         return self.inner;
     }
 
@@ -35,7 +35,7 @@ pub const Valuator = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Valuator) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Valuator) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -45,16 +45,16 @@ pub const Valuator = struct {
         };
     }
 
-    pub fn handle(self: *Valuator, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Valuator, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Valuator, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Valuator, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     /// Set bounds of a valuator
-    pub fn setBounds(self: *Valuator, a: f64, b: f64) void {
+    pub fn setBounds(self: *const Valuator, a: f64, b: f64) void {
         return c.Fl_Slider_set_bounds(self.inner, a, b);
     }
     /// Get the minimum bound of a valuator
@@ -62,7 +62,7 @@ pub const Valuator = struct {
         return c.Fl_Slider_minimum(self.inner);
     }
     /// Set the minimum bound of a valuator
-    pub fn setMinimum(self: *Valuator, a: f64) void {
+    pub fn setMinimum(self: *const Valuator, a: f64) void {
         return c.Fl_Slider_set_minimum(self.inner, a);
     }
     /// Get the maximum bound of a valuator
@@ -70,15 +70,15 @@ pub const Valuator = struct {
         return c.Fl_Slider_maximum(self.inner);
     }
     /// Set the maximum bound of a valuator
-    pub fn setMaximum(self: *Valuator, a: f64) void {
+    pub fn setMaximum(self: *const Valuator, a: f64) void {
         return c.Fl_Slider_set_maximum(self.inner, a);
     }
     /// Set the range of a valuator
-    pub fn setRange(self: *Valuator, a: f64, b: f64) void {
+    pub fn setRange(self: *const Valuator, a: f64, b: f64) void {
         return c.Fl_Slider_set_range(self.inner, a, b);
     }
     /// Set change step of a valuator
-    pub fn setStep(self: *Valuator, a: f64, b: i32) void {
+    pub fn setStep(self: *const Valuator, a: f64, b: i32) void {
         return c.Fl_Slider_set_step(self.inner, a, b);
     }
     /// Get change step of a valuator
@@ -86,7 +86,7 @@ pub const Valuator = struct {
         return c.Fl_Slider_step(self.inner);
     }
     /// Set the precision of a valuator
-    pub fn setPrecision(self: *Valuator, digits: i32) void {
+    pub fn setPrecision(self: *const Valuator, digits: i32) void {
         return c.Fl_Slider_set_precision(self.inner, digits);
     }
     /// Get the value of a valuator
@@ -94,11 +94,11 @@ pub const Valuator = struct {
         return c.Fl_Slider_value(self.inner);
     }
     /// Set the value of a valuator
-    pub fn setValue(self: *Valuator, arg2: f64) void {
+    pub fn setValue(self: *const Valuator, arg2: f64) void {
         return c.Fl_Slider_set_value(self.inner, arg2);
     }
     /// Set the format of a valuator
-    pub fn format(self: *Valuator, arg2: [*c]const u8) void {
+    pub fn format(self: *const Valuator, arg2: [*c]const u8) void {
         return c.Fl_Slider_format(self.inner, arg2);
     }
     /// Round the valuator
@@ -110,7 +110,7 @@ pub const Valuator = struct {
         return c.Fl_Slider_clamp(self.inner, arg2);
     }
     /// Increment the valuator
-    pub fn increment(self: *Valuator, arg2: f64, arg3: i32) f64 {
+    pub fn increment(self: *const Valuator, arg2: f64, arg3: i32) f64 {
         return c.Fl_Slider_increment(self.inner, arg2, arg3);
     }
 };
@@ -140,7 +140,7 @@ pub const Slider = struct {
         };
     }
 
-    pub fn raw(self: *Slider) ?*c.Fl_Slider {
+    pub fn raw(self: *const Slider) ?*c.Fl_Slider {
         return self.inner;
     }
 
@@ -162,7 +162,7 @@ pub const Slider = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Slider) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Slider) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -178,11 +178,11 @@ pub const Slider = struct {
         };
     }
 
-    pub fn handle(self: *Slider, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Slider, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Slider, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Slider, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -206,7 +206,7 @@ pub const Dial = struct {
         };
     }
 
-    pub fn raw(self: *Dial) ?*c.Fl_Dial {
+    pub fn raw(self: *const Dial) ?*c.Fl_Dial {
         return self.inner;
     }
 
@@ -228,7 +228,7 @@ pub const Dial = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Dial) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Dial) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -244,11 +244,11 @@ pub const Dial = struct {
         };
     }
 
-    pub fn handle(self: *Dial, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Dial, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Dial_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Dial, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Dial, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Dial_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -270,7 +270,7 @@ pub const Counter = struct {
         };
     }
 
-    pub fn raw(self: *Counter) ?*c.Fl_Counter {
+    pub fn raw(self: *const Counter) ?*c.Fl_Counter {
         return self.inner;
     }
 
@@ -292,7 +292,7 @@ pub const Counter = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Counter) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Counter) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -308,11 +308,11 @@ pub const Counter = struct {
         };
     }
 
-    pub fn handle(self: *Counter, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Counter, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Counter_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Counter, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Counter, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Counter_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -342,7 +342,7 @@ pub const Scrollbar = struct {
         };
     }
 
-    pub fn raw(self: *Scrollbar) ?*c.Fl_Scrollbar {
+    pub fn raw(self: *const Scrollbar) ?*c.Fl_Scrollbar {
         return self.inner;
     }
 
@@ -364,7 +364,7 @@ pub const Scrollbar = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Scrollbar) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Scrollbar) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -380,11 +380,11 @@ pub const Scrollbar = struct {
         };
     }
 
-    pub fn handle(self: *Scrollbar, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Scrollbar, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Scrollbar_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Scrollbar, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Scrollbar, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Scrollbar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -399,7 +399,7 @@ pub const Adjuster = struct {
         };
     }
 
-    pub fn raw(self: *Adjuster) ?*c.Fl_Adjuster {
+    pub fn raw(self: *const Adjuster) ?*c.Fl_Adjuster {
         return self.inner;
     }
 
@@ -421,7 +421,7 @@ pub const Adjuster = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Adjuster) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Adjuster) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -437,11 +437,11 @@ pub const Adjuster = struct {
         };
     }
 
-    pub fn handle(self: *Adjuster, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Adjuster, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Adjuster_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Adjuster, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Adjuster, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Adjuster_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
@@ -456,7 +456,7 @@ pub const Roller = struct {
         };
     }
 
-    pub fn raw(self: *Roller) ?*c.Fl_Roller {
+    pub fn raw(self: *const Roller) ?*c.Fl_Roller {
         return self.inner;
     }
 
@@ -478,7 +478,7 @@ pub const Roller = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Roller) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Roller) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -494,15 +494,15 @@ pub const Roller = struct {
         };
     }
 
-    pub fn handle(self: *Roller, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Roller, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Roller_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Roller, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Roller, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Roller_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

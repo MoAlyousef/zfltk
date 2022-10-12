@@ -38,11 +38,11 @@ pub const NativeFileDialog = struct {
         };
     }
 
-    pub fn setOptions(self: *NativeFileDialog, opt: NativeFileDialogOptions) void {
+    pub fn setOptions(self: *const NativeFileDialog, opt: NativeFileDialogOptions) void {
         c.Fl_Native_File_Chooser_set_option(self.inner, @enumToInt(opt));
     }
 
-    pub fn show(self: *NativeFileDialog) void {
+    pub fn show(self: *const NativeFileDialog) void {
         _ = c.Fl_Native_File_Chooser_show(self.inner);
     }
 
@@ -58,7 +58,7 @@ pub const NativeFileDialog = struct {
         return c.Fl_Native_File_Chooser_count(self.inner);
     }
 
-    pub fn setDirectory(self: *NativeFileDialog, dir: [*c]const u8) void {
+    pub fn setDirectory(self: *const NativeFileDialog, dir: [*c]const u8) void {
         c.Fl_Native_File_Chooser_set_directory(self.inner, dir);
     }
 
@@ -72,12 +72,12 @@ pub const NativeFileDialog = struct {
     /// A descriptive name followed by a "\t" and a wildcard (eg. "Text Files\t*.txt")
     /// A list of separate wildcards with a "\n" between each (eg. "*.{cxx,H}\n*.txt")
     /// A list of descriptive names and wildcards (eg. "C++ Files\t*.{cxx,H}\nTxt Files\t*.txt")
-    pub fn setFilter(self: *NativeFileDialog, f: [*c]const u8) void {
+    pub fn setFilter(self: *const NativeFileDialog, f: [*c]const u8) void {
         c.Fl_Native_File_Chooser_set_filter(self.inner, f);
     }
 
     /// Sets the preset filter for the dialog
-    pub fn setPresetFile(self: *NativeFileDialog, f: [*c]const u8) void {
+    pub fn setPresetFile(self: *const NativeFileDialog, f: [*c]const u8) void {
         c.Fl_Native_File_Chooser_set_preset_file(self.inner, f);
     }
 };
@@ -109,6 +109,6 @@ pub fn password(x: i32, y: i32, txt: [*c]const u8, deflt: [*c]const u8) [*c]cons
     return c.Fl_password(x, y, txt, deflt);
 }
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

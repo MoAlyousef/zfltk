@@ -15,7 +15,7 @@ pub const Window = struct {
         };
     }
 
-    pub fn raw(self: *Window) ?*c.Fl_Double_Window {
+    pub fn raw(self: *const Window) ?*c.Fl_Double_Window {
         return self.inner;
     }
 
@@ -37,7 +37,7 @@ pub const Window = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Window) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Window) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -47,45 +47,45 @@ pub const Window = struct {
         };
     }
 
-    pub fn asGroup(self: *Window) group.Group {
+    pub fn asGroup(self: *const Window) group.Group {
         return group.Group{
             .inner = @ptrCast(group.GroupPtr, self.inner),
         };
     }
 
-    pub fn handle(self: *Window, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Window, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Double_Window_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *Window, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Window, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Double_Window_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
-    pub fn sizeRange(self: *Window, min_w: i32, min_h: i32, max_w: i32, max_h: i32) void {
+    pub fn sizeRange(self: *const Window, min_w: i32, min_h: i32, max_w: i32, max_h: i32) void {
         return c.Fl_Double_Window_size_range(self.inner, min_w, min_h, max_w, max_h);
     }
 
-    pub fn iconize(self: *Window) void {
+    pub fn iconize(self: *const Window) void {
         return c.Fl_Double_Window_iconize(self.inner);
     }
 
-    pub fn freePosition(self: *Window) void {
+    pub fn freePosition(self: *const Window) void {
         return c.Fl_Double_Window_free_position(self.inner);
     }
 
-    pub fn setCursor(self: *Window, cursor: enums.Cursor) void {
+    pub fn setCursor(self: *const Window, cursor: enums.Cursor) void {
         return c.Fl_Double_Window_set_cursor(self.inner, cursor);
     }
 
-    pub fn makeModal(self: *Window, val: bool) void {
+    pub fn makeModal(self: *const Window, val: bool) void {
         return c.Fl_Double_Window_make_modal(self.inner, @boolToInt(val));
     }
 
-    pub fn fullscreen(self: *Window, val: bool) void {
+    pub fn fullscreen(self: *const Window, val: bool) void {
         return c.Fl_Double_Window_fullscreen(self.inner, @boolToInt(val));
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

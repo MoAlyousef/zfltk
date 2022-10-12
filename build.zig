@@ -36,7 +36,7 @@ pub fn build(b: *Builder) !void {
     const mode = b.standardReleaseOptions();
 
     _ = fs.cwd().openDir("vendor/lib", .{}) catch |err| {
-        std.debug.print("Warning: {e}. The cfltk library will be grabbed and built from source!\n", .{err});
+        std.debug.print("Warning: {!}. The cfltk library will be grabbed and built from source!\n", .{err});
         const zfltk_init = b.addSystemCommand(&[_][]const u8{
             "git",
             "submodule",
@@ -107,8 +107,8 @@ pub fn build(b: *Builder) !void {
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackagePath("zfltk", "src/zfltk.zig");
-        exe.addIncludeDir("vendor/cfltk/include");
-        exe.addLibPath("vendor/lib/lib");
+        exe.addIncludePath("vendor/cfltk/include");
+        exe.addLibraryPath("vendor/lib/lib");
         exe.linkSystemLibrary("cfltk");
         exe.linkSystemLibrary("fltk");
         exe.linkSystemLibrary("fltk_images");

@@ -24,6 +24,6 @@ pub fn widgetCast(comptime T: type, wid: anytype) T {
     };
 }
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

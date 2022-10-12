@@ -3,6 +3,7 @@ const c = @cImport({
 });
 
 pub const Color = struct {
+    inner_: u32 = 0,
     pub const ForeGround = 0;
     pub const BackGround2 = 7;
     pub const Inactive = 8;
@@ -29,6 +30,19 @@ pub const Color = struct {
     pub const DarkMagenta = 152;
     pub const DarkCyan = 140;
     pub const White = 255;
+    pub fn from_rgb(r: u8, g: u8, b: u8) Color {
+        var col = Color{};
+        col.inner_ = ((@intCast(u32, r) & 0xff) << 24) + ((@intCast(u32, g) & 0xff) << 16) + ((@intCast(u32, b) & 0xff) << 8);
+        return col;
+    }
+    pub fn from_rgbi(val: u32) Color {
+        var col = Color{};
+        col.inner_ = val;
+        return col;
+    }
+    pub fn inner(self: Color) c_uint {
+        return self.inner_;
+    }
 };
 
 pub const Align = struct {
@@ -284,6 +298,6 @@ pub const TextCursor = enum(u8) {
     Simple,
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

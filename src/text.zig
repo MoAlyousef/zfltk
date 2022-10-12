@@ -18,17 +18,16 @@ pub const TextBuffer = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *TextBuffer) ?*anyopaque {
+    pub fn toVoidPtr(self: *const TextBuffer) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
-    pub fn delete(self: *TextBuffer) void {
+    pub fn delete(self: *const TextBuffer) void {
         c.Fl_Text_Buffer_delete(self.inner);
-        self.inner = null;
     }
 
     /// Sets the text of the buffer
-    pub fn setText(self: *TextBuffer, txt: [*c]const u8) void {
+    pub fn setText(self: *const TextBuffer, txt: [*c]const u8) void {
         return c.Fl_Text_Buffer_set_text(self.inner, txt);
     }
 
@@ -38,7 +37,7 @@ pub const TextBuffer = struct {
     }
 
     /// Appends to the buffer
-    pub fn append(self: *TextBuffer, str: [*c]const u8) void {
+    pub fn append(self: *const TextBuffer, str: [*c]const u8) void {
         return c.Fl_Text_Buffer_append(self.inner, str);
     }
 
@@ -48,7 +47,7 @@ pub const TextBuffer = struct {
     }
 
     /// Removes from the buffer
-    pub fn remove(self: *TextBuffer, start: u32, end: u32) void {
+    pub fn remove(self: *const TextBuffer, start: u32, end: u32) void {
         return c.Fl_Text_Buffer_remove(self.inner, start, end);
     }
     /// Returns the text within the range
@@ -57,17 +56,17 @@ pub const TextBuffer = struct {
     }
 
     /// Inserts text into a position
-    pub fn insert(self: *TextBuffer, pos: u32, str: [*c]const u8) void {
+    pub fn insert(self: *const TextBuffer, pos: u32, str: [*c]const u8) void {
         c.Fl_Text_Buffer_insert(self.inner, pos, str.as_ptr());
     }
 
     /// Replaces text from position ```start``` to ```end```
-    pub fn replace(self: *TextBuffer, start: u32, end: u32, txt: [*c]const u8) void {
+    pub fn replace(self: *const TextBuffer, start: u32, end: u32, txt: [*c]const u8) void {
         c.Fl_Text_Buffer_replace(self.inner, start, end, txt);
     }
 
     /// Copies text from a source buffer into the current buffer
-    pub fn copyFrom(self: *TextBuffer, source_buf: *TextBuffer, start: u32, end: u32, to: u32) void {
+    pub fn copyFrom(self: *const TextBuffer, source_buf: *TextBuffer, start: u32, end: u32, to: u32) void {
         c.Fl_Text_Buffer_copy(
             self.inner,
             source_buf.inner,
@@ -84,26 +83,26 @@ pub const TextBuffer = struct {
     }
 
     /// Performs an undo operation on the buffer
-    pub fn undo(self: *TextBuffer) void {
+    pub fn undo(self: *const TextBuffer) void {
         _ = c.Fl_Text_Buffer_undo(self.inner, null);
     }
 
     /// Sets whether the buffer can undo
-    pub fn canUndo(self: *TextBuffer, flag: bool) void {
+    pub fn canUndo(self: *const TextBuffer, flag: bool) void {
         c.Fl_Text_Buffer_canUndo(self.inner, @boolToInt(flag));
     }
 
-    pub fn lineStart(self: *TextBuffer, pos: u32) u32 {
+    pub fn lineStart(self: *const TextBuffer, pos: u32) u32 {
         return c.Fl_Text_Buffer_line_start(self.inner, pos);
     }
     /// Loads a file into the buffer
-    pub fn loadFile(self: *TextBuffer, path: [*c]const u8) !void {
+    pub fn loadFile(self: *const TextBuffer, path: [*c]const u8) !void {
         const ret = c.Fl_Text_Buffer_load_file(self.inner, path);
         if (ret != 0) return error.InvalidParameter;
     }
 
     /// Saves a buffer into a file
-    pub fn saveFile(self: *TextBuffer, path: [*c]const u8) !void {
+    pub fn saveFile(self: *const TextBuffer, path: [*c]const u8) !void {
         const ret = c.Fl_Text_Buffer_save_file(self.inner, path);
         if (ret != 0) return error.InvalidParameter;
     }
@@ -114,12 +113,12 @@ pub const TextBuffer = struct {
     }
 
     /// Sets the tab distance
-    pub fn setTabDistance(self: *TextBuffer, tab_dist: u32) void {
+    pub fn setTabDistance(self: *const TextBuffer, tab_dist: u32) void {
         c.Fl_Text_Buffer_set_tab_distance(self.inner, tab_dist);
     }
 
     /// Selects the text from start to end
-    pub fn select(self: *TextBuffer, start: u32, end: u32) void {
+    pub fn select(self: *const TextBuffer, start: u32, end: u32) void {
         c.Fl_Text_Buffer_select(self.inner, start, end);
     }
 
@@ -129,7 +128,7 @@ pub const TextBuffer = struct {
     }
 
     /// Unselects text
-    pub fn unselect(self: *TextBuffer) void {
+    pub fn unselect(self: *const TextBuffer) void {
         return c.Fl_Text_Buffer_unselect(self.inner);
     }
 };
@@ -144,7 +143,7 @@ pub const TextDisplay = struct {
         };
     }
 
-    pub fn raw(self: *TextDisplay) ?*c.Fl_Text_Display {
+    pub fn raw(self: *const TextDisplay) ?*c.Fl_Text_Display {
         return self.inner;
     }
 
@@ -166,7 +165,7 @@ pub const TextDisplay = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *TextDisplay) ?*anyopaque {
+    pub fn toVoidPtr(self: *const TextDisplay) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -176,11 +175,11 @@ pub const TextDisplay = struct {
         };
     }
 
-    pub fn handle(self: *TextDisplay, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const TextDisplay, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Text_Display_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *TextDisplay, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const TextDisplay, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Text_Display_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -189,23 +188,23 @@ pub const TextDisplay = struct {
         return TextBuffer{ .inner = buf };
     }
 
-    pub fn setBuffer(self: *TextDisplay, buf: *TextBuffer) void {
+    pub fn setBuffer(self: *const TextDisplay, buf: *TextBuffer) void {
         c.Fl_Text_Display_set_buffer(self.inner, buf.*.inner);
     }
 
-    pub fn setTextFont(self: *TextDisplay, font: enums.Font) void {
+    pub fn setTextFont(self: *const TextDisplay, font: enums.Font) void {
         c.Fl_Text_Display_set_text_font(self.inner, @enumToInt(font));
     }
 
-    pub fn setTextColor(self: *TextDisplay, col: u32) void {
-        c.Fl_Text_Display_set_text_color(self.inner, col);
+    pub fn setTextColor(self: *const TextDisplay, col: enums.Color) void {
+        c.Fl_Text_Display_set_text_color(self.inner, col.inner());
     }
 
-    pub fn setTextSize(self: *TextDisplay, sz: u32) void {
+    pub fn setTextSize(self: *const TextDisplay, sz: u32) void {
         c.Fl_Text_Display_set_text_size(self.inner, sz);
     }
 
-    pub fn scroll(self: *TextDisplay, topLineNum: u32, horizOffset: u32) void {
+    pub fn scroll(self: *const TextDisplay, topLineNum: u32, horizOffset: u32) void {
         c.Fl_Text_Display_scroll(self.inner, topLineNum, horizOffset);
     }
 
@@ -213,7 +212,7 @@ pub const TextDisplay = struct {
         c.Fl_Text_Display_insert(self.inner, text);
     }
 
-    pub fn setInsertPosition(self: *TextDisplay, newPos: u32) void {
+    pub fn setInsertPosition(self: *const TextDisplay, newPos: u32) void {
         c.Fl_Text_Display_set_insert_position(self.inner, newPos);
     }
 
@@ -225,43 +224,43 @@ pub const TextDisplay = struct {
         return c.Fl_Text_Display_count_lines(self.inner, start, end, @boolToInt(is_line_start));
     }
 
-    pub fn moveRight(self: *TextDisplay) void {
+    pub fn moveRight(self: *const TextDisplay) void {
         _ = c.Fl_Text_Display_move_right(self.inner);
     }
 
-    pub fn moveLeft(self: *TextDisplay) void {
+    pub fn moveLeft(self: *const TextDisplay) void {
         _ = c.Fl_Text_Display_move_left(self.inner);
     }
 
-    pub fn moveUp(self: *TextDisplay) void {
+    pub fn moveUp(self: *const TextDisplay) void {
         _ = c.Fl_Text_Display_move_up(self.inner);
     }
 
-    pub fn moveDown(self: *TextDisplay) void {
+    pub fn moveDown(self: *const TextDisplay) void {
         _ = c.Fl_Text_Display_move_down(self.inner);
     }
 
-    pub fn showCursor(self: *TextDisplay, val: bool) void {
+    pub fn showCursor(self: *const TextDisplay, val: bool) void {
         c.Fl_Text_Display_show_cursor(self.inner, @boolToInt(val));
     }
 
-    pub fn setCursorStyle(self: *TextDisplay, style: enums.TextCursor) void {
+    pub fn setCursorStyle(self: *const TextDisplay, style: enums.TextCursor) void {
         c.Fl_Text_Display_set_cursor_style(self.inner, @enumToInt(style));
     }
 
-    pub fn setCursorColor(self: *TextDisplay, col: enums.Color) void {
-        c.Fl_Text_Display_set_cursor_color(self.inner, @enumToInt(col));
+    pub fn setCursorColor(self: *const TextDisplay, col: enums.Color) void {
+        c.Fl_Text_Display_set_cursor_color(self.inner, col.inner());
     }
 
-    pub fn setScrollbarSize(self: *TextDisplay, size: u32) void {
+    pub fn setScrollbarSize(self: *const TextDisplay, size: u32) void {
         c.Fl_Text_Display_set_scrollbar_size(self.inner, size);
     }
 
-    pub fn setScrollbarAlign(self: *TextDisplay, a: i32) void {
+    pub fn setScrollbarAlign(self: *const TextDisplay, a: i32) void {
         c.Fl_Text_Display_set_scrollbar_align(self.inner, a);
     }
 
-    pub fn setLinenumberWidth(self: *TextDisplay, w: i32) void {
+    pub fn setLinenumberWidth(self: *const TextDisplay, w: i32) void {
         c.Fl_Text_Display_set_linenumber_width(self.inner, w);
     }
 };
@@ -276,7 +275,7 @@ pub const TextEditor = struct {
         };
     }
 
-    pub fn raw(self: *TextEditor) ?*c.Fl_Text_Editor {
+    pub fn raw(self: *const TextEditor) ?*c.Fl_Text_Editor {
         return self.inner;
     }
 
@@ -298,7 +297,7 @@ pub const TextEditor = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *TextEditor) ?*anyopaque {
+    pub fn toVoidPtr(self: *const TextEditor) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -314,11 +313,11 @@ pub const TextEditor = struct {
         };
     }
 
-    pub fn handle(self: *TextEditor, cb: fn (w: widget.WidgetPtr,  ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const TextEditor, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
         c.Fl_Text_Editor_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *TextEditor, cb: fn (w: widget.WidgetPtr,  data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const TextEditor, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Text_Editor_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -338,6 +337,6 @@ pub const TextEditor = struct {
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

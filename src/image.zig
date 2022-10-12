@@ -4,11 +4,11 @@ const c = @cImport({
 
 pub const Image = struct {
     inner: ?*c.Fl_Image,
-    pub fn scale(self: *Image, width: i32, height: i32, proportional: bool, can_expand: bool) void {
+    pub fn scale(self: *const Image, width: i32, height: i32, proportional: bool, can_expand: bool) void {
         c.Fl_Image_scale(self.inner, width, height, @boolToInt(proportional), @boolToInt(can_expand));
     }
 
-    pub fn raw(self: *Image) ?*c.Fl_Image {
+    pub fn raw(self: *const Image) ?*c.Fl_Image {
         return self.inner;
     }
 
@@ -30,11 +30,11 @@ pub const Image = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *Image) ?*anyopaque {
+    pub fn toVoidPtr(self: *const Image) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
-    pub fn delete(self: *Image) void {
+    pub fn delete(self: *const Image) void {
         c.Fl_Image_delete(self.inner);
         self.inner = null;
     }
@@ -46,7 +46,7 @@ pub const Image = struct {
         };
     }
 
-    pub fn draw(self: *Image, arg2: i32, arg3: i32, arg4: i32, arg5: i32) void {
+    pub fn draw(self: *const Image, arg2: i32, arg3: i32, arg4: i32, arg5: i32) void {
         return c.Fl_Image_draw(self.inner, arg2, arg3, arg4, arg5);
     }
 
@@ -90,10 +90,10 @@ pub const SharedImage = struct {
     pub fn fromImage(img: *const Image) !SharedImage {
         const x = c.Fl_Shared_Image_from_rgb(img.inner, 0);
         if (x == null or c.Fl_Shared_Image_fail(x) < 0) return error.InvalidParemeter;
-        return SharedImage{.inner = x};
+        return SharedImage{ .inner = x };
     }
 
-    pub fn raw(self: *SharedImage) ?*c.Fl_Shared_Image {
+    pub fn raw(self: *const SharedImage) ?*c.Fl_Shared_Image {
         return self.inner;
     }
 
@@ -115,7 +115,7 @@ pub const SharedImage = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *SharedImage) ?*anyopaque {
+    pub fn toVoidPtr(self: *const SharedImage) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -135,10 +135,10 @@ pub const SvgImage = struct {
     pub fn fromData(data: [*c]const u8) !SvgImage {
         const x = c.Fl_SVG_Image_from(data);
         if (x == null or c.Fl_SVG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return SvgImage{.inner = x};
+        return SvgImage{ .inner = x };
     }
 
-    pub fn raw(self: *SvgImage) ?*c.Fl_SVG_Image {
+    pub fn raw(self: *const SvgImage) ?*c.Fl_SVG_Image {
         return self.inner;
     }
 
@@ -160,7 +160,7 @@ pub const SvgImage = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *SvgImage) ?*anyopaque {
+    pub fn toVoidPtr(self: *const SvgImage) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -180,10 +180,10 @@ pub const JpegImage = struct {
     pub fn fromData(data: [*c]const u8) !JpegImage {
         const x = c.Fl_JPEG_Image_from(data);
         if (x == null or c.Fl_JPEG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return JpegImage{.inner = x};
+        return JpegImage{ .inner = x };
     }
 
-    pub fn raw(self: *JpegImage) ?*c.Fl_JPEG_Image {
+    pub fn raw(self: *const JpegImage) ?*c.Fl_JPEG_Image {
         return self.inner;
     }
 
@@ -205,7 +205,7 @@ pub const JpegImage = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *JpegImage) ?*anyopaque {
+    pub fn toVoidPtr(self: *const JpegImage) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -225,10 +225,10 @@ pub const BmpImage = struct {
     pub fn fromData(data: [*c]const u8) !BmpImage {
         const x = c.Fl_BMP_Image_from(data);
         if (x == null or c.Fl_BMP_Image_fail(x) < 0) return error.InvalidParemeter;
-        return BmpImage{.inner = x};
+        return BmpImage{ .inner = x };
     }
 
-    pub fn raw(self: *BmpImage) ?*c.Fl_BMP_Image {
+    pub fn raw(self: *const BmpImage) ?*c.Fl_BMP_Image {
         return self.inner;
     }
 
@@ -250,7 +250,7 @@ pub const BmpImage = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *BmpImage) ?*anyopaque {
+    pub fn toVoidPtr(self: *const BmpImage) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -273,7 +273,7 @@ pub const RgbImage = struct {
         return RgbImage{ .inner = ptr };
     }
 
-    pub fn raw(self: *RgbImage) ?*c.Fl_RGB_Image {
+    pub fn raw(self: *const RgbImage) ?*c.Fl_RGB_Image {
         return self.inner;
     }
 
@@ -295,7 +295,7 @@ pub const RgbImage = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *RgbImage) ?*anyopaque {
+    pub fn toVoidPtr(self: *const RgbImage) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -315,10 +315,10 @@ pub const PngImage = struct {
     pub fn fromData(data: [*c]const u8) !PngImage {
         const x = c.Fl_PNG_Image_from(data);
         if (x == null or c.Fl_PNG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return PngImage{.inner = x};
+        return PngImage{ .inner = x };
     }
 
-    pub fn raw(self: *PngImage) ?*c.Fl_PNG_Image {
+    pub fn raw(self: *const PngImage) ?*c.Fl_PNG_Image {
         return self.inner;
     }
 
@@ -340,7 +340,7 @@ pub const PngImage = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *PngImage) ?*anyopaque {
+    pub fn toVoidPtr(self: *const PngImage) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -360,10 +360,10 @@ pub const GifImage = struct {
     pub fn fromData(data: [*c]const u8) !GifImage {
         const x = c.Fl_GIF_Image_from(data);
         if (x == null or c.Fl_GIF_Image_fail(x) < 0) return error.InvalidParemeter;
-        return GifImage{.inner = x};
+        return GifImage{ .inner = x };
     }
 
-    pub fn raw(self: *GifImage) ?*c.Fl_GIF_Image {
+    pub fn raw(self: *const GifImage) ?*c.Fl_GIF_Image {
         return self.inner;
     }
 
@@ -385,7 +385,7 @@ pub const GifImage = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *GifImage) ?*anyopaque {
+    pub fn toVoidPtr(self: *const GifImage) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -401,7 +401,7 @@ pub const TiledImage = struct {
         return TiledImage{ .inner = ptr };
     }
 
-    pub fn raw(self: *TiledImage) ?*c.Fl_Tiled_Image {
+    pub fn raw(self: *const TiledImage) ?*c.Fl_Tiled_Image {
         return self.inner;
     }
 
@@ -423,7 +423,7 @@ pub const TiledImage = struct {
         };
     }
 
-    pub fn toVoidPtr(self: *TiledImage) ?*anyopaque {
+    pub fn toVoidPtr(self: *const TiledImage) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
@@ -432,6 +432,6 @@ pub const TiledImage = struct {
     }
 };
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }

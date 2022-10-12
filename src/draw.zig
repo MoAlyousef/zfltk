@@ -2,7 +2,7 @@ const c = @cImport({
     @cInclude("cfl_draw.h");
 });
 const Font = @import("enums.zig").Font;
-const FrameType = @import("enums.zig").FrameType;
+const BoxType = @import("enums.zig").BoxType;
 const Cursor = @import("enums.zig").Cursor;
 
 pub const LineStyle = enum(i32) {
@@ -55,11 +55,11 @@ pub const Offscreen = struct {
     }
 
     /// Rescales the offscreen
-    pub fn rescale(self: *Offscreen) void {
+    pub fn rescale(self: *const Offscreen) void {
         c.Fl_rescale_offscreen(self.inner);
     }
 
-    pub fn delete(self: *Offscreen) void {
+    pub fn delete(self: *const Offscreen) void {
         c.Fl_delete_offscreen(self._inner);
     }
 };
@@ -445,7 +445,7 @@ pub fn draw_frame2(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32) void {
 }
 
 /// Draws a box given the box type, size, position and color
-pub fn draw_box(box_type: FrameType, x: i32, y: i32, w: i32, h: i32, color: u32) void {
+pub fn draw_box(box_type: BoxType, x: i32, y: i32, w: i32, h: i32, color: u32) void {
     c.Fl_draw_box(box_type, x, y, w, h, color);
 }
 
@@ -479,6 +479,6 @@ pub fn set_cursor_with_color(cursor: Cursor, fg: u32, bg: u32) void {
     c.Fl_set_cursor2(@enumToInt(cursor), @enumToInt(fg), @enumToInt(bg));
 }
 
-test "" {
+test "all" {
     @import("std").testing.refAllDecls(@This());
 }
