@@ -41,19 +41,6 @@ pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
     const exe = b.addExecutable("main", "src/main.zig");
-    
-    var buf: [250]u8 = undefined;
-    var lib_path: []u8 = undefined;
-    if (target.isWindows() and target.getCpuArch() == .x86_64) {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"zfltk/cfltk/lib/x86_64-windows-gnu"});
-    } else if (target.isDarwin() and target.getCpuArch() == .x86_64) {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"zfltk/cfltk/lib/x86_64-apple-darwin"});
-    } else if (target.isLinux() and target.getCpuArch() == .x86_64 and target.isGnuLibC()) {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"zfltk/cfltk/lib/x86_64-linux-gnu"});
-    } else {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{std.os.getenv("CFLTK_BUNDLE_DIR").?});
-    }
-
     exe.addPackagePath("zfltk", "zfltk/src/zfltk.zig");
     exe.linkSystemLibrary("cfltk");
     exe.linkSystemLibrary("fltk");
