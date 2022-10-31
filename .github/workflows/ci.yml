@@ -7,17 +7,11 @@ on:
     branches: [ master ]
 
 jobs:
-  build_posix:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+  build_linux:
+    runs-on: ubuntu-latest
     steps:
       - name: Download deps
-        run: |
-         if [ "$RUNNER_OS" == "Linux" ]; then
-          sudo apt-get update && sudo apt-get install -y libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev
-         fi
+        run: sudo apt-get update && sudo apt-get install -y libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev
         shell: bash
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v1
@@ -25,12 +19,14 @@ jobs:
           version: master
 
       - name: Build
-        run: zig build
-  build_windows:
-    strategy:
-      matrix:
-        os: [windows-latest]
-    runs-on: ${{ matrix.os }}
+        run: |
+          git clone https://github.com/MoAlyousef/cfltk
+          cd cfltk
+          ./scripts/bootstrap_linux.sh
+          cd ../
+          zig build
+  build_macos:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v1
@@ -38,5 +34,31 @@ jobs:
           version: master
 
       - name: Build
-        run: zig build -Dtarget=x86_64-windows-gnu
+        run: |
+          git clone https://github.com/MoAlyousef/cfltk
+          cd cfltk
+          ./scripts/bootstrap_macos.sh
+          cd ../
+          zig build
+  build_windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: git mingw-w64-x86_64-cc mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-rust --needed
+
+      - name: Build
         shell: bash
+        run: |
+          git clone https://github.com/MoAlyousef/cfltk
+          cd cfltk
+          ./scripts/bootstrap_windows.sh
+          cd ../
+          zig build -Dtarget=x86_64-windows-gnu
+
