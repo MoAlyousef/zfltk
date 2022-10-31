@@ -37,6 +37,8 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
           cd cfltk
+          export C_INCLUDE_PATH=/usr/local/include
+          export CPLUS_INCLUDE_PATH=/usr/local/include
           ./scripts/bootstrap_macos.sh
           cd ../
           zig build
