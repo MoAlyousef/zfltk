@@ -38,5 +38,5 @@ jobs:
           version: master
 
       - name: Build
-        run: zig build -target x86_64-windows-gnu
+        run: zig build
         shell: bash
