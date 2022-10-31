@@ -47,6 +47,7 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v2
+      - uses: seanmiddleditch/gha-setup-ninja@master
       - uses: goto-bus-stop/setup-zig@v1
         with:
           version: master
@@ -54,7 +55,7 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
           cd cfltk
-          ./scripts/bootstrap_windows.sh
-          cd ../
-          zig build -Dtarget=x86_64-windows-gnu
-
+          cmake -Bbin -GNinja -DOPTION_USE_SYSTEM_LIBPNG=OFF -DOPTION_USE_SYSTEM_LIBJPEG=OFF -DOPTION_USE_SYSTEM_ZLIB=OFF -DCFLTK_LINK_IMAGES=ON -DOpenGL_GL_PREFERENCE=GLVND -DOPTION_USE_GL=ON -DCFLTK_USE_OPENGL=ON -DCFLTK_SINGLE_THREADED=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCFLTK_CARGO_BUILD=ON -DFLTK_BUILD_EXAMPLES=OFF -DFLTK_BUILD_TEST=OFF -DOPTION_LARGE_FILE=ON -DOPTION_USE_THREADS=ON -DOPTION_BUILD_HTML_DOCUMENTATION=OFF -DOPTION_BUILD_PDF_DOCUMENTATION=OFF -DCMAKE_INSTALL_PREFIX=bin -DCMAKE_BUILD_TYPE=Release
+          cmake --build bin --parallel --target install 
+          cd ..
+          zig build
