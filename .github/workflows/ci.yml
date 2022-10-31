@@ -39,6 +39,7 @@ jobs:
           cd cfltk
           export C_INCLUDE_PATH=/usr/local/include
           export CPLUS_INCLUDE_PATH=/usr/local/include
+          export LD_LIBRARY_PATH=/usr/local/lib
           ./scripts/bootstrap_macos.sh
           cd ../
           zig build
@@ -49,6 +50,10 @@ jobs:
         shell: msys2 {0}
     steps:
       - uses: actions/checkout@v2
+      - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: master
+
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
