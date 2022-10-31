@@ -20,7 +20,7 @@ jobs:
 
       - name: Build
         run: |
-          git clone https://github.com/MoAlyousef/cfltk
+          git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
           cd cfltk
           ./scripts/bootstrap_linux.sh
           cd ../
@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         run: |
-          git clone https://github.com/MoAlyousef/cfltk
+          git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
           cd cfltk
           ./scripts/bootstrap_macos.sh
           cd ../
@@ -56,7 +56,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          git clone https://github.com/MoAlyousef/cfltk
+          git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
           cd cfltk
           ./scripts/bootstrap_windows.sh
           cd ../

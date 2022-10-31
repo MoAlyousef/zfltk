@@ -20,7 +20,7 @@ zig build <args> -Dtarget=x86_64-windows-gnu
 ## Usage
 This repo tracks cfltk, the C bindings to FLTK. It will thus need to be installed to a system path:
 ```
-git clone https://github.com/MoAlyousef/cfltk
+git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
 cd cfltk
 sudo ./scripts/bootstrap_linux.sh # for linux
 sudo ./scripts/bootstrap_macos.sh # for macos
