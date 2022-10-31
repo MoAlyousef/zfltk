@@ -244,4 +244,3 @@ pub fn main() !void {
 ![alt_test](screenshots/image.jpg)
 ![alt_test](screenshots/editor.jpg)
 
-
