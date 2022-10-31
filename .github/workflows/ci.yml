@@ -55,10 +55,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: git mingw-w64-x86_64-cc mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja mingw-w64-x86_64-rust --needed
-
-      - name: Build
-        shell: bash
+          install: git mingw-w64-x86_64-cc mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja
         run: |
           git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
           cd cfltk
