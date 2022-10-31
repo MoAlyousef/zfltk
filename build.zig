@@ -52,7 +52,6 @@ pub fn build(b: *Builder) !void {
         if (target.isWindows()) {
             exe.addIncludePath("cfltk/bin/include");
             exe.addLibraryPath("cfltk/bin/lib");
-	    exe.linkSystemLibrary("fltk_gl");
             exe.linkSystemLibrary("ws2_32");
             exe.linkSystemLibrary("comctl32");
             exe.linkSystemLibrary("gdi32");
@@ -67,8 +66,6 @@ pub fn build(b: *Builder) !void {
             exe.linkSystemLibrary("kernel32");
             exe.linkSystemLibrary("odbc32");
             exe.linkSystemLibrary("gdiplus");
-	    exe.linkSystemLibrary("opengl32");
-	    exe.linkSystemLibrary("glu32");
         } else if (target.isDarwin()) {
             exe.addIncludePath("/usr/local/include");
             exe.addLibraryPath("/usr/local/lib");
