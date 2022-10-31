@@ -47,7 +47,7 @@ pub fn build(b: *Builder) !void {
     } else if (target.isLinux() and target.getCpuArch() == .x86_64 and target.isGnuLibC()) {
         lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-linux-gnu"});
     } else {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"/usr/lib"});
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{std.os.getenv("CFLTK_BUNDLE_DIR").?});
     }
 
     for (examples) |example| {
