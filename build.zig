@@ -35,80 +35,28 @@ pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
 
-    _ = fs.cwd().openDir("vendor/lib", .{}) catch |err| {
-        std.debug.print("Warning: {!}. The cfltk library will be grabbed and built from source!\n", .{err});
-        const zfltk_init = b.addSystemCommand(&[_][]const u8{
-            "git",
-            "submodule",
-            "update",
-            "--init",
-            "--recursive",
-            "--depth=1",
-        });
-        try zfltk_init.step.make();
-
-        if (target.isWindows() or target.isDarwin()) {
-            const zfltk_config = b.addSystemCommand(&[_][]const u8{
-                "cmake",
-                "-B",
-                "vendor/bin",
-                "-S",
-                "vendor/cfltk",
-                "-DCMAKE_BUILD_TYPE=Release",
-                "-DCMAKE_INSTALL_PREFIX=vendor/lib",
-                "-DFLTK_BUILD_TEST=OFF",
-                "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
-                "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
-                "-DOPTION_USE_SYSTEM_ZLIB=OFF",
-            });
-            try zfltk_config.step.make();
-        } else {
-            const zfltk_config = b.addSystemCommand(&[_][]const u8{
-                "cmake",
-                "-B",
-                "vendor/bin",
-                "-S",
-                "vendor/cfltk",
-                "-DCMAKE_BUILD_TYPE=Release",
-                "-DCMAKE_INSTALL_PREFIX=vendor/lib",
-                "-DFLTK_BUILD_TEST=OFF",
-                "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
-                "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
-                "-DOPTION_USE_SYSTEM_ZLIB=OFF",
-                "-DOPTION_USE_PANGO=ON", // enable if rtl/cjk font support is needed
-            });
-            try zfltk_config.step.make();
-        }
-
-        const zfltk_build = b.addSystemCommand(&[_][]const u8{
-            "cmake",
-            "--build",
-            "vendor/bin",
-            "--config",
-            "Release",
-            "--parallel",
-        });
-        try zfltk_build.step.make();
-
-        // This only needs to run once!
-        const zfltk_install = b.addSystemCommand(&[_][]const u8{
-            "cmake",
-            "--install",
-            "vendor/bin",
-        });
-        try zfltk_install.step.make();
-    };
-
     const examples_step = b.step("examples", "build the examples");
     b.default_step.dependOn(examples_step);
+
+    var buf: [250]u8 = undefined;
+    var lib_path: []u8 = undefined;
+    if (target.isWindows() and target.getCpuArch() == .x86_64 and target.isGnuLibC()) {
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-windows-gnu"});
+    } else if (target.isDarwin() and target.getCpuArch() == .x86_64) {
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-apple-darwin"});
+    } else if (target.isLinux() and target.getCpuArch() == .x86_64 and target.isGnuLibC()) {
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-linux-gnu"});
+    } else {
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"/usr/lib"});
+    }
 
     for (examples) |example| {
         const exe = b.addExecutable(example.output, example.input);
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackagePath("zfltk", "src/zfltk.zig");
-        exe.addIncludePath("vendor/cfltk/include");
-        exe.addLibraryPath("vendor/lib/lib");
+        exe.addIncludePath("cfltk/include");
+        exe.addLibraryPath(lib_path);
         exe.linkSystemLibrary("cfltk");
         exe.linkSystemLibrary("fltk");
         exe.linkSystemLibrary("fltk_images");
