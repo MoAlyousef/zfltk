@@ -4,38 +4,44 @@ A Zig wrapper for the FLTK gui library.
 ## Running the examples
 After cloning the repo, run:
 ```
-$ cd zfltk
-$ zig build run-simple
-$ zig build run-capi
-$ zig build run-editor
-$ zig build run-input
-$ zig build run-image
-$ zig build run-mixed
+cd zfltk
+zig build run-simple
+zig build run-capi
+zig build run-editor
+zig build run-input
+zig build run-image
+zig build run-mixed
 ```
 
 For Windows, you can use the gnu toolchain:
 ```
-$ zig build <args> -target x86_64-windows-gnu
+zig build <args> -Dtarget=x86_64-windows-gnu
 ```
 ## Usage
+This repo tracks cfltk, the C bindings to FLTK. It will thus need to be installed to a system path:
+```
+git clone https://github.com/MoAlyousef/cfltk
+cd cfltk
+sudo ./scripts/bootstrap_linux.sh # for linux
+sudo ./scripts/bootstrap_macos.sh # for macos
+sudo ./scripts/bootstrap_windows.sh # for windows
+```
+This requires CMake and a C++11 compiler, and is only required once.
+
 Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
 ```
-$ git submodule add https://github.com/moalyousef/zfltk
-$ cd zfltk
-$ zig build
-$ cd ..
+git submodule add https://github.com/moalyousef/zfltk
 ```
 then you will need a build.zig file as follows:
 ```zig
-const Builder = @import("std").build.Builder;
+const std = @import("std");
+const Builder = std.build.Builder;
 
-pub fn build(b: *Builder) void {
+pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
     const exe = b.addExecutable("main", "src/main.zig");
     exe.addPackagePath("zfltk", "zfltk/src/zfltk.zig");
-    exe.addIncludeDir("zfltk/vendor/cfltk/include");
-    exe.addLibPath("zfltk/vendor/lib/lib");
     exe.linkSystemLibrary("cfltk");
     exe.linkSystemLibrary("fltk");
     exe.linkSystemLibrary("fltk_images");
@@ -57,7 +63,7 @@ pub fn build(b: *Builder) void {
         exe.linkSystemLibrary("user32");
         exe.linkSystemLibrary("kernel32");
         exe.linkSystemLibrary("odbc32");
-        // exe.linkSystemLibrary("gdiplus");
+        exe.linkSystemLibrary("gdiplus");
     } else if (target.isDarwin()) {
         exe.linkFramework("Carbon");
         exe.linkFramework("Cocoa");
@@ -95,12 +101,12 @@ pub fn build(b: *Builder) void {
 ```
 Then you can run:
 ```
-$ zig build run
+zig build run
 ```
 
 ## Dependencies 
 
-CMake (version > 3.15), Git and a C++11 compiler need to be installed and in your PATH for a crossplatform build from source.
+CMake (version > 3.15), Git and a C++11 compiler need to be installed and in your PATH for a crossplatform build of cfltk.
 
 - Windows: No dependencies.
 - MacOS: No dependencies.
@@ -108,19 +114,19 @@ CMake (version > 3.15), Git and a C++11 compiler need to be installed and in you
 
 For Debian-based GUI distributions, that means running:
 ```
-$ sudo apt-get install libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpango1.0-dev libpng-dev libgl1-mesa-dev libglu1-mesa-dev
+sudo apt-get install libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpango1.0-dev libpng-dev libgl1-mesa-dev libglu1-mesa-dev
 ```
 For RHEL-based GUI distributions, that means running:
 ```
-$ sudo yum groupinstall "X Software Development" && yum install pango-devel libXinerama-devel libpng-devel
+sudo yum groupinstall "X Software Development" && yum install pango-devel libXinerama-devel libpng-devel
 ```
 For Arch-based GUI distributions, that means running:
 ```
-$ sudo pacman -S libx11 libxext libxft libxinerama libxcursor libxrender libxfixes libpng pango cairo libgl mesa --needed
+sudo pacman -S libx11 libxext libxft libxinerama libxcursor libxrender libxfixes libpng pango cairo libgl mesa --needed
 ```
 For Alpine linux:
 ```
-$ apk add pango-dev fontconfig-dev libxinerama-dev libxfixes-dev libxcursor-dev libpng-dev mesa-gl
+apk add pango-dev fontconfig-dev libxinerama-dev libxfixes-dev libxcursor-dev libpng-dev mesa-gl
 ```
 
 ## API
@@ -183,11 +189,11 @@ pub fn main() !void {
 Using the C Api directly:
 ```zig
 const c = @cImport({
-    @cInclude("cfl.h"); // Fl_run
-    @cInclude("cfl_enums.h"); // Fl_Color_*
-    @cInclude("cfl_button.h"); // Fl_Button
-    @cInclude("cfl_box.h"); // Fl_Box
-    @cInclude("cfl_window.h"); // Fl_Window
+    @cInclude("cfltk/cfl.h"); // Fl_run
+    @cInclude("cfltk/cfl_enums.h"); // Fl_Color_*
+    @cInclude("cfltk/cfl_button.h"); // Fl_Button
+    @cInclude("cfltk/cfl_box.h"); // Fl_Box
+    @cInclude("cfltk/cfl_window.h"); // Fl_Window
 });
 
 pub fn butCb(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
@@ -209,7 +215,7 @@ pub fn main() void {
 You can also mix and match for any missing functionalities in the Zig wrapper:
 ```zig
 const c = @cImport({
-    @cInclude("cfl.h"); // Fl_event_x() and Fl_event_y()
+    @cInclude("cfltk/cfl.h"); // Fl_event_x() and Fl_event_y()
 });
 const zfltk = @import("zfltk");
 const app = zfltk.app;

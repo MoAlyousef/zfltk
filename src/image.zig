@@ -1,5 +1,5 @@
 const c = @cImport({
-    @cInclude("cfl_image.h");
+    @cInclude("cfltk/cfl_image.h");
 });
 
 pub const Image = struct {

@@ -38,25 +38,11 @@ pub fn build(b: *Builder) !void {
     const examples_step = b.step("examples", "build the examples");
     b.default_step.dependOn(examples_step);
 
-    var buf: [250]u8 = undefined;
-    var lib_path: []u8 = undefined;
-    if (target.isWindows() and target.getCpuArch() == .x86_64) {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-windows-gnu"});
-    } else if (target.isDarwin() and target.getCpuArch() == .x86_64) {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-apple-darwin"});
-    } else if (target.isLinux() and target.getCpuArch() == .x86_64 and target.isGnuLibC()) {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-linux-gnu"});
-    } else {
-        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{std.os.getenv("CFLTK_BUNDLE_DIR").?});
-    }
-
     for (examples) |example| {
         const exe = b.addExecutable(example.output, example.input);
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackagePath("zfltk", "src/zfltk.zig");
-        exe.addIncludePath("cfltk/include");
-        exe.addLibraryPath(lib_path);
         exe.linkSystemLibrary("cfltk");
         exe.linkSystemLibrary("fltk");
         exe.linkSystemLibrary("fltk_images");

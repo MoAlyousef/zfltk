@@ -1,5 +1,5 @@
 const c = @cImport({
-    @cInclude("cfl_draw.h");
+    @cInclude("cfltk/cfl_draw.h");
 });
 const Font = @import("enums.zig").Font;
 const BoxType = @import("enums.zig").BoxType;

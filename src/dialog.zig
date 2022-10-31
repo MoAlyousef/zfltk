@@ -1,5 +1,5 @@
 const c = @cImport({
-    @cInclude("cfl_dialog.h");
+    @cInclude("cfltk/cfl_dialog.h");
 });
 
 pub const NativeFileDialogType = enum(i32) {

@@ -1,5 +1,5 @@
 const c = @cImport({
-    @cInclude("cfl_text.h");
+    @cInclude("cfltk/cfl_text.h");
 });
 const widget = @import("widget.zig");
 const enums = @import("enums.zig");

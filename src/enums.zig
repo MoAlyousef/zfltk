@@ -1,5 +1,5 @@
 const c = @cImport({
-    @cInclude("cfl_enums.h");
+    @cInclude("cfltk/cfl_enums.h");
 });
 
 pub const Color = struct {
