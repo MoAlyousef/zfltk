@@ -50,7 +50,7 @@ jobs:
       - uses: seanmiddleditch/gha-setup-ninja@master
       - uses: goto-bus-stop/setup-zig@v1
         with:
-          version: master
+          version: 0.10.0
       - name: build
         run: |
           git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
