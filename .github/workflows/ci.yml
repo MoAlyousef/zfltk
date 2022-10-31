@@ -7,10 +7,10 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build_posix:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Download deps
@@ -26,3 +26,17 @@ jobs:
 
       - name: Build
         run: zig build
+  build_windows:
+    strategy:
+      matrix:
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: master
+
+      - name: Build
+        run: zig build -target x86_64-windows-gnu
+        shell: bash
