@@ -40,7 +40,7 @@ pub fn build(b: *Builder) !void {
 
     var buf: [250]u8 = undefined;
     var lib_path: []u8 = undefined;
-    if (target.isWindows()) {
+    if (target.isWindows() and target.getCpuArch() == .x86_64) {
         lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-windows-gnu"});
     } else if (target.isDarwin() and target.getCpuArch() == .x86_64) {
         lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"cfltk/lib/x86_64-apple-darwin"});
