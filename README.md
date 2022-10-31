@@ -24,7 +24,7 @@ git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
 cd cfltk
 sudo ./scripts/bootstrap_linux.sh # for linux
 sudo ./scripts/bootstrap_macos.sh # for macos
-sudo ./scripts/bootstrap_windows.sh # for windows
+./scripts/bootstrap_windows.sh # for windows
 ```
 This requires CMake and a C++11 compiler, and is only required once.
 
@@ -65,6 +65,8 @@ pub fn build(b: *Builder) !void {
         exe.linkSystemLibrary("odbc32");
         exe.linkSystemLibrary("gdiplus");
     } else if (target.isDarwin()) {
+        exe.addIncludePath("/usr/local/include");
+        exe.addLibraryPath("/usr/local/lib");
         exe.linkFramework("Carbon");
         exe.linkFramework("Cocoa");
         exe.linkFramework("ApplicationServices");
