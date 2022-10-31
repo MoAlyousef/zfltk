@@ -28,7 +28,6 @@ const examples = &[_]Example{
     Example.new("channels", "examples/channels.zig", "Use messages to handle events"),
     Example.new("editormsgs", "examples/editormsgs.zig", "Use messages in the editor example"),
     Example.new("browser", "examples/browser.zig", "Browser example"),
-    Example.new("svg", "examples/svg.zig", "svg example"),
 };
 
 pub fn build(b: *Builder) !void {
@@ -53,6 +52,7 @@ pub fn build(b: *Builder) !void {
         if (target.isWindows()) {
             exe.addIncludePath("cfltk/bin/include");
             exe.addLibraryPath("cfltk/bin/lib");
+	    exe.linkSystemLibrary("fltk_gl");
             exe.linkSystemLibrary("ws2_32");
             exe.linkSystemLibrary("comctl32");
             exe.linkSystemLibrary("gdi32");
@@ -67,6 +67,8 @@ pub fn build(b: *Builder) !void {
             exe.linkSystemLibrary("kernel32");
             exe.linkSystemLibrary("odbc32");
             exe.linkSystemLibrary("gdiplus");
+	    exe.linkSystemLibrary("opengl32");
+	    exe.linkSystemLibrary("glu32");
         } else if (target.isDarwin()) {
             exe.addIncludePath("/usr/local/include");
             exe.addLibraryPath("/usr/local/lib");
