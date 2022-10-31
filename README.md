@@ -21,21 +21,32 @@ $ zig build <args> -target x86_64-windows-gnu
 Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
 ```
 $ git submodule add https://github.com/moalyousef/zfltk
-$ cd zfltk
-$ zig build
-$ cd ..
 ```
 then you will need a build.zig file as follows:
 ```zig
-const Builder = @import("std").build.Builder;
+const std = @import("std");
+const Builder = std.build.Builder;
 
-pub fn build(b: *Builder) void {
+pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
     const exe = b.addExecutable("main", "src/main.zig");
+    
+    var buf: [250]u8 = undefined;
+    var lib_path: []u8 = undefined;
+    if (target.isWindows() and target.getCpuArch() == .x86_64) {
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"zfltk/cfltk/lib/x86_64-windows-gnu"});
+    } else if (target.isDarwin() and target.getCpuArch() == .x86_64) {
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"zfltk/cfltk/lib/x86_64-apple-darwin"});
+    } else if (target.isLinux() and target.getCpuArch() == .x86_64 and target.isGnuLibC()) {
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{"zfltk/cfltk/lib/x86_64-linux-gnu"});
+    } else {
+        lib_path = try std.fmt.bufPrint(buf[0..], "{s}", .{std.os.getenv("CFLTK_BUNDLE_DIR").?});
+    }
+
     exe.addPackagePath("zfltk", "zfltk/src/zfltk.zig");
-    exe.addIncludeDir("zfltk/vendor/cfltk/include");
-    exe.addLibPath("zfltk/vendor/lib/lib");
+    exe.addIncludePath("zfltk/cfltk/include");
+    exe.addLibraryPath(lib_path);
     exe.linkSystemLibrary("cfltk");
     exe.linkSystemLibrary("fltk");
     exe.linkSystemLibrary("fltk_images");
@@ -57,7 +68,7 @@ pub fn build(b: *Builder) void {
         exe.linkSystemLibrary("user32");
         exe.linkSystemLibrary("kernel32");
         exe.linkSystemLibrary("odbc32");
-        // exe.linkSystemLibrary("gdiplus");
+        exe.linkSystemLibrary("gdiplus");
     } else if (target.isDarwin()) {
         exe.linkFramework("Carbon");
         exe.linkFramework("Cocoa");
@@ -99,9 +110,6 @@ $ zig build run
 ```
 
 ## Dependencies 
-
-CMake (version > 3.15), Git and a C++11 compiler need to be installed and in your PATH for a crossplatform build from source.
-
 - Windows: No dependencies.
 - MacOS: No dependencies.
 - Linux: X11 and OpenGL development headers need to be installed for development. The libraries themselves are available on linux distros with a graphical user interface.
