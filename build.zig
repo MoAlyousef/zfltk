@@ -66,6 +66,7 @@ pub fn build(b: *Builder) !void {
             exe.linkSystemLibrary("odbc32");
             exe.linkSystemLibrary("gdiplus");
         } else if (target.isDarwin()) {
+            exe.addIncludePath("/usr/local/include");
             exe.addLibraryPath("/usr/local/lib");
             exe.linkFramework("Carbon");
             exe.linkFramework("Cocoa");
