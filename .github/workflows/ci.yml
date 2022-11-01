@@ -65,6 +65,7 @@ jobs:
         with:
           version: 0.10.0
       - name: build
+        shell: cmd
         run: |
           pushd "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build" & call vcvars64.bat & popd
           git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
