@@ -50,8 +50,6 @@ pub fn build(b: *Builder) !void {
         exe.linkSystemLibrary("fltk_z");
         exe.linkSystemLibrary("c");
         if (target.isWindows()) {
-            exe.addIncludePath("cfltk/bin/include");
-            exe.addLibraryPath("cfltk/bin/lib");
             exe.linkSystemLibrary("ws2_32");
             exe.linkSystemLibrary("comctl32");
             exe.linkSystemLibrary("gdi32");
