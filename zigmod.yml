@@ -1,6 +1,0 @@
-id: m6q5i953cnr6uwzi2h67qpjqb24vsfuw6swh0xr2itq5tk0l
-name: zfltk
-main: src/zfltk.zig
-license: MIT
-description: Zig FLTK bindings
-dependencies:
