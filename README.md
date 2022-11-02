@@ -129,6 +129,10 @@ For Alpine linux:
 ```
 apk add pango-dev fontconfig-dev libxinerama-dev libxfixes-dev libxcursor-dev libpng-dev mesa-gl
 ```
+For nixos:
+```
+nix-shell --packages rustc cmake git gcc xorg.libXext xorg.libXft xorg.libXinerama xorg.libXcursor xorg.libXrender xorg.libXfixes libcerf pango cairo libGL mesa pkg-config
+```
 
 ## API
 Using the Zig wrapper (under development):
