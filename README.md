@@ -18,16 +18,6 @@ For Windows, you can use the gnu toolchain:
 zig build <args> -Dtarget=x86_64-windows-gnu
 ```
 ## Usage
-This repo tracks cfltk, the C bindings to FLTK. It will thus need to be installed to a system path:
-```
-git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
-cd cfltk
-sudo ./scripts/bootstrap_linux.sh # for linux
-sudo ./scripts/bootstrap_macos.sh # for macos
-./scripts/bootstrap_windows.sh # for windows
-```
-This requires CMake and a C++11 compiler, and is only required once.
-
 Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
 ```
 git submodule add https://github.com/moalyousef/zfltk
@@ -108,7 +98,16 @@ zig build run
 
 ## Dependencies 
 
-CMake (version > 3.15), Git and a C++11 compiler need to be installed and in your PATH for a crossplatform build of cfltk.
+This repo tracks cfltk, the C bindings to FLTK. It will thus need to be installed to a system path for dev development (cfltk and FLTK will be linked statically, so you won't have to deploy other libraries):
+```
+git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
+cd cfltk
+sudo ./scripts/bootstrap_linux.sh # for linux
+sudo ./scripts/bootstrap_macos.sh # for macos
+./scripts/bootstrap_windows.sh # for windows on msys2-mingw
+# for normal windows, check the github workflow for the cmake invocation 
+```
+This requires CMake and Ninja as a build system, and is only required once.
 
 - Windows: No dependencies.
 - MacOS: No dependencies.
