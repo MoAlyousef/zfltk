@@ -1,4 +1,5 @@
 const std = @import("std");
+const Sdk = @import("sdk.zig");
 const fs = std.fs;
 const Builder = std.build.Builder;
 
@@ -33,6 +34,7 @@ const examples = &[_]Example{
 pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
+    const sdk = Sdk.init(b);
 
     const examples_step = b.step("examples", "build the examples");
     b.default_step.dependOn(examples_step);
@@ -42,50 +44,7 @@ pub fn build(b: *Builder) !void {
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackagePath("zfltk", "src/zfltk.zig");
-        exe.linkSystemLibrary("cfltk");
-        exe.linkSystemLibrary("fltk");
-        exe.linkSystemLibrary("fltk_images");
-        exe.linkSystemLibrary("fltk_png");
-        exe.linkSystemLibrary("fltk_jpeg");
-        exe.linkSystemLibrary("fltk_z");
-        exe.linkSystemLibrary("c");
-        if (target.isWindows()) {
-            exe.linkSystemLibrary("ws2_32");
-            exe.linkSystemLibrary("comctl32");
-            exe.linkSystemLibrary("gdi32");
-            exe.linkSystemLibrary("oleaut32");
-            exe.linkSystemLibrary("ole32");
-            exe.linkSystemLibrary("uuid");
-            exe.linkSystemLibrary("shell32");
-            exe.linkSystemLibrary("advapi32");
-            exe.linkSystemLibrary("comdlg32");
-            exe.linkSystemLibrary("winspool");
-            exe.linkSystemLibrary("user32");
-            exe.linkSystemLibrary("kernel32");
-            exe.linkSystemLibrary("odbc32");
-            exe.linkSystemLibrary("gdiplus");
-        } else if (target.isDarwin()) {
-            exe.addIncludePath("/usr/local/include");
-            exe.addLibraryPath("/usr/local/lib");
-            exe.linkFramework("Carbon");
-            exe.linkFramework("Cocoa");
-            exe.linkFramework("ApplicationServices");
-        } else {
-            exe.linkSystemLibrary("pthread");
-            exe.linkSystemLibrary("X11");
-            exe.linkSystemLibrary("Xext");
-            exe.linkSystemLibrary("Xinerama");
-            exe.linkSystemLibrary("Xcursor");
-            exe.linkSystemLibrary("Xrender");
-            exe.linkSystemLibrary("Xfixes");
-            exe.linkSystemLibrary("Xft");
-            exe.linkSystemLibrary("fontconfig");
-            exe.linkSystemLibrary("pango-1.0");
-            exe.linkSystemLibrary("pangoxft-1.0");
-            exe.linkSystemLibrary("gobject-2.0");
-            exe.linkSystemLibrary("cairo");
-            exe.linkSystemLibrary("pangocairo-1.0");
-        }
+        sdk.link(exe);
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);
 
