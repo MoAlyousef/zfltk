@@ -23,7 +23,8 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) void {
     exe.linkSystemLibrary("fltk_png");
     exe.linkSystemLibrary("fltk_jpeg");
     exe.linkSystemLibrary("fltk_z");
-    exe.linkSystemLibrary("c");
+    exe.linkLibC();
+    exe.linkLibCpp();
     if (target.isWindows()) {
         exe.linkSystemLibrary("ws2_32");
         exe.linkSystemLibrary("comctl32");
