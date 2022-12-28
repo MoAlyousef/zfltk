@@ -21,7 +21,7 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
           cd cfltk
-          ./scripts/bootstrap_linux.sh
+          ./scripts/bootstrap_linux_with_gl.sh
           cd ../
           zig build
   build_macos:
