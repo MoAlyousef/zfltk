@@ -23,7 +23,7 @@ pub fn butCb(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
 
 pub fn main() !void {
     try fltkInit();
-    c.Fl_set_scheme("gtk+");
+    _ = c.Fl_set_scheme("gtk+");
     var win = c.Fl_Window_new(100, 100, 400, 300, "Hello");
     var but = c.Fl_Button_new(160, 220, 80, 40, "Click me!");
     var box = c.Fl_Box_new(10, 10, 380, 180, "");

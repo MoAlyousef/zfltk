@@ -35,7 +35,7 @@ pub fn setScheme(scheme: Scheme) void {
         .Plastic => "plastic",
         .Gleam => "gleam",
     };
-    c.Fl_set_scheme(temp);
+    _ = c.Fl_set_scheme(temp);
 }
 
 // Set the boxtype's draw callback
