@@ -62,5 +62,7 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) void {
         exe.linkSystemLibrary("gobject-2.0");
         exe.linkSystemLibrary("cairo");
         exe.linkSystemLibrary("pangocairo-1.0");
+        exe.linkSystemLibrary("GL");
+        exe.linkSystemLibrary("GLU");
     }
 }
