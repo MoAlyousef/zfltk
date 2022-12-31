@@ -44,7 +44,7 @@ pub fn build(b: *Builder) !void {
         exe.setTarget(target);
         exe.setBuildMode(mode);
         exe.addPackagePath("zfltk", "src/zfltk.zig");
-        sdk.link(exe);
+        try sdk.link(exe);
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);
 
