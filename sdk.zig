@@ -30,7 +30,26 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
         });
         try zfltk_init.step.make();
 
-        if (target.isWindows() or target.isDarwin()) {
+        if (target.isWindows()) {
+            const zfltk_config = b.addSystemCommand(&[_][]const u8{
+                "cmake",
+                "-B",
+                "vendor/bin",
+                "-S",
+                "vendor/cfltk",
+                "-GNinja",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_INSTALL_PREFIX=vendor/lib",
+                "-DFLTK_BUILD_TEST=OFF",
+                "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
+                "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
+                "-DOPTION_USE_SYSTEM_ZLIB=OFF",
+                "-DOPTION_USE_GL=ON",
+                "-DCFLTK_USE_OPENGL=ON",
+                "-DFLTK_BUILD_FLUID=OFF",
+            });
+            try zfltk_config.step.make();
+        } else if (target.isDarwin()) {
             const zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
@@ -45,6 +64,7 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
                 "-DOPTION_USE_SYSTEM_ZLIB=OFF",
                 "-DOPTION_USE_GL=ON",
                 "-DCFLTK_USE_OPENGL=ON",
+                "-DFLTK_BUILD_FLUID=OFF",
             });
             try zfltk_config.step.make();
         } else {
@@ -65,6 +85,7 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
                 "-DCFLTK_USE_OPENGL=ON",
                 "-DOPTION_USE_WAYLAND=OFF",
                 "-DOPTION_USE_CAIRO=ON",
+                "-DFLTK_BUILD_FLUID=OFF",
             });
             try zfltk_config.step.make();
         }
