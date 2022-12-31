@@ -1,5 +1,5 @@
 const c = @cImport({
-    @cInclude("cfltk/cfl_group.h");
+    @cInclude("cfl_group.h");
 });
 const widget = @import("widget.zig");
 

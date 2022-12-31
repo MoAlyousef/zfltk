@@ -1,6 +1,6 @@
 const c = @cImport({
-    @cInclude("cfltk/cfl_widget.h");
-    @cInclude("cfltk/cfl.h");
+    @cInclude("cfl_widget.h");
+    @cInclude("cfl.h");
 });
 const enums = @import("enums.zig");
 const group = @import("group.zig");

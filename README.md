@@ -152,11 +152,11 @@ pub fn main() !void {
 Using the C Api directly:
 ```zig
 const c = @cImport({
-    @cInclude("cfltk/cfl.h"); // Fl_run
-    @cInclude("cfltk/cfl_enums.h"); // Fl_Color_*
-    @cInclude("cfltk/cfl_button.h"); // Fl_Button
-    @cInclude("cfltk/cfl_box.h"); // Fl_Box
-    @cInclude("cfltk/cfl_window.h"); // Fl_Window
+    @cInclude("cfl.h"); // Fl_run
+    @cInclude("cfl_enums.h"); // Fl_Color_*
+    @cInclude("cfl_button.h"); // Fl_Button
+    @cInclude("cfl_box.h"); // Fl_Box
+    @cInclude("cfl_window.h"); // Fl_Window
 });
 
 pub fn butCb(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
@@ -178,7 +178,7 @@ pub fn main() void {
 You can also mix and match for any missing functionalities in the Zig wrapper:
 ```zig
 const c = @cImport({
-    @cInclude("cfltk/cfl.h"); // Fl_event_x() and Fl_event_y()
+    @cInclude("cfl.h"); // Fl_event_x() and Fl_event_y()
 });
 const zfltk = @import("zfltk");
 const app = zfltk.app;

@@ -1,5 +1,5 @@
 const c = @cImport({
-    @cInclude("cfltk/cfl.h"); // Fl_event_x(), Fl_event_y()
+    @cInclude("cfl.h"); // Fl_event_x(), Fl_event_y()
 });
 
 const zfltk = @import("zfltk");
