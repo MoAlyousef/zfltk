@@ -21,43 +21,43 @@ jobs:
         run: |
           git submodule update --init --recursive
           zig build
-  # build_macos:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: goto-bus-stop/setup-zig@v1
-  #       with:
-  #         version: 0.10.0
-  #     - name: Build
-  #       run: |
-  #         git submodule update --init --recursive
-  #         zig build
-  # build_windows-mingw:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: msys2/setup-msys2@v2
-  #       with:
-  #         msystem: MINGW64
-  #         update: true
-  #     - shell: msys2 {0}
-  #       run: |
-  #         pacman -Sy
-  #         pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-ninja $MINGW_PACKAGE_PREFIX-cc wget unzip git --needed
-  #         wget https://ziglang.org/download/0.10.0/zig-windows-x86_64-0.10.0.zip
-  #         unzip -qq zig-windows-x86_64-0.10.0.zip
-  #         git submodule update --init --recursive
-  #         zig-windows-x86_64-0.10.0/zig build --search-prefix $MINGW_PREFIX
-  # build_windows:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: goto-bus-stop/setup-zig@v1
-  #       with:
-  #         version: 0.10.0
-  #     - uses: seanmiddleditch/gha-setup-ninja@master
-  #     - name: build
-  #       shell: bash
-  #       run: |
-  #         git submodule update --init --recursive
-  #         zig build --search-prefix C:\\cfltk
+  build_macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: 0.10.0
+      - name: Build
+        run: |
+          git submodule update --init --recursive
+          zig build
+  build_windows-mingw:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+      - shell: msys2 {0}
+        run: |
+          pacman -Sy
+          pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-ninja $MINGW_PACKAGE_PREFIX-cc wget unzip git --needed
+          wget https://ziglang.org/download/0.10.0/zig-windows-x86_64-0.10.0.zip
+          unzip -qq zig-windows-x86_64-0.10.0.zip
+          git submodule update --init --recursive
+          zig-windows-x86_64-0.10.0/zig build --search-prefix $MINGW_PREFIX
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: 0.10.0
+      - uses: seanmiddleditch/gha-setup-ninja@master
+      - name: build
+        shell: bash
+        run: |
+          git submodule update --init --recursive
+          zig build
