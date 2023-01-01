@@ -3,6 +3,7 @@ const c = @cImport({
     @cInclude("cfl.h");
 });
 const enums = @import("enums.zig");
+const Color = enums.Color;
 const group = @import("group.zig");
 const image = @import("image.zig");
 
@@ -62,8 +63,8 @@ pub const Widget = struct {
         self.setCallback(shim, @intToPtr(?*anyopaque, @enumToInt(msg)));
     }
 
-    pub fn setColor(self: *const Widget, col: enums.Color) void {
-        c.Fl_Widget_set_color(self.inner, col.inner());
+    pub fn setColor(self: *const Widget, col: Color) void {
+        c.Fl_Widget_set_color(self.inner, col.toRgbi());
     }
 
     pub fn show(self: *const Widget) void {
@@ -114,16 +115,16 @@ pub const Widget = struct {
         c.Fl_Widget_set_type(self.inner, @enumToInt(t));
     }
 
-    pub fn color(self: *const Widget) enums.Color {
-        return enums.Color.from_rgbi(c.Fl_Widget_color(self.inner));
+    pub fn color(self: *const Widget) Color {
+        return Color.fromRgbi(c.Fl_Widget_color(self.inner));
     }
 
-    pub fn labelColor(self: *const Widget) enums.Color {
-        return enums.Color.from_rgbi(c.Fl_Widget_label_color(self.inner));
+    pub fn labelColor(self: *const Widget) Color {
+        return Color.fromRbgi(c.Fl_Widget_label_color(self.inner));
     }
 
-    pub fn setLabelColor(self: *const Widget, col: enums.Color) void {
-        c.Fl_Widget_set_label_color(self.inner, col.inner());
+    pub fn setLabelColor(self: *const Widget, col: Color) void {
+        c.Fl_Widget_set_label_color(self.inner, col.toRbgi());
     }
 
     pub fn labelFont(self: *const Widget) enums.Font {
@@ -183,7 +184,7 @@ pub const Widget = struct {
     }
 
     pub fn setSelectionColor(self: *const Widget, col: enums.Color) void {
-        c.Fl_Widget_set_selection_color(self.inner, col.inner());
+        c.Fl_Widget_set_selection_color(self.inner, col.toRgbi());
     }
 
     pub fn doCallback(self: *const Widget) void {

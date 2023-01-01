@@ -148,9 +148,9 @@ pub fn main() !void {
         helpCb,
         null,
     );
-    
+
     var item = mymenu.asMenu().findItem("&File/Quit...\t");
-    item.setLabelColor(enums.Color.from_rgbi(enums.Color.Red));
+    item.setLabelColor(enums.Color.fromRgbi(enums.Color.Red));
 
     try app.run();
 }

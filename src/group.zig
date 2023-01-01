@@ -69,23 +69,23 @@ pub const Group = struct {
         c.Fl_Group_end(self.inner);
     }
 
-    pub fn find(self: *const Group, w: *widget.Widget) u32 {
+    pub fn find(self: *const Group, w: *const widget.Widget) u32 {
         return c.Fl_Group_find(self.inner, w.*.raw());
     }
 
-    pub fn add(self: *const Group, w: *widget.Widget) void {
+    pub fn add(self: *const Group, w: *const widget.Widget) void {
         return c.Fl_Group_add(self.inner, w.*.raw());
     }
 
-    pub fn insert(self: *const Group, w: *widget.Widget, index: u32) void {
+    pub fn insert(self: *const Group, w: *const widget.Widget, index: u32) void {
         return c.Fl_Group_insert(self.inner, w.*.raw(), index);
     }
 
-    pub fn remove(self: *const Group, w: *widget.Widget) void {
+    pub fn remove(self: *const Group, w: *const widget.Widget) void {
         return c.Fl_Group_remove(self.inner, w.*.raw());
     }
 
-    pub fn resizable(self: *const Group, w: *widget.Widget) void {
+    pub fn resizable(self: *const Group, w: *const widget.Widget) void {
         return c.Fl_Group_resizable(self.inner, w.*.raw());
     }
 

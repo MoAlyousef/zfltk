@@ -2,8 +2,17 @@ const c = @cImport({
     @cInclude("cfl_enums.h");
 });
 
-pub const Color = struct {
-    inner_: u32 = 0,
+// DO NOT add more elements to this stuct.
+// Using 4 `u8`s in a packed struct makes an identical memory layout to a u32
+// (the color format FLTK uses) so this trick can be used to make Colors both
+// efficient and easy to use
+pub const Color = packed struct {
+    // Arranged like so because a vast majority of systems are little-endian
+    // TODO: use comptime to arrange big-endian when needed
+    i: u8 = 0,
+    b: u8 = 0,
+    g: u8 = 0,
+    r: u8 = 0,
     pub const ForeGround = 0;
     pub const BackGround2 = 7;
     pub const Inactive = 8;
@@ -30,18 +39,26 @@ pub const Color = struct {
     pub const DarkMagenta = 152;
     pub const DarkCyan = 140;
     pub const White = 255;
-    pub fn from_rgb(r: u8, g: u8, b: u8) Color {
-        var col = Color{};
-        col.inner_ = ((@intCast(u32, r) & 0xff) << 24) + ((@intCast(u32, g) & 0xff) << 16) + ((@intCast(u32, b) & 0xff) << 8);
-        return col;
+    pub fn toRgb(col: Color, r: *u8, g: *u8, b: *u8) void {
+        r = col.r;
+        g = col.g;
+        b = col.b;
     }
-    pub fn from_rgbi(val: u32) Color {
-        var col = Color{};
-        col.inner_ = val;
-        return col;
+    pub fn fromRgb(r: u8, g: u8, b: u8) Color {
+        return Color{ .r = r, .g = g, .b = b, .i = 0 };
     }
-    pub fn inner(self: Color) c_uint {
-        return self.inner_;
+    pub fn toRgbi(col: Color) u32 {
+        return @bitCast(u32, col);
+    }
+    // TODO: retrieve and fill the R, G and B values if set from an index
+    pub fn fromRgbi(val: u32) Color {
+        return @bitCast(Color, val);
+    }
+    pub fn toHex(col: Color) u24 {
+        return @truncate(u24, @bitCast(u32, col) >> 8);
+    }
+    pub fn fromHex(val: u24) Color {
+        return @bitCast(Color, @intCast(u32, val) << 8);
     }
 };
 

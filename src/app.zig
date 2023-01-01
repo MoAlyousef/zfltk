@@ -39,15 +39,15 @@ pub fn setScheme(scheme: Scheme) void {
 }
 
 // Set the boxtype's draw callback
-pub fn setBoxTypeEx(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, u32) void, ox: i32, oy: i32, ow: i32, oh: i32) void {
+pub fn setBoxTypeEx(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, enums.Color) void, ox: i32, oy: i32, ow: i32, oh: i32) void {
     c.Fl_set_box_type_cb(@enumToInt(box),
     // The function must be casted into an exported function before passing
-    @ptrCast(fn (i32, i32, i32, i32, u32) callconv(.C) void, f), ox, oy, ow, oh);
+    @ptrCast(*const fn (i32, i32, i32, i32, u32) callconv(.C) void, &f), ox, oy, ow, oh);
 }
 
 // Simplified version of setBoxTypeEx to keep code a bit cleaner when offsets
 // are unneeded
-pub fn setBoxType(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, u32) void) void {
+pub fn setBoxType(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, enums.Color) void) void {
     setBoxTypeEx(box, f, 0, 0, 0, 0);
 }
 
@@ -56,6 +56,14 @@ pub fn setBoxType(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, u32) v
 // same function name, one must be renamed to allow it to be used in Zig
 pub fn copyBoxType(destBox: enums.BoxType, srcBox: enums.BoxType) void {
     c.Fl_set_box_type(@enumToInt(destBox), @enumToInt(srcBox));
+}
+
+pub fn setVisibleFocus(focus: bool) void {
+    c.Fl_set_visible_focus(@boolToInt(focus));
+}
+
+pub fn setColor(idx: u8, col: enums.Color) void {
+    c.Fl_set_color(idx, col.r, col.g, col.b);
 }
 
 pub fn event() enums.Event {
