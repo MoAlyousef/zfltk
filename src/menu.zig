@@ -118,7 +118,7 @@ pub const Menu = struct {
     }
 
     pub fn setTextColor(self: *const Menu, col: enums.Color) void {
-        c.Fl_Menu_Bar_set_text_color(self.inner, col.inner());
+        c.Fl_Menu_Bar_set_text_color(self.inner, col.toRgbi());
     }
 
     pub fn setTextSize(self: *const Menu, sz: u32) void {
@@ -308,15 +308,15 @@ pub const MenuItem = struct {
     }
 
     pub fn color(self: *const MenuItem) enums.Color {
-        return enums.Color.from_rgbi(c.Fl_Menu_Item_color(self.inner));
+        return enums.Color.fromRgbi(c.Fl_Menu_Item_color(self.inner));
     }
 
     pub fn labelColor(self: *const MenuItem) enums.Color {
-        return enums.Color.from_rgbi(c.Fl_Menu_Item_label_color(self.inner));
+        return enums.Color.fromRgbi(c.Fl_Menu_Item_label_color(self.inner));
     }
 
     pub fn setLabelColor(self: *const MenuItem, col: enums.Color) void {
-        c.Fl_Menu_Item_set_label_color(self.inner, col.inner());
+        c.Fl_Menu_Item_set_label_color(self.inner, col.toRgbi());
     }
 
     pub fn labelFont(self: *const MenuItem) enums.Font {
