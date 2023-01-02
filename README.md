@@ -2,8 +2,8 @@
 A Zig wrapper for the FLTK gui library.
 
 ## Running the examples
-After cloning the repo, run:
 ```
+git clone https://github.com/MoAlyousef/zfltk --recurse-submodules
 cd zfltk
 zig build run-simple
 zig build run-capi
@@ -13,14 +13,13 @@ zig build run-image
 zig build run-mixed
 ```
 
-For Windows, you can use the gnu toolchain:
-```
-zig build <args> -Dtarget=x86_64-windows-gnu
-```
 ## Usage
 Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
 ```
 git submodule add https://github.com/moalyousef/zfltk
+cd zfltk
+git submodule update --init --recursive
+cd ..
 ```
 then you will need a build.zig file as follows:
 ```zig
@@ -56,16 +55,8 @@ zig build run
 
 ## Dependencies 
 
-This repo tracks cfltk, the C bindings to FLTK. It will thus need to be installed to a system path for dev development (cfltk and FLTK will be linked statically, so you won't have to deploy other libraries):
-```
-git clone https://github.com/MoAlyousef/cfltk --recurse-submodules
-cd cfltk
-sudo ./scripts/bootstrap_linux.sh # for linux
-sudo ./scripts/bootstrap_macos.sh # for macos
-./scripts/bootstrap_windows.sh # for windows on msys2-mingw
-# for normal windows, check the github workflow for the cmake invocation 
-```
-This requires CMake and Ninja as a build system, and is only required once.
+This repo tracks cfltk, the C bindings to FLTK. It (along with FLTK) is statically linked to your application.
+This requires CMake (and Ninja on Windows) as a build system, and is only required once.
 
 - Windows: No dependencies.
 - MacOS: No dependencies.
@@ -77,7 +68,7 @@ sudo apt-get install libx11-dev libxext-dev libxft-dev libxinerama-dev libxcurso
 ```
 For RHEL-based GUI distributions, that means running:
 ```
-sudo yum groupinstall "X Software Development" && yum install pango-devel libXinerama-devel libpng-devel
+sudo yum groupinstall "X Software Development" && yum install pango-devel libXinerama-devel libpng-devel libstdc++-static
 ```
 For Arch-based GUI distributions, that means running:
 ```
