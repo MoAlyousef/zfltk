@@ -191,7 +191,7 @@ pub const Widget = struct {
         c.Fl_Widget_do_callback(self.inner);
     }
 
-    pub fn clearVisiblFocus(self: *const Widget) void {
+    pub fn clearVisibleFocus(self: *const Widget) void {
         c.Fl_Widget_clear_visible_focus(self.inner);
     }
 

@@ -11,6 +11,7 @@ const Scheme = enum {
     Gtk,
     Plastic,
     Gleam,
+    Oxy
 };
 
 // fltk initizialization of optional functionalities
@@ -34,6 +35,7 @@ pub fn setScheme(scheme: Scheme) void {
         .Gtk => "gtk+",
         .Plastic => "plastic",
         .Gleam => "gleam",
+        .Oxy => "oxy"
     };
     _ = c.Fl_set_scheme(temp);
 }

@@ -31,9 +31,10 @@ pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
 
 pub fn main() !void {
     try app.init();
-    app.setScheme(.Gtk);
+    app.setScheme(.Oxy);
     var win = window.Window.new(100, 100, 400, 300, "Hello");
     var but = button.Button.new(160, 220, 80, 40, "Click");
+    but.asWidget().clearVisibleFocus();
     var mybox = box.Box.new(10, 10, 380, 180, "");
     win.asGroup().end();
     win.asWidget().show();
