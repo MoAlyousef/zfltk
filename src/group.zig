@@ -331,6 +331,82 @@ pub const Scroll = struct {
     }
 };
 
+
+pub const FlexType = enum(i32) {
+    Vertical = 0,
+    Horizontal = 1,
+};
+
+pub const Flex = struct {
+    inner: ?*c.Fl_Flex,
+    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Flex {
+        const ptr = c.Fl_Flex_new(x, y, w, h, title);
+        if (ptr == null) unreachable;
+        return Flex{
+            .inner = ptr,
+        };
+    }
+
+    pub fn raw(self: *const Flex) ?*c.Fl_Flex {
+        return self.inner;
+    }
+
+    pub fn fromRaw(ptr: ?*c.Fl_Flex) Flex {
+        return Flex{
+            .inner = ptr,
+        };
+    }
+
+    pub fn fromWidgetPtr(w: widget.WidgetPtr) Flex {
+        return Flex{
+            .inner = @ptrCast(?*c.Fl_Flex, w),
+        };
+    }
+
+    pub fn end(self: *const Flex) void {
+        c.Fl_Flex_end(self.inner);
+    }
+
+    pub fn fromVoidPtr(ptr: ?*anyopaque) Flex {
+        return Flex{
+            .inner = @ptrCast(?*c.Fl_Flex, ptr),
+        };
+    }
+
+    pub fn toVoidPtr(self: *const Flex) ?*anyopaque {
+        return @ptrCast(?*anyopaque, self.inner);
+    }
+
+    pub fn asWidget(self: *const Flex) widget.Widget {
+        return widget.Widget{
+            .inner = @ptrCast(widget.WidgetPtr, self.inner),
+        };
+    }
+
+    pub fn asGroup(self: *const Flex) Group {
+        return Group{
+            .inner = @ptrCast(?*c.Fl_Group, self.inner),
+        };
+    }
+
+    pub fn handle(self: *const Flex, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+        c.Fl_Flex_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
+    }
+
+    pub fn draw(self: *const Flex, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        c.Fl_Flex_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
+    }
+
+    /// Set the size of the child
+    pub fn fixed(self: *const Flex, w: *const widget.Widget, sz: i32) void {
+        c.Fl_Flex_set_size(self.inner, @ptrCast(*c.Fl_Widget, w.*.raw()), sz);
+    }
+
+    pub fn setPad(self: *const Flex, sz: i32) void {
+        c.Fl_Flex_set_pad(self.inner, sz);
+    }
+};
+
 test "all" {
     @import("std").testing.refAllDecls(@This());
 }

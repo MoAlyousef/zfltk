@@ -38,6 +38,16 @@ pub fn setScheme(scheme: Scheme) void {
     _ = c.Fl_set_scheme(temp);
 }
 
+pub fn lock() !void {
+    if (c.Fl_lock() != 0) {
+        return error.LockError;
+    }
+}
+
+pub fn unlock() void {
+    c.Fl_unlock();
+}
+
 // Set the boxtype's draw callback
 pub fn setBoxTypeEx(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, enums.Color) void, ox: i32, oy: i32, ow: i32, oh: i32) void {
     c.Fl_set_box_type_cb(@enumToInt(box),
@@ -111,6 +121,10 @@ pub const WidgetTracker = struct {
 
 pub fn wait() bool {
     return c.Fl_wait() != 0;
+}
+
+pub fn waitFor(v: f64) bool {
+    return c.Fl_wait_for(v) != 0;
 }
 
 pub fn awake() void {
