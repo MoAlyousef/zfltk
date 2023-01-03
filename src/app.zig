@@ -113,7 +113,7 @@ pub fn wait() bool {
     return c.Fl_wait() != 0;
 }
 
-pub fn awake() {
+pub fn awake() void {
     c.Fl_awake();
 }
 
