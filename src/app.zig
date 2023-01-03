@@ -113,6 +113,10 @@ pub fn wait() bool {
     return c.Fl_wait() != 0;
 }
 
+pub fn awake() {
+    c.Fl_awake();
+}
+
 pub fn send(comptime T: type, t: T) void {
     c.Fl_awake_msg(@intToPtr(?*anyopaque, @enumToInt(t)));
 }
