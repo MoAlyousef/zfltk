@@ -2,6 +2,7 @@ const c = @cImport({
     @cInclude("cfl_group.h");
 });
 const widget = @import("widget.zig");
+const Widget = widget.Widget;
 
 pub const GroupPtr = ?*c.Fl_Group;
 
@@ -226,11 +227,15 @@ pub const Tabs = struct {
         };
     }
 
-    pub fn handle(self: *const Tabs, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn setHandle(self: *const Tabs, cb: fn (w: Widget, ev: i32) i32) void {
+        c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), null);
+    }
+
+    pub fn setHandleEx(self: *const Tabs, cb: fn (w: Widget, ev: i32, data: ?*anyopaque) i32, data: ?*anyopaque) void {
         c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *const Tabs, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Tabs, cb: fn (w: Widget, data: ?*anyopaque) void, data: ?*anyopaque) void {
         c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -331,7 +336,6 @@ pub const Scroll = struct {
     }
 };
 
-
 pub const FlexType = enum(i32) {
     Vertical = 0,
     Horizontal = 1,
@@ -389,16 +393,16 @@ pub const Flex = struct {
         };
     }
 
-    pub fn handle(self: *const Flex, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Flex, cb: fn (w: Widget, ev: i32, data: ?*anyopaque) i32, data: ?*anyopaque) void {
         c.Fl_Flex_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *const Flex, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Flex, cb: fn (w: Widget, data: ?*anyopaque) void, data: ?*anyopaque) void {
         c.Fl_Flex_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
     /// Set the size of the child
-    pub fn fixed(self: *const Flex, w: *const widget.Widget, sz: i32) void {
+    pub fn fixed(self: *const Flex, w: *const Widget, sz: i32) void {
         c.Fl_Flex_set_size(self.inner, @ptrCast(*c.Fl_Widget, w.*.raw()), sz);
     }
 

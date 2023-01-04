@@ -2,6 +2,7 @@ const c = @cImport({
     @cInclude("cfl_button.h");
 });
 const widget = @import("widget.zig");
+const Widget = widget.Widget;
 const enums = @import("enums.zig");
 
 pub const Button = struct {
@@ -46,11 +47,11 @@ pub const Button = struct {
         };
     }
 
-    pub fn handle(self: *const Button, comptime cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const Button, comptime cb: fn (w: Widget, ev: i32, data: ?*anyopaque) i32, data: ?*anyopaque) void {
         c.Fl_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, &cb), data);
     }
 
-    pub fn draw(self: *const Button, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const Button, cb: fn (w: Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
@@ -188,11 +189,11 @@ pub const CheckButton = struct {
         };
     }
 
-    pub fn handle(self: *const CheckButton, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+    pub fn handle(self: *const CheckButton, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) i32, data: ?*anyopaque) void {
         c.Fl_Check_Button_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
     }
 
-    pub fn draw(self: *const CheckButton, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *const CheckButton, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) void, data: ?*anyopaque) void {
         c.Fl_Check_Button_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 };

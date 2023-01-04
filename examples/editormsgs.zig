@@ -1,6 +1,7 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
 const widget = zfltk.widget;
+const Widget = widget.Widget;
 const window = zfltk.window;
 const menu = zfltk.menu;
 const enums = zfltk.enums;
@@ -21,9 +22,8 @@ pub const Message = enum(usize) {
 
 // To avoid exiting when hitting escape.
 // Also logic can be added to prompt the user to save their work
-pub fn winCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
+pub fn winCb(w: Widget) void {
     _ = w;
-    _ = data;
     if (app.event() == enums.Event.Close) {
         app.send(Message, .Quit);
     }
@@ -43,7 +43,7 @@ pub fn main() !void {
     editor.asTextDisplay().setLinenumberWidth(24);
     win.asGroup().end();
     win.asWidget().show();
-    win.asWidget().setCallback(winCb, null);
+    win.asWidget().setCallback(winCb);
 
     mymenu.asMenu().add_emit(
         "&File/New...\t",

@@ -14,9 +14,9 @@ const ButtonMessage = enum(usize) {
     Released,
 };
 
-pub fn butCb(w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32 {
-    _ = w;
+pub fn butCb(w: widget.Widget, ev: i32, data: ?*anyopaque) i32 {
     _ = data;
+    _ = w;
     switch (@intToEnum(Event, ev)) {
         Event.Push => {
             app.send(ButtonMessage, .Pushed);
@@ -26,7 +26,7 @@ pub fn butCb(w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32 {
             app.send(ButtonMessage, .Released);
             return 1;
         },
-        else => return 0,    
+        else => return 0,
     }
     return 0;
 }
