@@ -17,6 +17,8 @@ pub fn main() !void {
     _ = button.Button.new(0, 0, 0, 40, "Button 1");
     _ = button.Button.new(0, 0, 0, 40, "Button 2");
     _ = button.Button.new(0, 0, 0, 40, "Button 3");
+    win.asGroup().add(&pack.asWidget());
+    win.asGroup().resizable(&pack.asWidget());
     pack.asGroup().end();
     win.asGroup().end();
     win.asWidget().show();

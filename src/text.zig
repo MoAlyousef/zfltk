@@ -200,11 +200,11 @@ pub const TextDisplay = struct {
         c.Fl_Text_Display_set_text_color(self.inner, col.inner());
     }
 
-    pub fn setTextSize(self: *const TextDisplay, sz: u32) void {
+    pub fn setTextSize(self: *const TextDisplay, sz: i32) void {
         c.Fl_Text_Display_set_text_size(self.inner, sz);
     }
 
-    pub fn scroll(self: *const TextDisplay, topLineNum: u32, horizOffset: u32) void {
+    pub fn scroll(self: *const TextDisplay, topLineNum: i32, horizOffset: i32) void {
         c.Fl_Text_Display_scroll(self.inner, topLineNum, horizOffset);
     }
 

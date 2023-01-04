@@ -1,15 +1,16 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
 const widget = zfltk.widget;
+const Widget = widget.Widget;
 const window = zfltk.window;
 const button = zfltk.button;
 const box = zfltk.box;
 const enums = zfltk.enums;
 
-pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
+pub fn butCb(w: Widget, data: ?*anyopaque) void {
     var mybox = widget.Widget.fromVoidPtr(data);
     mybox.setLabel("Hello World!");
-    var but = button.Button.fromWidgetPtr(w); // You can still use a Widget.fromWidgetPtr
+    var but = button.Button.fromWidgetPtr(w.inner); // You can still use a Widget.fromWidgetPtr
     but.asWidget().setColor(enums.Color.fromRgbi(enums.Color.Cyan));
 }
 
@@ -24,6 +25,6 @@ pub fn main() !void {
     mybox.asWidget().setLabelSize(18);
     win.asGroup().end();
     win.asWidget().show();
-    but.asWidget().setCallback(butCb, mybox.toVoidPtr());
+    but.asWidget().setCallbackEx(butCb, mybox.toVoidPtr());
     try app.run();
 }

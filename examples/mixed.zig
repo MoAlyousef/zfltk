@@ -5,14 +5,14 @@ const c = @cImport({
 const zfltk = @import("zfltk");
 const app = zfltk.app;
 const widget = zfltk.widget;
+const Widget = widget.Widget;
 const window = zfltk.window;
 const button = zfltk.button;
 const std = @import("std");
 
-pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
+pub fn butCb(w: Widget) void {
     _ = w;
-    _ = data;
-    std.debug.print("{},{}\n", .{c.Fl_event_x(), c.Fl_event_y()});
+    std.debug.print("{},{}\n", .{ c.Fl_event_x(), c.Fl_event_y() });
 }
 
 pub fn main() !void {
@@ -21,6 +21,6 @@ pub fn main() !void {
     var but = button.Button.new(160, 200, 80, 40, "Click");
     win.asGroup().end();
     win.asWidget().show();
-    but.asWidget().setCallback(butCb, null);
+    but.asWidget().setCallback(butCb);
     try app.run();
 }

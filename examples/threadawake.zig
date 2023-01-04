@@ -23,9 +23,11 @@ pub fn thread_func(data: ?*anyopaque) !void {
     }
 }
 
-pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
+pub fn butCb(w: widget.Widget, data: ?*anyopaque) void {
     _ = w;
-    var thread = std.Thread.spawn(.{}, thread_func, .{data}) catch { return; };
+    var thread = std.Thread.spawn(.{}, thread_func, .{data}) catch {
+        return;
+    };
     thread.detach();
 }
 
@@ -38,6 +40,6 @@ pub fn main() !void {
     var mybox = box.Box.new(10, 10, 380, 180, "");
     win.asGroup().end();
     win.asWidget().show();
-    but.asWidget().setCallback(butCb, mybox.toVoidPtr());
+    but.asWidget().setCallbackEx(butCb, mybox.toVoidPtr());
     try app.run();
 }

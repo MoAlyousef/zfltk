@@ -2,7 +2,11 @@ const c = @cImport({
     @cInclude("cfl_input.h");
 });
 const widget = @import("widget.zig");
+const Widget = widget.Widget;
 const enums = @import("enums.zig");
+const Event = enums.Event;
+const Color = enums.Color;
+const Font = enums.Font;
 
 pub const Input = struct {
     inner: ?*c.Fl_Input,
@@ -46,8 +50,12 @@ pub const Input = struct {
         };
     }
 
-    pub fn handle(self: *const Input, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
+    pub fn setHandle(self: *const Input, comptime f: fn (w: Widget, ev: Event) bool) void {
+        c.Fl_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, &f), null);
+    }
+
+    pub fn setHandleEx(self: *const Input, comptime f: fn (w: Widget, ev: Event, data: ?*anyopaque) i32, data: ?*anyopaque) void {
+        c.Fl_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, &f), data);
     }
 
     pub fn draw(self: *const Input, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
@@ -58,19 +66,32 @@ pub const Input = struct {
         return c.Fl_Input_value(self.inner);
     }
 
-    pub fn setValue(self: *const Input, val: [*c]const u8) void {
-        c.Fl_Input_set_value(self.inner, val);
+    pub fn insert(self: *const Input, val: [*c]const u8, idx: u16) !void {
+        _ = c.Fl_Input_insert(self.inner, val, idx);
     }
 
-    pub fn setTextFont(self: *const Input, font: enums.Font) void {
+    // TODO: handle errors
+    pub fn setValue(self: *const Input, val: [*c]const u8) !void {
+        _ = c.Fl_Input_set_value(self.inner, val);
+    }
+
+    pub fn position(self: *const Input) u16 {
+        return @intCast(u16, c.Fl_Input_position(self.inner));
+    }
+
+    pub fn setPosition(self: *const Input, sz: u16) !void {
+        _ = c.Fl_Input_set_position(self.inner, sz);
+    }
+
+    pub fn setTextFont(self: *const Input, font: Font) void {
         c.Fl_Input_set_text_font(self.inner, @enumToInt(font));
     }
 
-    pub fn setTextColor(self: *const Input, col: enums.Color) void {
+    pub fn setTextColor(self: *const Input, col: Color) void {
         c.Fl_Input_set_text_color(self.inner, col.inner());
     }
 
-    pub fn setTextSize(self: *const Input, sz: u32) void {
+    pub fn setTextSize(self: *const Input, sz: i32) void {
         c.Fl_Input_set_text_size(self.inner, sz);
     }
 };

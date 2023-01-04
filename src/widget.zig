@@ -9,14 +9,15 @@ const image = @import("image.zig");
 
 pub const WidgetPtr = ?*c.Fl_Widget;
 
-fn shim(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
+fn shim(w: Widget, data: ?*anyopaque) void {
     _ = w;
     c.Fl_awake_msg(data);
 }
 
-pub const Widget = struct {
+pub const Widget = packed struct {
     inner: ?*c.Fl_Widget,
-    pub fn new(coord_x: i32, coord_y: i32, width: i32, height: i32, title: [*c]const u8) Widget {
+
+    pub fn new(coord_x: u16, coord_y: u16, width: u16, height: u16, title: [*c]const u8) Widget {
         const ptr = c.Fl_Widget_new(coord_x, coord_y, width, height, title);
         if (ptr == null) unreachable;
         return Widget{
@@ -55,12 +56,17 @@ pub const Widget = struct {
         self.inner = null;
     }
 
-    pub fn setCallback(self: *const Widget, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Widget_set_callback(self.inner, cb, data);
+    pub fn setCallback(self: *const Widget, comptime f: fn (w: Widget) void) void {
+        c.Fl_Widget_set_callback(self.inner, @ptrCast(*const fn (?*c.Fl_Widget, ?*anyopaque) callconv(.C) void, &f), null);
+    }
+
+    // Like `setCallback`, but also gives a data param
+    pub fn setCallbackEx(self: *const Widget, comptime f: fn (w: Widget, data: ?*anyopaque) void, data: ?*anyopaque) void {
+        c.Fl_Widget_set_callback(self.inner, @ptrCast(*const fn (?*c.Fl_Widget, ?*anyopaque) callconv(.C) void, &f), data);
     }
 
     pub fn emit(self: *const Widget, comptime T: type, msg: T) void {
-        self.setCallback(shim, @intToPtr(?*anyopaque, @enumToInt(msg)));
+        self.setCallbackEx(shim, @intToPtr(?*anyopaque, @enumToInt(msg)));
     }
 
     pub fn setColor(self: *const Widget, col: Color) void {
@@ -79,7 +85,7 @@ pub const Widget = struct {
         c.Fl_Widget_set_label(self.inner, str);
     }
 
-    pub fn resize(self: *const Widget, coord_x: i32, coord_y: i32, width: i32, height: i32) void {
+    pub fn resize(self: *const Widget, coord_x: u16, coord_y: u16, width: u16, height: u16) void {
         c.Fl_Widget_resize(self.inner, coord_x, coord_y, width, height);
     }
 
@@ -87,19 +93,19 @@ pub const Widget = struct {
         c.Fl_Widget_redraw(self.inner);
     }
 
-    pub fn x(self: *const Widget) i32 {
+    pub fn x(self: *const Widget) u16 {
         return c.Fl_Widget_x(self.inner);
     }
 
-    pub fn y(self: *const Widget) i32 {
+    pub fn y(self: *const Widget) u16 {
         return c.Fl_Widget_y(self.inner);
     }
 
-    pub fn w(self: *const Widget) i32 {
+    pub fn w(self: *const Widget) u16 {
         return c.Fl_Widget_w(self.inner);
     }
 
-    pub fn h(self: *const Widget) i32 {
+    pub fn h(self: *const Widget) u16 {
         return c.Fl_Widget_h(self.inner);
     }
 
@@ -135,15 +141,19 @@ pub const Widget = struct {
         c.Fl_Widget_set_label_font(self.inner, @enumToInt(font));
     }
 
-    pub fn labelSize(self: *const Widget) i32 {
-        c.Fl_Widget_label_size(self.inner);
+    pub fn labelSize(self: *const Widget) u16 {
+        @intCast(u16, c.Fl_Widget_label_size(self.inner));
     }
 
-    pub fn setLabelSize(self: *const Widget, sz: i32) void {
+    pub fn setLabelSize(self: *const Widget, sz: u16) void {
         c.Fl_Widget_set_label_size(self.inner, sz);
     }
 
-    pub fn setAlign(self: *const Widget, a: i32) void {
+    pub fn labelAlign(self: *const Widget) i32 {
+        return c.Fl_Widget_align(self.inner);
+    }
+
+    pub fn setLabelAlign(self: *const Widget, a: i32) void {
         c.Fl_Widget_set_align(self.inner, a);
     }
 
@@ -195,15 +205,11 @@ pub const Widget = struct {
         c.Fl_Widget_clear_visible_focus(self.inner);
     }
 
-    pub fn visibleFocus(self: *const Widget, v: bool) void {
-        c.Fl_Widget_visible_focus(self.inner, v);
+    pub fn setVisibleFocus(self: *const Widget, v: bool) void {
+        c.Fl_Widget_visible_focus(self.inner, @boolToInt(v));
     }
 
-    pub fn getAlign(self: *const Widget) i32 {
-        return c.Fl_Widget_align(self.inner);
-    }
-
-    pub fn setLabelLype(self: *const Widget, typ: enums.LabelType) void {
+    pub fn setLabelType(self: *const Widget, typ: enums.LabelType) void {
         c.Fl_Widget_set_label_type(self.inner, @enumToInt(typ));
     }
 
@@ -216,6 +222,10 @@ pub const Widget = struct {
             self.inner,
             txt,
         );
+    }
+
+    pub fn takeFocus(self: *const Widget) void {
+        c.Fl_set_focus(self.inner);
     }
 };
 

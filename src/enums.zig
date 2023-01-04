@@ -1,5 +1,6 @@
 const c = @cImport({
-    @cInclude("cfl_enums.h");
+    @cInclude("cfl.h");
+    //    @cInclude("cfl_enums.h");
 });
 
 // DO NOT add more elements to this stuct.
@@ -13,15 +14,16 @@ pub const Color = packed struct {
     b: u8 = 0,
     g: u8 = 0,
     r: u8 = 0,
-    pub const ForeGround = 0;
-    pub const BackGround2 = 7;
+
+    pub const Foreground = 0;
+    pub const Background2 = 7;
     pub const Inactive = 8;
     pub const Selection = 15;
     pub const Gray0 = 32;
     pub const Dark3 = 39;
     pub const Dark2 = 45;
     pub const Dark1 = 47;
-    pub const BackGround = 49;
+    pub const Background = 49;
     pub const Light1 = 50;
     pub const Light2 = 52;
     pub const Light3 = 54;
@@ -39,26 +41,85 @@ pub const Color = packed struct {
     pub const DarkMagenta = 152;
     pub const DarkCyan = 140;
     pub const White = 255;
+
     pub fn toRgb(col: Color, r: *u8, g: *u8, b: *u8) void {
         r = col.r;
         g = col.g;
         b = col.b;
     }
+
     pub fn fromRgb(r: u8, g: u8, b: u8) Color {
+        // This is a special exception as FLTK's `0` index is the
+        // foreground for some reason. Eg: if you override the foreground
+        // color then try to set another color to black, it would set it to
+        // the new foreground color
+        if (r + g + b == 0) {
+            return Color.fromRgbi(Black);
+        }
+
         return Color{ .r = r, .g = g, .b = b, .i = 0 };
     }
+
     pub fn toRgbi(col: Color) u32 {
         return @bitCast(u32, col);
     }
-    // TODO: retrieve and fill the R, G and B values if set from an index
+
     pub fn fromRgbi(val: u32) Color {
-        return @bitCast(Color, val);
+        var col = @bitCast(Color, val);
+
+        // If the color is indexed, set find out what the R, G and B values
+        // are and set the struct's fields
+        if (col.i != 0) {
+            c.Fl_get_color_rgb(col.i, &col.r, &col.g, &col.b);
+        }
+
+        return col;
     }
+
     pub fn toHex(col: Color) u24 {
         return @truncate(u24, @bitCast(u32, col) >> 8);
     }
+
     pub fn fromHex(val: u24) Color {
+        if (val == 0) {
+            return Color.fromRgbi(Black);
+        }
+
         return @bitCast(Color, @intCast(u32, val) << 8);
+    }
+
+    // Seems really redundant and the FLTK docs don't even appear to document
+    // how much a color gets darkened/lightened
+    //    pub fn darker(col: Color) Color {
+    //        return Color.fromRgbi(c.Fl_darker(col.toRgbi()));
+    //    }
+
+    pub fn darken(col: Color, val: u8) Color {
+        var new_col = col;
+
+        if (new_col.i != 0) {
+            c.Fl_get_color_rgb(new_col.i, &new_col.r, &new_col.g, &new_col.b);
+        }
+
+        new_col.r -|= val;
+        new_col.g -|= val;
+        new_col.b -|= val;
+
+        return new_col;
+    }
+
+    pub fn lighten(col: Color, val: u8) Color {
+        var new_col = col;
+
+        if (new_col.i != 0) {
+            c.Fl_get_color_rgb(new_col.i, &new_col.r, &new_col.g, &new_col.b);
+        }
+
+        new_col.r +|= val;
+        new_col.g +|= val;
+        new_col.b +|= val;
+
+        return new_col;
     }
 };
 
@@ -199,6 +260,9 @@ pub const Event = enum(i32) {
     Fullscreen,
     ZoomGesture,
     ZoomEvent,
+    FILLER, // FLTK sends `28` as an event occasionally and this doesn't appear
+    // to be documented anywhere. This is only included to keep
+    // programs from crashing from a non-existent enum
 };
 
 pub const Font = enum(i32) {

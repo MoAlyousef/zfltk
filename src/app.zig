@@ -4,6 +4,7 @@ const c = @cImport({
 });
 const widget = @import("widget.zig");
 const enums = @import("enums.zig");
+const Font = enums.Font;
 const std = @import("std");
 
 const Scheme = enum {
@@ -11,7 +12,7 @@ const Scheme = enum {
     Gtk,
     Plastic,
     Gleam,
-    Oxy
+    Oxy,
 };
 
 // fltk initizialization of optional functionalities
@@ -30,14 +31,13 @@ pub fn run() !void {
 }
 
 pub fn setScheme(scheme: Scheme) void {
-    var temp: [*:0]const u8 = switch (scheme) {
+    _ = c.Fl_set_scheme(switch (scheme) {
         .Base => "base",
         .Gtk => "gtk+",
         .Plastic => "plastic",
         .Gleam => "gleam",
-        .Oxy => "oxy"
-    };
-    _ = c.Fl_set_scheme(temp);
+        .Oxy => "oxy",
+    });
 }
 
 pub fn lock() !void {
@@ -78,6 +78,18 @@ pub fn setColor(idx: u8, col: enums.Color) void {
     c.Fl_set_color(idx, col.r, col.g, col.b);
 }
 
+pub fn loadFont(path: [*:0]const u8) !void {
+    _ = c.Fl_load_font(path);
+}
+
+pub fn unloadFont(path: [*:0]const u8) !void {
+    c.Fl_unload_font(path);
+}
+
+pub fn setFont(face: Font, name: [*:0]const u8) void {
+    c.Fl_set_font2(@enumToInt(face), name);
+}
+
 pub fn event() enums.Event {
     return @intToEnum(enums.Event, c.Fl_event());
 }
@@ -88,6 +100,11 @@ pub fn eventX() i32 {
 
 pub fn eventY() i32 {
     return c.Fl_event_y();
+}
+
+// TODO: Implement as an enum (maybe have another function for unknown keys?)
+pub fn eventKey() i32 {
+    return c.Fl_event_key();
 }
 
 pub fn background(r: u8, g: u8, b: u8) void {
@@ -121,6 +138,10 @@ pub const WidgetTracker = struct {
     }
 };
 
+pub fn awake() void {
+    c.Fl_awake();
+}
+
 pub fn wait() bool {
     return c.Fl_wait() != 0;
 }
@@ -129,8 +150,8 @@ pub fn waitFor(v: f64) bool {
     return c.Fl_wait_for(v) != 0;
 }
 
-pub fn awake() void {
-    c.Fl_awake();
+pub fn check() i32 {
+    return c.Fl_check();
 }
 
 pub fn send(comptime T: type, t: T) void {
@@ -146,8 +167,16 @@ pub fn recv(comptime T: type) ?T {
     return null;
 }
 
-pub fn rgb_color(r: u8, g: u8, b: u8) u32 {
-    return c.Fl_get_rgb_color(r, g, b);
+// Executes the callback function after `d` (duration in seconds) has passed
+pub fn timeout(d: f32, comptime f: fn () void) void {
+    const v: ?*anyopaque = null;
+    c.Fl_add_timeout(d, @ptrCast(?*const fn (?*anyopaque) callconv(.C) void, &f), v);
+}
+
+// The same as `timeout` but allows for data to be passed in
+pub fn timeoutEx(d: f32, comptime f: fn (?*anyopaque) void) void {
+    const v: ?*anyopaque = null;
+    c.Fl_add_timeout(d, @ptrCast(?*const fn (?*anyopaque) callconv(.C) void, &f), v);
 }
 
 test "all" {
