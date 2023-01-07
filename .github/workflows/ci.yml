@@ -26,6 +26,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: 0.11.0-dev.1183+2b9478ce1
       - name: Build
         run: |
           git submodule update --init --recursive
