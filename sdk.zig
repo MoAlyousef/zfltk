@@ -15,10 +15,12 @@ pub fn init(b: *Builder) *Sdk {
     return sdk;
 }
 
-pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
+pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
     const b = sdk.builder;
     const target = exe.target;
-    _ = fs.cwd().openDir("vendor/lib", .{}) catch |err| {
+    var buf: [1024]u8 = undefined;
+    var sdk_lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/lib", .{sdk_path});
+    _ = fs.cwd().openDir(sdk_lib_dir, .{}) catch |err| {
         std.debug.print("Warning: {!}. The cfltk library will be grabbed and built from source!\n", .{err});
         const zfltk_init = b.addSystemCommand(&[_][]const u8{
             "git",
@@ -29,17 +31,22 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
             "--depth=1",
         });
         try zfltk_init.step.make();
-
+        var bin_buf: [250]u8 = undefined;
+        var src_buf: [250]u8 = undefined;
+        var inst_buf: [250]u8 = undefined;
+        var cmake_bin_path = try std.fmt.bufPrint(bin_buf[0..], "{s}/vendor/bin", .{sdk_path});
+        var cmake_src_path = try std.fmt.bufPrint(src_buf[0..], "{s}/vendor/cfltk", .{sdk_path});
+        var cmake_inst_path = try std.fmt.bufPrint(inst_buf[0..], "-DCMAKE_INSTALL_PREFIX={s}/vendor/lib", .{sdk_path});
         if (target.isWindows()) {
             const zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
-                "vendor/bin",
+                cmake_bin_path,
                 "-S",
-                "vendor/cfltk",
+                cmake_src_path,
                 "-GNinja",
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DCMAKE_INSTALL_PREFIX=vendor/lib",
+                cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
                 "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
@@ -53,11 +60,11 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
             const zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
-                "vendor/bin",
+                cmake_bin_path,
                 "-S",
-                "vendor/cfltk",
+                cmake_src_path,
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DCMAKE_INSTALL_PREFIX=vendor/lib",
+                cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
                 "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
@@ -71,11 +78,11 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
             const zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
-                "vendor/bin",
+                cmake_bin_path,
                 "-S",
-                "vendor/cfltk",
+                cmake_src_path,
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DCMAKE_INSTALL_PREFIX=vendor/lib",
+                cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
                 "-DOPTION_USE_SYSTEM_LIBJPEG=OFF",
@@ -93,7 +100,7 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
         const zfltk_build = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--build",
-            "vendor/bin",
+            cmake_bin_path,
             "--config",
             "Release",
             "--parallel",
@@ -104,12 +111,14 @@ pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
         const zfltk_install = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--install",
-            "vendor/bin",
+            cmake_bin_path,
         });
         try zfltk_install.step.make();
     };
-    exe.addIncludePath("vendor/cfltk/include");
-    exe.addLibraryPath("vendor/lib/lib");
+    var inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/cfltk/include", .{sdk_path});
+    exe.addIncludePath(inc_dir);
+    var lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/lib/lib", .{sdk_path});
+    exe.addLibraryPath(lib_dir);
     exe.linkSystemLibrary("cfltk");
     exe.linkSystemLibrary("fltk");
     exe.linkSystemLibrary("fltk_images");
