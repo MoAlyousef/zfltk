@@ -4,6 +4,15 @@ const c = @cImport({
 const widget = @import("widget.zig");
 const enums = @import("enums.zig");
 
+pub const StyleTableEntry = struct {
+    /// Font color
+    color: enums.Color,
+    /// Font type
+    font: enums.Font,
+    /// Font size
+    size: i32,
+};
+
 pub const TextBuffer = struct {
     inner: ?*c.Fl_Text_Buffer,
     pub fn new() TextBuffer {
@@ -188,8 +197,32 @@ pub const TextDisplay = struct {
         return TextBuffer{ .inner = buf };
     }
 
+    pub fn styleBuffer(self: *const TextDisplay) TextBuffer {
+        const buf = c.Fl_Text_Display_get_style_buffer(self.inner);
+        return TextBuffer{ .inner = buf };
+    }
+
     pub fn setBuffer(self: *const TextDisplay, buf: *TextBuffer) void {
         c.Fl_Text_Display_set_buffer(self.inner, buf.*.inner);
+    }
+
+    pub fn setHighlightData(self: *const TextDisplay, sbuf: *TextBuffer, entries: []const StyleTableEntry) void {
+        const sz = entries.len;
+        var colors: [28]c_uint = undefined;
+        var fonts: [28]i32 = undefined;
+        var fontszs: [28]i32 = undefined;
+        var attrs: [28]c_uint = undefined;
+        var bgcolors: [28]c_uint = undefined;
+        var i: usize = 0;
+        for (entries) |e| {
+            colors[i] = @bitCast(c_uint, e.color);
+            fonts[i] = @enumToInt(e.font);
+            fontszs[i] = e.size;
+            attrs[i] = 0;
+            bgcolors[i] = 0;
+            i += 1;
+        }
+        c.Fl_Text_Display_set_highlight_data(self.inner, sbuf.*.inner, &colors, &fonts, &fontszs, &attrs, &bgcolors, @intCast(i32, sz));
     }
 
     pub fn setTextFont(self: *const TextDisplay, font: enums.Font) void {

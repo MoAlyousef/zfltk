@@ -90,6 +90,10 @@ pub fn setFont(face: Font, name: [*:0]const u8) void {
     c.Fl_set_font2(@enumToInt(face), name);
 }
 
+pub fn setFontSize(sz: i32) void {
+    c.Fl_set_font_size(sz);
+}
+
 pub fn event() enums.Event {
     return @intToEnum(enums.Event, c.Fl_event());
 }
@@ -177,6 +181,10 @@ pub fn timeout(d: f32, comptime f: fn () void) void {
 pub fn timeoutEx(d: f32, comptime f: fn (?*anyopaque) void) void {
     const v: ?*anyopaque = null;
     c.Fl_add_timeout(d, @ptrCast(?*const fn (?*anyopaque) callconv(.C) void, &f), v);
+}
+
+pub fn setMenuLinespacing(h: i32) void {
+    c.Fl_set_menu_linespacing(h);
 }
 
 test "all" {

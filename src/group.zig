@@ -409,6 +409,10 @@ pub const Flex = struct {
     pub fn setPad(self: *const Flex, sz: i32) void {
         c.Fl_Flex_set_pad(self.inner, sz);
     }
+
+    pub fn setMargin(self: *const Flex, sz: i32) void {
+        c.Fl_Flex_set_margin(self.inner, sz);
+    }
 };
 
 test "all" {
