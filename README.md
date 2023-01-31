@@ -35,7 +35,7 @@ pub fn build(b: *Builder) !void {
     exe.addPackagePath("zfltk", "zfltk/src/zfltk.zig");
     exe.setTarget(target);
     exe.setBuildMode(mode);
-    sdk.link(exe);
+    try sdk.link(exe);
     exe.install();
 
     const run_cmd = exe.run();
