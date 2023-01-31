@@ -22,15 +22,6 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
     var sdk_lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/lib", .{sdk_path});
     _ = fs.cwd().openDir(sdk_lib_dir, .{}) catch |err| {
         std.debug.print("Warning: {!}. The cfltk library will be grabbed and built from source!\n", .{err});
-        const zfltk_init = b.addSystemCommand(&[_][]const u8{
-            "git",
-            "submodule",
-            "update",
-            "--init",
-            "--recursive",
-            "--depth=1",
-        });
-        try zfltk_init.step.make();
         var bin_buf: [250]u8 = undefined;
         var src_buf: [250]u8 = undefined;
         var inst_buf: [250]u8 = undefined;
