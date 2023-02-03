@@ -45,56 +45,56 @@ pub fn main() !void {
     win.asWidget().show();
     win.asWidget().setCallback(winCb);
 
-    mymenu.asMenu().add_emit(
+    mymenu.asMenu().addEmit(
         "&File/New...\t",
         enums.Shortcut.Ctrl | 'n',
         .Normal,
         Message,
         .New,
     );
-    mymenu.asMenu().add_emit(
+    mymenu.asMenu().addEmit(
         "&File/Open...\t",
         enums.Shortcut.Ctrl | 'o',
         .Normal,
         Message,
         .Open,
     );
-    mymenu.asMenu().add_emit(
+    mymenu.asMenu().addEmit(
         "&File/Save...\t",
         enums.Shortcut.Ctrl | 's',
         .MenuDivider,
         Message,
         .Save,
     );
-    mymenu.asMenu().add_emit(
+    mymenu.asMenu().addEmit(
         "&File/Quit...\t",
         enums.Shortcut.Ctrl | 'q',
         .Normal,
         Message,
         .Quit,
     );
-    mymenu.asMenu().add_emit(
+    mymenu.asMenu().addEmit(
         "&Edit/Cut...\t",
         enums.Shortcut.Ctrl | 'x',
         .Normal,
         Message,
         .Cut,
     );
-    mymenu.asMenu().add_emit(
+    mymenu.asMenu().addEmit(
         "&Edit/Copy...\t",
         enums.Shortcut.Ctrl | 'c',
         .Normal,
         Message,
         .Copy,
     );
-    mymenu.asMenu().add_emit(
+    mymenu.asMenu().addEmit(
         "&Edit/Paste...\t",
         enums.Shortcut.Ctrl | 'v',
         .Normal,
         Message,
         .Paste,
     );
-    mymenu.asMenu().add_emit(
+    mymenu.asMenu().addEmit(
         "&Help/About...\t",
         enums.Shortcut.Ctrl | 'q',
         .Normal,

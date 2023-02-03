@@ -98,11 +98,11 @@ pub const Menu = struct {
         _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, cb, data, @enumToInt(flag));
     }
 
-    pub fn add_emit(self: *const Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+    pub fn addEmit(self: *const Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
         _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, shim, @intToPtr(?*anyopaque, @enumToInt(msg)), @enumToInt(flag));
     }
 
-    pub fn insert_emit(self: *const Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+    pub fn insertEmit(self: *const Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
         _ = c.Fl_Menu_Bar_insert(self.inner, idx, name, shortcut, shim, @intToPtr(?*anyopaque, @bitCast(usize, msg)), @enumToInt(flag));
     }
 
@@ -126,7 +126,7 @@ pub const Menu = struct {
         c.Fl_Menu_Bar_set_text_color(self.inner, col.toRgbi());
     }
 
-    pub fn setTextSize(self: *const Menu, sz: u32) void {
+    pub fn setTextSize(self: *const Menu, sz: i32) void {
         c.Fl_Menu_Bar_set_text_size(self.inner, sz);
     }
 };
