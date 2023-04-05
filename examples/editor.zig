@@ -5,6 +5,7 @@ const Widget = widget.Widget;
 const window = zfltk.window;
 const menu = zfltk.menu;
 const enums = zfltk.enums;
+const Color = enums.Color;
 const text = zfltk.text;
 const dialog = zfltk.dialog;
 
@@ -79,7 +80,7 @@ pub fn helpCb(w: Widget, data: ?*anyopaque) void {
 pub fn main() !void {
     try app.init();
     app.setScheme(.Gtk);
-    app.background(211, 211, 211);
+    app.setBackground(Color.fromRgb(211, 211, 211));
     var win = window.Window.new(100, 100, 800, 600, "Editor");
     win.freePosition();
     var mymenu = menu.MenuBar.new(0, 0, 800, 35, "");
@@ -152,7 +153,7 @@ pub fn main() !void {
     );
 
     var item = mymenu.asMenu().findItem("&File/Quit...\t");
-    item.setLabelColor(enums.Color.fromRgbi(enums.Color.Red));
+    item.setLabelColor(Color.fromName(.red));
 
     try app.run();
 }
