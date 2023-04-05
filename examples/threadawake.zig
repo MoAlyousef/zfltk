@@ -6,17 +6,32 @@ const window = zfltk.window;
 const button = zfltk.button;
 const box = zfltk.box;
 const enums = zfltk.enums;
+const Color = enums.Color;
 
 var count: i32 = 0;
 
 pub fn thread_func(data: ?*anyopaque) !void {
+    var brighten = true;
     while (true) {
         if (data) |d| {
             var mybox = widget.Widget.fromVoidPtr(d);
-            std.time.sleep(1000000);
+            std.time.sleep(10000000);
             var buf: [100]u8 = undefined;
             const val = try std.fmt.bufPrintZ(buf[0..], "Hello {d}!", .{count});
             mybox.setLabel(val);
+
+            if (mybox.labelColor().toHex() == 0xffffff) {
+                brighten = false;
+            } else if (mybox.labelColor().toHex() == 0x000000) {
+                brighten = true;
+            }
+
+            if (brighten) {
+                mybox.setLabelColor(mybox.labelColor().lighten(1));
+            } else {
+                mybox.setLabelColor(mybox.labelColor().darken(1));
+            }
+
             app.awake();
         }
         count += 1;
