@@ -1,7 +1,11 @@
+const std = @import("std");
+
 const c = @cImport({
     @cInclude("cfl.h");
-    //    @cInclude("cfl_enums.h");
 });
+
+// TODO: rename enums to snake_case to match Zig style guide
+// <https://github.com/ziglang/zig/issues/2101>
 
 // DO NOT add more elements to this stuct.
 // Using 4 `u8`s in a packed struct makes an identical memory layout to a u32
@@ -9,43 +13,55 @@ const c = @cImport({
 // efficient and easy to use
 pub const Color = packed struct {
     // Arranged like so because a vast majority of systems are little-endian
-    // TODO: use comptime to arrange big-endian when needed
     i: u8 = 0,
     b: u8 = 0,
     g: u8 = 0,
     r: u8 = 0,
 
-    pub const Foreground = 0;
-    pub const Background2 = 7;
-    pub const Inactive = 8;
-    pub const Selection = 15;
-    pub const Gray0 = 32;
-    pub const Dark3 = 39;
-    pub const Dark2 = 45;
-    pub const Dark1 = 47;
-    pub const Background = 49;
-    pub const Light1 = 50;
-    pub const Light2 = 52;
-    pub const Light3 = 54;
-    pub const Black = 56;
-    pub const Red = 88;
-    pub const Green = 63;
-    pub const Yellow = 95;
-    pub const Blue = 216;
-    pub const Magenta = 248;
-    pub const Cyan = 223;
-    pub const DarkRed = 72;
-    pub const DarkGreen = 60;
-    pub const DarkYellow = 76;
-    pub const DarkBlue = 136;
-    pub const DarkMagenta = 152;
-    pub const DarkCyan = 140;
-    pub const White = 255;
+    pub const Names = enum(u8) {
+        foreground = 0,
+        background2 = 7,
+        inactive = 8,
+        selection = 15,
+        gray0 = 32,
+        dark3 = 39,
+        dark2 = 45,
+        dark1 = 47,
+        background = 49,
+        light1 = 50,
+        light2 = 52,
+        light3 = 54,
+        black = 56,
+        red = 88,
+        green = 63,
+        yellow = 95,
+        blue = 216,
+        magenta = 248,
+        cyan = 223,
+        dark_red = 72,
+        dark_green = 60,
+        dark_yellow = 76,
+        dark_blue = 136,
+        dark_magenta = 152,
+        dark_cyan = 140,
+        white = 255,
+    };
 
-    pub fn toRgb(col: Color, r: *u8, g: *u8, b: *u8) void {
-        r = col.r;
-        g = col.g;
-        b = col.b;
+    pub fn fromName(name: Names) Color {
+        return Color.fromIndex(@enumToInt(name));
+    }
+
+    pub fn fromIndex(idx: u8) Color {
+        var col = Color{
+            .r = undefined,
+            .g = undefined,
+            .b = undefined,
+            .i = idx,
+        };
+
+        c.Fl_get_color_rgb(idx, &col.r, &col.g, &col.b);
+
+        return col;
     }
 
     pub fn fromRgb(r: u8, g: u8, b: u8) Color {
@@ -53,19 +69,31 @@ pub const Color = packed struct {
         // foreground for some reason. Eg: if you override the foreground
         // color then try to set another color to black, it would set it to
         // the new foreground color
-        if (r + g + b == 0) {
-            return Color.fromRgbi(Black);
+        if (r | g | b == 0) {
+            return Color.fromName(.black);
         }
 
-        return Color{ .r = r, .g = g, .b = b, .i = 0 };
+        return Color{
+            .r = r,
+            .g = g,
+            .b = b,
+            .i = 0,
+        };
     }
 
     pub fn toRgbi(col: Color) u32 {
-        return @bitCast(u32, col);
+        // Drop the RGB bytes if color is indexed
+        // This is because colors where both the index byte and color u24 are
+        // non-0 are reserved
+        if (col.i != 0) {
+            return col.i;
+        }
+
+        return std.mem.littleToNative(u32, @bitCast(u32, col));
     }
 
     pub fn fromRgbi(val: u32) Color {
-        var col = @bitCast(Color, val);
+        var col = @bitCast(Color, std.mem.nativeToLittle(u32, val));
 
         // If the color is indexed, set find out what the R, G and B values
         // are and set the struct's fields
@@ -82,10 +110,10 @@ pub const Color = packed struct {
 
     pub fn fromHex(val: u24) Color {
         if (val == 0) {
-            return Color.fromRgbi(Black);
+            return Color.fromName(.black);
         }
 
-        return @bitCast(Color, @intCast(u32, val) << 8);
+        return @bitCast(Color, std.mem.nativeToLittle(u32, @intCast(u32, val) << 8));
     }
 
     // Seems really redundant and the FLTK docs don't even appear to document
@@ -97,10 +125,6 @@ pub const Color = packed struct {
     pub fn darken(col: Color, val: u8) Color {
         var new_col = col;
 
-        if (new_col.i != 0) {
-            c.Fl_get_color_rgb(new_col.i, &new_col.r, &new_col.g, &new_col.b);
-        }
-
         new_col.r -|= val;
         new_col.g -|= val;
         new_col.b -|= val;
@@ -110,10 +134,6 @@ pub const Color = packed struct {
 
     pub fn lighten(col: Color, val: u8) Color {
         var new_col = col;
-
-        if (new_col.i != 0) {
-            c.Fl_get_color_rgb(new_col.i, &new_col.r, &new_col.g, &new_col.b);
-        }
 
         new_col.r +|= val;
         new_col.g +|= val;
@@ -325,6 +345,8 @@ pub const Key = struct {
     pub const AltL = 0xffe9;
     pub const AltR = 0xffea;
     pub const Delete = 0xffff;
+
+    // TODO: add `fromName` and related methods
 };
 
 pub const Shortcut = struct {

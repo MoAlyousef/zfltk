@@ -126,11 +126,11 @@ pub const Widget = packed struct {
     }
 
     pub fn labelColor(self: *const Widget) Color {
-        return Color.fromRbgi(c.Fl_Widget_label_color(self.inner));
+        return Color.fromRgbi(c.Fl_Widget_label_color(self.inner));
     }
 
     pub fn setLabelColor(self: *const Widget, col: Color) void {
-        c.Fl_Widget_set_label_color(self.inner, col.toRbgi());
+        c.Fl_Widget_set_label_color(self.inner, col.toRgbi());
     }
 
     pub fn labelFont(self: *const Widget) enums.Font {

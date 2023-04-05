@@ -4,6 +4,7 @@ const c = @cImport({
 });
 const widget = @import("widget.zig");
 const enums = @import("enums.zig");
+const Color = enums.Color;
 const Font = enums.Font;
 const std = @import("std");
 
@@ -74,20 +75,31 @@ pub fn setVisibleFocus(focus: bool) void {
     c.Fl_set_visible_focus(@boolToInt(focus));
 }
 
-pub fn setColor(idx: u8, col: enums.Color) void {
+/// Sets a `free` color in the FLTK color table. These are meant to be
+/// user-defined
+pub fn setColor(idx: u4, col: enums.Color) void {
+    // FLTK enumerations.H defines `FREE_COLOR` as 16
+    setColorAny(@intCast(u8, idx) + 16, col);
+}
+
+/// Allows setting any color in the color table
+/// Most colors are not intended to be overridden, `setColor` should be
+/// preferred unless the goal is to override the theme's color scheme.
+/// Overriding these may cause display elements to look incorrect
+pub fn setColorAny(idx: u8, col: enums.Color) void {
     c.Fl_set_color(idx, col.r, col.g, col.b);
 }
 
-pub fn loadFont(path: [*:0]const u8) !void {
-    _ = c.Fl_load_font(path);
+pub fn loadFont(path: [:0]const u8) !void {
+    _ = c.Fl_load_font(path.ptr);
 }
 
-pub fn unloadFont(path: [*:0]const u8) !void {
-    c.Fl_unload_font(path);
+pub fn unloadFont(path: [:0]const u8) !void {
+    c.Fl_unload_font(path.ptr);
 }
 
-pub fn setFont(face: Font, name: [*:0]const u8) void {
-    c.Fl_set_font2(@enumToInt(face), name);
+pub fn setFont(face: Font, name: [:0]const u8) void {
+    c.Fl_set_font2(@enumToInt(face), name.ptr);
 }
 
 pub fn setFontSize(sz: i32) void {
@@ -111,16 +123,16 @@ pub fn eventKey() i32 {
     return c.Fl_event_key();
 }
 
-pub fn background(r: u8, g: u8, b: u8) void {
-    c.Fl_background(r, g, b);
+pub fn setBackground(col: Color) void {
+    c.Fl_background(col.r, col.g, col.b);
 }
 
-pub fn background2(r: u8, g: u8, b: u8) void {
-    c.Fl_background2(r, g, b);
+pub fn setBackground2(col: Color) void {
+    c.Fl_background2(col.r, col.g, col.b);
 }
 
-pub fn foreground(r: u8, g: u8, b: u8) void {
-    c.Fl_foreground(r, g, b);
+pub fn setForeground(col: Color) void {
+    c.Fl_foreground(col.r, col.g, col.b);
 }
 
 pub const WidgetTracker = struct {
