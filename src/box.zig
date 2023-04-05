@@ -29,6 +29,16 @@ pub const Box = struct {
         };
     }
 
+    pub fn fromDynWidgetPtr(w: widget.WidgetPtr) ?Box {
+        if (c.Fl_Box_from_dyn_ptr(@ptrCast(?*c.Fl_Widget, w))) |v| {
+            return Box{
+                .inner = v,
+            };
+        } else {
+            return null;
+        }
+    }
+
     pub fn fromVoidPtr(ptr: ?*anyopaque) Box {
         return Box{
             .inner = @ptrCast(?*c.Fl_Box, ptr),

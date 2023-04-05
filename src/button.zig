@@ -31,6 +31,16 @@ pub const Button = struct {
         };
     }
 
+    pub fn fromDynWidgetPtr(w: widget.WidgetPtr) ?Button {
+        if (c.Fl_Button_from_dyn_ptr(@ptrCast(?*c.Fl_Widget, w))) |v| {
+            return Button{
+                .inner = v,
+            };
+        } else {
+            return null;
+        }
+    }
+
     pub fn fromVoidPtr(ptr: ?*anyopaque) Button {
         return Button{
             .inner = @ptrCast(?*c.Fl_Button, ptr),
