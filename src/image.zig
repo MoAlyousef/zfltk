@@ -1,434 +1,228 @@
-const c = @cImport({
-    @cInclude("cfl_image.h");
-});
+// TODO: update to new API
+
+const zfltk = @import("zfltk.zig");
+const c = zfltk.c;
+const std = @import("std");
+
+// TODO: Add more error types
+pub const ImageError = error{
+    NoImage,
+    FileAccess,
+    InvalidFormat,
+    MemoryAccess,
+    Error,
+};
+
+// Converts a C error code to a Zig error enum
+inline fn ImageErrorFromInt(err: c_int) ImageError!void {
+    return switch (err) {
+        0 => {},
+        -1 => ImageError.NoImage,
+        -2 => ImageError.FileAccess,
+        -3 => ImageError.InvalidFormat,
+        -4 => ImageError.MemoryAccess,
+
+        else => ImageError.Error,
+    };
+}
 
 pub const Image = struct {
-    inner: ?*c.Fl_Image,
-    pub fn scale(self: *const Image, width: i32, height: i32, proportional: bool, can_expand: bool) void {
-        c.Fl_Image_scale(self.inner, width, height, @boolToInt(proportional), @boolToInt(can_expand));
+    inner: RawPtr,
+
+    pub const RawPtr = *c.Fl_Image;
+
+    pub const RawImageOptions = struct {
+        data: []const u8,
+
+        w: u31,
+        h: u31,
+
+        depth: enum(c_int) {
+            grayscale = 0,
+            grayscale_alpha,
+            rgb,
+            rgba,
+        },
+
+        line_data: u31 = 0,
+    };
+
+    pub const Kind = enum {
+        normal,
+        shared,
+        svg,
+        jpeg,
+        bmp,
+        raw,
+        png,
+        gif,
+        tiled,
+    };
+
+    pub fn load(comptime kind: Kind, path: [:0]const u8) !Image {
+        const loadFn = switch (kind) {
+            .shared => c.Fl_Shared_Image_get,
+            .svg => c.Fl_SVG_Image_new,
+            .jpeg => c.Fl_JPEG_Image_new,
+            .bmp => c.Fl_BMP_Image_new,
+            .png => c.Fl_PNG_Image_new,
+            .gif => c.Fl_GIF_Image_new,
+
+            else => @compileError("this image type cannot be loaded from file"),
+        };
+
+        const failFn = switch (kind) {
+            .shared => c.Fl_Shared_Image_fail,
+            .svg => c.Fl_SVG_Image_fail,
+            .jpeg => c.Fl_JPEG_Image_fail,
+            .bmp => c.Fl_BMP_Image_fail,
+            .png => c.Fl_PNG_Image_fail,
+            .gif => c.Fl_GIF_Image_fail,
+
+            else => unreachable,
+        };
+
+        _ = switch (kind) {
+            .shared => {
+                if (loadFn(path.ptr, 0, 0)) |ptr| {
+                    try ImageErrorFromInt(failFn(ptr));
+                    return Image.fromRaw(@ptrCast(RawPtr, ptr));
+                }
+            },
+            else => {
+                if (loadFn(path.ptr)) |ptr| {
+                    try ImageErrorFromInt(failFn(ptr));
+                    return Image.fromRaw(@ptrCast(RawPtr, ptr));
+                }
+            },
+        };
+
+        unreachable;
     }
 
-    pub fn raw(self: *const Image) ?*c.Fl_Image {
+    pub inline fn init(comptime kind: Kind, data: []const u8) !Image {
+        const loadFn = switch (kind) {
+            .svg => c.Fl_SVG_Image_from,
+            .jpeg => c.Fl_JPEG_Image_from,
+            .bmp => c.Fl_BMP_Image_from,
+            .png => c.Fl_PNG_Image_from,
+            .gif => c.Fl_GIF_Image_from,
+
+            .raw => @compileError("use `fromRawData` instead"),
+            else => @compileError("this image type cannot be loaded from data"),
+        };
+
+        const failFn = switch (kind) {
+            .svg => c.Fl_SVG_Image_fail,
+            .jpeg => c.Fl_JPEG_Image_fail,
+            .bmp => c.Fl_BMP_Image_fail,
+            .png => c.Fl_PNG_Image_fail,
+            .gif => c.Fl_GIF_Image_fail,
+
+            else => unreachable,
+        };
+
+        // JPEG and SVG currently do not use a length arg in cfltk
+        switch (kind) {
+            .jpeg, .svg => {
+                if (loadFn(data.ptr)) |ptr| {
+                    try ImageErrorFromInt(failFn(ptr));
+                    return Image.fromRaw(@ptrCast(RawPtr, ptr));
+                }
+            },
+            else => {
+                if (loadFn(data.ptr, @intCast(c_int, data.len))) |ptr| {
+                    try ImageErrorFromInt(failFn(ptr));
+                    return Image.fromRaw(@ptrCast(RawPtr, ptr));
+                }
+            },
+        }
+
+        unreachable;
+    }
+
+    /// Only used on raw image types (grayscale, RGB, RGBA)
+    pub inline fn fromRawData(opts: RawImageOptions) Image {
+        // TODO error handling
+        if (c.Fl_RGB_Image_new(opts.data.ptr, opts.w, opts.h, @enumToInt(opts.depth), opts.line_data)) |ptr| {
+            try ImageErrorFromInt(c.Fl_RGB_Image_fail(ptr));
+            return Image.fromRaw(ptr);
+        }
+
+        unreachable;
+    }
+
+    pub inline fn scale(self: *const Image, width: u31, height: u31, proportional: bool, can_expand: bool) void {
+        c.Fl_Image_scale(@ptrCast(RawPtr, self.inner), width, height, @boolToInt(proportional), @boolToInt(can_expand));
+    }
+
+    pub inline fn raw(self: *const Image) RawPtr {
         return self.inner;
     }
 
-    pub fn fromRaw(ptr: ?*c.Fl_Image) Image {
-        return Image{
-            .inner = ptr,
-        };
+    pub inline fn fromRaw(ptr: RawPtr) Image {
+        return .{ .inner = ptr };
     }
 
-    pub fn fromImagePtr(img: ?*c.Fl_Image) Image {
-        return Image{
-            .inner = @ptrCast(?*c.Fl_Image, img),
-        };
+    pub inline fn fromVoidPtr(ptr: *anyopaque) Image {
+        return Image.fromRaw(@ptrCast(RawPtr, ptr));
     }
 
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Image {
-        return Image{
-            .inner = @ptrCast(?*c.Fl_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const Image) ?*anyopaque {
+    pub inline fn toVoidPtr(self: *const Image) ?*anyopaque {
         return @ptrCast(?*anyopaque, self.inner);
     }
 
-    pub fn delete(self: *const Image) void {
-        c.Fl_Image_delete(self.inner);
-        self.inner = null;
+    pub inline fn deinit(self: *const Image) void {
+        c.Fl_Image_delete(@ptrCast(RawPtr, self.inner));
     }
 
-    pub fn copy(self: *const Image) Image {
-        const img = c.Fl_Image_copy(self.inner);
-        return Image{
-            .inner = img,
-        };
+    /// Returns a tiled version of the input image
+    pub inline fn tile(self: *const Image, _w: u31, _h: u31) Image {
+        if (c.Fl_Tiled_Image_new(self.inner, _w, _h)) |ptr| {
+            return Image.fromRaw(@ptrCast(RawPtr, ptr));
+        }
+
+        unreachable;
     }
 
-    pub fn draw(self: *const Image, arg2: i32, arg3: i32, arg4: i32, arg5: i32) void {
+    pub inline fn copy(self: *const Image) Image {
+        if (c.Fl_Image_copy(self.inner)) |ptr| {
+            return Image.fromRaw(ptr);
+        }
+
+        unreachable;
+    }
+
+    pub fn draw(self: *const Image, arg2: u31, arg3: u31, arg4: u31, arg5: u31) void {
         return c.Fl_Image_draw(self.inner, arg2, arg3, arg4, arg5);
     }
 
-    pub fn w(self: *const Image) i32 {
+    pub fn w(self: *const Image) u31 {
         return c.Fl_Image_width(self.inner);
     }
 
-    pub fn h(self: *const Image) i32 {
+    pub fn h(self: *const Image) u31 {
         return c.Fl_Image_height(self.inner);
     }
 
-    pub fn count(self: *const Image) u32 {
+    pub fn count(self: *const Image) u31 {
         return c.Fl_Image_count(self.inner);
     }
 
-    pub fn dataW(self: *const Image) u32 {
+    pub fn dataW(self: *const Image) u31 {
         return c.Fl_Image_data_w(self.inner);
     }
 
-    pub fn dataH(self: *const Image) u32 {
+    pub fn dataH(self: *const Image) u31 {
         return c.Fl_Image_data_h(self.inner);
     }
 
-    pub fn depth(self: *const Image) u32 {
+    pub fn depth(self: *const Image) u31 {
         return c.Fl_Image_d(self.inner);
     }
 
-    pub fn ld(self: *const Image) u32 {
+    pub fn ld(self: *const Image) u31 {
         return c.Fl_Image_ld(self.inner);
-    }
-};
-
-pub const SharedImage = struct {
-    inner: ?*c.Fl_Shared_Image,
-    pub fn load(path: [*c]const u8) !SharedImage {
-        const ptr = c.Fl_Shared_Image_get(path, 0, 0);
-        if (ptr == null or c.Fl_Shared_Image_fail(ptr) < 0) return error.InvalidParemeter;
-        return SharedImage{ .inner = ptr };
-    }
-
-    pub fn fromImage(img: *const Image) !SharedImage {
-        const x = c.Fl_Shared_Image_from_rgb(img.inner, 0);
-        if (x == null or c.Fl_Shared_Image_fail(x) < 0) return error.InvalidParemeter;
-        return SharedImage{ .inner = x };
-    }
-
-    pub fn raw(self: *const SharedImage) ?*c.Fl_Shared_Image {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Shared_Image) SharedImage {
-        return SharedImage{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromImagePtr(img: ?*c.Fl_Image) SharedImage {
-        return SharedImage{
-            .inner = @ptrCast(?*c.Fl_Shared_Image, img),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) SharedImage {
-        return SharedImage{
-            .inner = @ptrCast(?*c.Fl_Shared_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const SharedImage) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asImage(self: *const SharedImage) Image {
-        return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
-    }
-};
-
-pub const SvgImage = struct {
-    inner: ?*c.Fl_SVG_Image,
-    pub fn load(path: [*c]const u8) !SvgImage {
-        const x = c.Fl_SVG_Image_new(path);
-        if (x == null or c.Fl_SVG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return SvgImage{ .inner = x };
-    }
-
-    pub fn fromData(data: [*c]const u8) !SvgImage {
-        const x = c.Fl_SVG_Image_from(data);
-        if (x == null or c.Fl_SVG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return SvgImage{ .inner = x };
-    }
-
-    pub fn raw(self: *const SvgImage) ?*c.Fl_SVG_Image {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_SVG_Image) SvgImage {
-        return SvgImage{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromImagePtr(img: ?*c.Fl_Image) SvgImage {
-        return SvgImage{
-            .inner = @ptrCast(?*c.Fl_SVG_Image, img),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) SvgImage {
-        return SvgImage{
-            .inner = @ptrCast(?*c.Fl_SVG_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const SvgImage) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asImage(self: *const SvgImage) Image {
-        return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
-    }
-};
-
-pub const JpegImage = struct {
-    inner: ?*c.Fl_JPEG_Image,
-    pub fn load(path: [*c]const u8) !JpegImage {
-        const x = c.Fl_JPEG_Image_new(path);
-        if (x == null or c.Fl_JPEG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return JpegImage{ .inner = x };
-    }
-
-    pub fn fromData(data: [*c]const u8) !JpegImage {
-        const x = c.Fl_JPEG_Image_from(data);
-        if (x == null or c.Fl_JPEG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return JpegImage{ .inner = x };
-    }
-
-    pub fn raw(self: *const JpegImage) ?*c.Fl_JPEG_Image {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_JPEG_Image) JpegImage {
-        return JpegImage{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromImagePtr(img: ?*c.Fl_Image) JpegImage {
-        return JpegImage{
-            .inner = @ptrCast(?*c.Fl_JPEG_Image, img),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) JpegImage {
-        return JpegImage{
-            .inner = @ptrCast(?*c.Fl_JPEG_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const JpegImage) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asImage(self: *const JpegImage) Image {
-        return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
-    }
-};
-
-pub const BmpImage = struct {
-    inner: ?*c.Fl_BMP_Image,
-    pub fn load(path: [*c]const u8) !BmpImage {
-        const x = c.Fl_BMP_Image_new(path);
-        if (x == null or c.Fl_BMP_Image_fail(x) < 0) return error.InvalidParemeter;
-        return BmpImage{ .inner = x };
-    }
-
-    pub fn fromData(data: [*c]const u8) !BmpImage {
-        const x = c.Fl_BMP_Image_from(data);
-        if (x == null or c.Fl_BMP_Image_fail(x) < 0) return error.InvalidParemeter;
-        return BmpImage{ .inner = x };
-    }
-
-    pub fn raw(self: *const BmpImage) ?*c.Fl_BMP_Image {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_BMP_Image) BmpImage {
-        return BmpImage{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromImagePtr(img: ?*c.Fl_Image) BmpImage {
-        return BmpImage{
-            .inner = @ptrCast(?*c.Fl_BMP_Image, img),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) BmpImage {
-        return BmpImage{
-            .inner = @ptrCast(?*c.Fl_BMP_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const BmpImage) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asImage(self: *const BmpImage) Image {
-        return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
-    }
-};
-
-pub const RgbImage = struct {
-    inner: ?*c.Fl_RGB_Image,
-    pub fn new(data: [*c]const u8, w: u32, h: u32, depth: u32) !RgbImage {
-        const ptr = c.Fl_RGB_Image_new(data, w, h, depth);
-        if (ptr == null or c.Fl_RGB_Image_fail(ptr) < 0) return error.InvalidParemeter;
-        return RgbImage{ .inner = ptr };
-    }
-
-    pub fn fromData(data: [*c]const u8, w: u32, h: u32, depth: u32) !RgbImage {
-        const ptr = c.Fl_RGB_Image_from_data(data, w, h, depth);
-        if (ptr == null or c.Fl_RGB_Image_fail(ptr) < 0) return error.InvalidParemeter;
-        return RgbImage{ .inner = ptr };
-    }
-
-    pub fn raw(self: *const RgbImage) ?*c.Fl_RGB_Image {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_RGB_Image) RgbImage {
-        return RgbImage{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromImagePtr(img: ?*c.Fl_Image) RgbImage {
-        return RgbImage{
-            .inner = @ptrCast(?*c.Fl_RGB_Image, img),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) RgbImage {
-        return RgbImage{
-            .inner = @ptrCast(?*c.Fl_RGB_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const RgbImage) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asImage(self: *const RgbImage) Image {
-        return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
-    }
-};
-
-pub const PngImage = struct {
-    inner: ?*c.Fl_PNG_Image,
-    pub fn load(path: [*c]const u8) !PngImage {
-        const x = c.Fl_PNG_Image_new(path);
-        if (x == null or c.Fl_PNG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return PngImage{ .inner = x };
-    }
-
-    pub fn fromData(data: [*c]const u8) !PngImage {
-        const x = c.Fl_PNG_Image_from(data);
-        if (x == null or c.Fl_PNG_Image_fail(x) < 0) return error.InvalidParemeter;
-        return PngImage{ .inner = x };
-    }
-
-    pub fn raw(self: *const PngImage) ?*c.Fl_PNG_Image {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_PNG_Image) PngImage {
-        return PngImage{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromImagePtr(img: ?*c.Fl_Image) PngImage {
-        return PngImage{
-            .inner = @ptrCast(?*c.Fl_PNG_Image, img),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) PngImage {
-        return PngImage{
-            .inner = @ptrCast(?*c.Fl_PNG_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const PngImage) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asImage(self: *const PngImage) Image {
-        return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
-    }
-};
-
-pub const GifImage = struct {
-    inner: ?*c.Fl_GIF_Image,
-    pub fn load(path: [*c]const u8) !GifImage {
-        const x = c.Fl_GIF_Image_new(path);
-        if (x == null or c.Fl_GIF_Image_fail(x) < 0) return error.InvalidParemeter;
-        return GifImage{ .inner = x };
-    }
-
-    pub fn fromData(data: [*c]const u8) !GifImage {
-        const x = c.Fl_GIF_Image_from(data);
-        if (x == null or c.Fl_GIF_Image_fail(x) < 0) return error.InvalidParemeter;
-        return GifImage{ .inner = x };
-    }
-
-    pub fn raw(self: *const GifImage) ?*c.Fl_GIF_Image {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_GIF_Image) GifImage {
-        return GifImage{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromImagePtr(img: ?*c.Fl_Image) GifImage {
-        return GifImage{
-            .inner = @ptrCast(?*c.Fl_GIF_Image, img),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) GifImage {
-        return GifImage{
-            .inner = @ptrCast(?*c.Fl_GIF_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const GifImage) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asImage(self: *const GifImage) Image {
-        return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
-    }
-};
-
-pub const TiledImage = struct {
-    inner: ?*c.Fl_Tiled_Image,
-    pub fn new(img: *const Image, w: i32, h: i32) TiledImage {
-        const ptr = c.Fl_Tiled_Image_new(img.inner, w, h);
-        return TiledImage{ .inner = ptr };
-    }
-
-    pub fn raw(self: *const TiledImage) ?*c.Fl_Tiled_Image {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Tiled_Image) TiledImage {
-        return TiledImage{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromImagePtr(img: ?*c.Fl_Image) TiledImage {
-        return TiledImage{
-            .inner = @ptrCast(?*c.Fl_Tiled_Image, img),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) TiledImage {
-        return TiledImage{
-            .inner = @ptrCast(?*c.Fl_Tiled_Image, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const TiledImage) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asImage(self: *const TiledImage) Image {
-        return Image{ .inner = @ptrCast(?*c.Fl_Image, self.inner) };
     }
 };
 

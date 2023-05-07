@@ -1,24 +1,54 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const widget = zfltk.widget;
-const window = zfltk.window;
-const box = zfltk.box;
-const button = zfltk.button;
-const group = zfltk.group;
+const Window = zfltk.Window;
+const Box = zfltk.Box;
+const Button = zfltk.Button;
+const Group = zfltk.Group;
+const Color = enums.Color;
 const enums = zfltk.enums;
 
 pub fn main() !void {
     try app.init();
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var flex = group.Flex.new(0, 0, 400, 300, "");
-    flex.asWidget().setType(group.FlexType, .Vertical);
-    flex.setPad(5);
-    _ = box.Box.new(0, 0, 0, 0, null);
-    var btn = button.Button.new(0, 0, 0, 0, "Button");
-    _ = box.Box.new(0, 0, 0, 0, null);
-    flex.fixed(&btn.asWidget(), 30);
-    flex.end(); // flex has its own end method which recalculates layouts
-    win.asGroup().end();
-    win.asWidget().show();
+
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 300,
+
+        .label = "Hello",
+    });
+
+    var flex = try Group(.flex).init(.{
+        .w = 400,
+        .h = 300,
+
+        // The orientation is vertical by default so this isn't necessary to
+        // set; this is just for reference
+        .orientation = .vertical,
+        .spacing = 6,
+    });
+
+    win.group().resizable(flex);
+
+    var btn = try Button(.normal).init(.{
+        .h = 48,
+        .label = "Button",
+    });
+
+    // This demonstrates how you can add inline widgets which have no purpose
+    // besides aesthetics. This could be useful for spacers and whatnot
+    flex.add(.{
+        try Box.init(.{ .boxtype = .down }),
+        btn,
+        try Box.init(.{ .boxtype = .down }),
+    });
+
+    flex.fixed(btn, btn.h());
+
+    // Flex has its own `end` method which recalculates layouts but the API
+    // remains consistent by utilizing Zig's comptime
+    flex.end();
+
+    win.group().end();
+    win.widget().show();
     try app.run();
 }

@@ -1,55 +1,85 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const widget = zfltk.widget;
-const box = zfltk.box;
+const Widget = zfltk.Widget;
+const Box = zfltk.Box;
 const Event = zfltk.enums.Event;
-const input = zfltk.input;
-const group = zfltk.group;
-const window = zfltk.window;
-const button = zfltk.button;
+const Input = zfltk.Input;
+const Group = zfltk.Group;
+const Window = zfltk.Window;
+const Button = zfltk.Button;
 const std = @import("std");
 
 const ButtonMessage = enum(usize) {
-    Pushed = 1,
-    Released,
+    pushed = 1,
+    released,
 };
 
-pub fn butCb(w: widget.Widget, ev: i32, data: ?*anyopaque) i32 {
-    _ = data;
-    _ = w;
-    switch (@intToEnum(Event, ev)) {
-        Event.Push => {
-            app.send(ButtonMessage, .Pushed);
-            return 1;
+pub fn butCb(_: *Button(.normal), ev: Event) bool {
+    switch (ev) {
+        Event.push => {
+            app.send(ButtonMessage, .pushed);
+            return true;
         },
-        Event.Released => {
-            app.send(ButtonMessage, .Released);
-            return 1;
+        Event.release => {
+            app.send(ButtonMessage, .released);
+            return true;
         },
-        else => return 0,
+
+        else => return false,
     }
-    return 0;
+
+    return false;
 }
 
 pub fn main() !void {
     try app.init();
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var inp = input.Input.new(10, 10, 380, 40, "");
-    var mybox = box.Box.new(10, 20, 380, 200, "");
-    var but = button.Button.new(160, 200, 80, 40, "Greet!");
-    win.asGroup().end();
-    win.asWidget().show();
-    but.handle(butCb, null);
+    app.setScheme(.plastic);
+
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 250,
+
+        .label = "Hello",
+    });
+
+    var inp = try Input(.normal).init(.{
+        .x = 10,
+        .y = 10,
+        .w = 380,
+        .h = 40,
+    });
+
+    var mybox = try Box.init(.{
+        .x = 10,
+        .y = 60,
+        .w = 380,
+        .h = 130,
+
+        .boxtype = .up,
+    });
+
+    var but = try Button(.normal).init(.{
+        .x = 160,
+        .y = 200,
+        .w = 80,
+        .h = 40,
+
+        .label = "Greet!",
+    });
+
+    win.group().end();
+    win.widget().show();
+    but.setEventHandler(butCb);
+    mybox.widget().setLabelSize(24);
+
     while (app.wait()) {
         if (app.recv(ButtonMessage)) |msg| switch (msg) {
-            .Pushed => {
+            .pushed => {
                 var buf: [100]u8 = undefined;
-                const name = try std.fmt.bufPrintZ(buf[0..], "Hello {s}!", .{inp.value()});
-                mybox.asWidget().setLabel(name);
+                const greeting = if (inp.value().len == 0) "I don't know your name!\nAdd it in the text box above" else try std.fmt.bufPrintZ(buf[0..], "Hello, {s}!", .{inp.value()});
+                mybox.widget().setLabel(greeting);
             },
-            .Released => {
-                mybox.asWidget().setLabel("");
-            },
+            else => {},
         };
     }
 }

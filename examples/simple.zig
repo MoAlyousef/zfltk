@@ -1,34 +1,53 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const widget = zfltk.widget;
-const Widget = widget.Widget;
-const window = zfltk.window;
-const button = zfltk.button;
-const box = zfltk.box;
+const Window = zfltk.Window;
+const Button = zfltk.Button;
+const Box = zfltk.Box;
 const Color = zfltk.enums.Color;
 
-pub fn butCb(w: Widget, data: ?*anyopaque) void {
-    var mybox = widget.Widget.fromVoidPtr(data);
-    mybox.setLabel("Hello World!");
+fn butCb(but: *Button(.normal), data: ?*anyopaque) void {
+    var box = Box.fromRaw(data.?);
 
-    var but = button.Button.fromWidgetPtr(w.inner); // You can still use a Widget.fromWidgetPtr
-    but.asWidget().setColor(Color.fromName(.cyan));
+    box.setLabel("Hello World!");
+
+    but.setColor(Color.fromName(.cyan));
 }
 
 pub fn main() !void {
     try app.init();
-    app.setScheme(.Gtk);
+    app.setScheme(.gtk);
 
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var but = button.Button.new(160, 220, 80, 40, "Click");
-    var mybox = box.Box.new(10, 10, 380, 180, "");
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 300,
 
-    mybox.asWidget().setBox(.UpBox);
-    mybox.asWidget().setLabelFont(.Courier);
-    mybox.asWidget().setLabelSize(18);
+        .label = "Hello",
+    });
 
-    win.asGroup().end();
-    win.asWidget().show();
-    but.asWidget().setCallbackEx(butCb, mybox.toVoidPtr());
+    var but = try Button(.normal).init(.{
+        .x = 160,
+        .y = 220,
+        .w = 80,
+        .h = 40,
+
+        .label = "Click me!",
+    });
+
+    var box = try Box.init(.{
+        .x = 10,
+        .y = 10,
+        .w = 380,
+        .h = 180,
+
+        .boxtype = .up,
+    });
+
+    box.setLabelFont(.courier);
+    box.setLabelSize(18);
+
+    win.group().end();
+    win.widget().show();
+
+    but.setCallbackEx(butCb, box);
     try app.run();
 }

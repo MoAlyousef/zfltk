@@ -1,329 +1,116 @@
-const c = @cImport({
-    @cInclude("cfl_input.h");
-});
-const widget = @import("widget.zig");
-const Widget = widget.Widget;
-const enums = @import("enums.zig");
+const zfltk = @import("zfltk.zig");
+const app = zfltk.app;
+const Widget = zfltk.Widget;
+const enums = zfltk.enums;
 const Event = enums.Event;
 const Color = enums.Color;
 const Font = enums.Font;
+const std = @import("std");
+const c = zfltk.c;
 
-pub const Input = struct {
-    inner: ?*c.Fl_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Input {
-        const ptr = c.Fl_Input_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return Input{
-            .inner = ptr,
-        };
-    }
-
-    pub fn raw(self: *const Input) ?*c.Fl_Input {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Input) Input {
-        return Input{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) Input {
-        return Input{
-            .inner = @ptrCast(?*c.Fl_Input, w),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Input {
-        return Input{
-            .inner = @ptrCast(?*c.Fl_Input, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const Input) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asWidget(self: *const Input) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
-
-    pub fn setHandle(self: *const Input, comptime f: fn (w: Widget, ev: Event) bool) void {
-        c.Fl_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, &f), null);
-    }
-
-    pub fn setHandleEx(self: *const Input, comptime f: fn (w: Widget, ev: Event, data: ?*anyopaque) i32, data: ?*anyopaque) void {
-        c.Fl_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, &f), data);
-    }
-
-    pub fn draw(self: *const Input, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-
-    pub fn value(self: *const Input) [*c]const u8 {
-        return c.Fl_Input_value(self.inner);
-    }
-
-    pub fn insert(self: *const Input, val: [*c]const u8, idx: u16) !void {
-        _ = c.Fl_Input_insert(self.inner, val, idx);
-    }
-
-    // TODO: handle errors
-    pub fn setValue(self: *const Input, val: [*c]const u8) !void {
-        _ = c.Fl_Input_set_value(self.inner, val);
-    }
-
-    pub fn position(self: *const Input) u16 {
-        return @intCast(u16, c.Fl_Input_position(self.inner));
-    }
-
-    pub fn setPosition(self: *const Input, sz: u16) !void {
-        _ = c.Fl_Input_set_position(self.inner, sz);
-    }
-
-    pub fn setTextFont(self: *const Input, font: Font) void {
-        c.Fl_Input_set_text_font(self.inner, @enumToInt(font));
-    }
-
-    pub fn setTextColor(self: *const Input, col: Color) void {
-        c.Fl_Input_set_text_color(self.inner, col.inner());
-    }
-
-    pub fn setTextSize(self: *const Input, sz: i32) void {
-        c.Fl_Input_set_text_size(self.inner, sz);
-    }
+pub const InputKind = enum {
+    normal,
+    multiline,
+    int,
+    float,
+    secret,
 };
 
-pub const MultilineInput = struct {
-    inner: ?*c.Fl_Multiline_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) MultilineInput {
-        const ptr = c.Fl_Multiline_Input_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return MultilineInput{
-            .inner = ptr,
+pub fn Input(comptime kind: InputKind) type {
+    return struct {
+        const Self = @This();
+
+        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
+
+        const InputRawPtr = *c.Fl_Input;
+
+        pub const RawPtr = switch (kind) {
+            .normal => *c.Fl_Input,
+            .multiline => *c.Fl_Multiline_Input,
+            .int => *c.Fl_Int_Input,
+            .float => *c.Fl_Float_Input,
+            .secret => *c.Fl_Secret_Input,
         };
-    }
 
-    pub fn raw(self: *const MultilineInput) ?*c.Fl_Multiline_Input {
-        return self.inner;
-    }
+        pub fn init(opts: Widget.Options) !*Self {
+            const initFn = switch (kind) {
+                .normal => c.Fl_Input_new,
+                .multiline => c.Fl_Multiline_Input_new,
+                .int => c.Fl_Int_Input_new,
+                .float => c.Fl_Float_Input_new,
+                .secret => c.Fl_Secret_Input_new,
+            };
 
-    pub fn fromRaw(ptr: ?*c.Fl_Multiline_Input) MultilineInput {
-        return MultilineInput{
-            .inner = ptr,
-        };
-    }
+            const label = if (opts.label != null) opts.label.?.ptr else null;
 
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) MultilineInput {
-        return MultilineInput{
-            .inner = @ptrCast(?*c.Fl_Multiline_Input, w),
-        };
-    }
+            if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
+                return Self.fromRaw(ptr);
+            }
 
-    pub fn fromVoidPtr(ptr: ?*anyopaque) MultilineInput {
-        return MultilineInput{
-            .inner = @ptrCast(?*c.Fl_Multiline_Input, ptr),
-        };
-    }
+            unreachable;
+        }
 
-    pub fn toVoidPtr(self: *const MultilineInput) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
+        pub inline fn deinit(self: *Self) void {
+            const deinitFn = switch (kind) {
+                .normal => c.Fl_Input_delete,
+                .multiline => c.Fl_Multiline_Input_delete,
+                .int => c.Fl_Int_Input_delete,
+                .float => c.Fl_Float_Input_delete,
+                .secret => c.Fl_Secret_Input_delete,
+            };
 
-    pub fn asWidget(self: *const MultilineInput) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
+            deinitFn(self.raw());
+            app.allocator.destroy(self);
+        }
 
-    pub fn asInput(self: *const MultilineInput) Input {
-        return Input{
-            .inner = @ptrCast(?*c.Fl_Input, self.inner),
-        };
-    }
+        pub inline fn input(self: *Self) *Input(.normal) {
+            return @ptrCast(*Input(.normal), self);
+        }
 
-    pub fn handle(self: *const MultilineInput, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Multiline_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
+        // TODO: refactor like `group.zig`
+        pub fn setHandle(self: *const Input, comptime f: fn (w: Widget, ev: Event) bool) void {
+            c.Fl_Input_handle(self.input().raw(), @ptrCast(c.custom_handler_callback, &f), null);
+        }
 
-    pub fn draw(self: *const MultilineInput, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Multiline_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-};
+        pub fn setHandleEx(self: *const Input, comptime f: fn (w: Widget, ev: Event, data: ?*anyopaque) i32, data: ?*anyopaque) void {
+            c.Fl_Input_handle(self.input().raw(), @ptrCast(c.custom_handler_callback, &f), data);
+        }
 
-pub const IntInput = struct {
-    inner: ?*c.Fl_Int_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) IntInput {
-        const ptr = c.Fl_Int_Input_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return IntInput{
-            .inner = ptr,
-        };
-    }
+        pub fn draw(self: *const Input, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Input_handle(self.input().raw(), @ptrCast(c.custom_draw_callback, cb), data);
+        }
 
-    pub fn raw(self: *const IntInput) ?*c.Fl_Int_Input {
-        return self.inner;
-    }
+        pub fn value(self: *Self) [:0]const u8 {
+            return std.mem.span(c.Fl_Input_value(self.input().raw()));
+        }
 
-    pub fn fromRaw(ptr: ?*c.Fl_Int_Input) IntInput {
-        return IntInput{
-            .inner = ptr,
-        };
-    }
+        pub fn insert(self: *const Input, val: [*c]const u8, idx: u16) !void {
+            _ = c.Fl_Input_insert(self.input().raw(), val, idx);
+        }
 
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) IntInput {
-        return IntInput{
-            .inner = @ptrCast(?*c.Fl_Int_Input, w),
-        };
-    }
+        // TODO: handle errors
+        pub fn setValue(self: *const Input, val: [*c]const u8) !void {
+            _ = c.Fl_Input_set_value(self.input().raw(), val);
+        }
 
-    pub fn fromVoidPtr(ptr: ?*anyopaque) IntInput {
-        return IntInput{
-            .inner = @ptrCast(?*c.Fl_Int_Input, ptr),
-        };
-    }
+        pub fn position(self: *const Input) u16 {
+            return @intCast(u16, c.Fl_Input_position(self.input().raw()));
+        }
 
-    pub fn toVoidPtr(self: *const IntInput) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
+        pub fn setPosition(self: *const Input, sz: u16) !void {
+            _ = c.Fl_Input_set_position(self.input().raw(), sz);
+        }
 
-    pub fn asWidget(self: *const IntInput) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
+        pub fn setTextFont(self: *const Input, font: Font) void {
+            c.Fl_Input_set_text_font(self.input().raw(), @enumToInt(font));
+        }
 
-    pub fn asInput(self: *const IntInput) Input {
-        return Input{
-            .inner = @ptrCast(?*c.Fl_Input, self.inner),
-        };
-    }
+        pub fn setTextColor(self: *const Input, col: Color) void {
+            c.Fl_Input_set_text_color(self.input().raw(), col.input().raw()());
+        }
 
-    pub fn handle(self: *const IntInput, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Int_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
-
-    pub fn draw(self: *const IntInput, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Int_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-};
-
-pub const FloatInput = struct {
-    inner: ?*c.Fl_Float_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) FloatInput {
-        const ptr = c.Fl_Float_Input_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return FloatInput{
-            .inner = ptr,
-        };
-    }
-
-    pub fn raw(self: *const FloatInput) ?*c.Fl_Float_Input {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Float_Input) FloatInput {
-        return FloatInput{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) FloatInput {
-        return FloatInput{
-            .inner = @ptrCast(?*c.Fl_Float_Input, w),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) FloatInput {
-        return FloatInput{
-            .inner = @ptrCast(?*c.Fl_Float_Input, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const FloatInput) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asWidget(self: *const FloatInput) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
-
-    pub fn asInput(self: *const FloatInput) Input {
-        return Input{
-            .inner = @ptrCast(?*c.Fl_Input, self.inner),
-        };
-    }
-
-    pub fn handle(self: *const FloatInput, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Float_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
-
-    pub fn draw(self: *const FloatInput, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Float_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-};
-
-pub const SecretInput = struct {
-    inner: ?*c.Fl_Secret_Input,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) SecretInput {
-        const ptr = c.Fl_Secret_Input_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return SecretInput{
-            .inner = ptr,
-        };
-    }
-
-    pub fn raw(self: *const SecretInput) ?*c.Fl_Secret_Input {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Secret_Input) SecretInput {
-        return SecretInput{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) SecretInput {
-        return SecretInput{
-            .inner = @ptrCast(?*c.Fl_Secret_Input, w),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) SecretInput {
-        return SecretInput{
-            .inner = @ptrCast(?*c.Fl_Secret_Input, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const SecretInput) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asWidget(self: *const SecretInput) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
-
-    pub fn asInput(self: *const SecretInput) Input {
-        return Input{
-            .inner = @ptrCast(?*c.Fl_Input, self.inner),
-        };
-    }
-
-    pub fn handle(self: *const SecretInput, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Secret_Input_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
-
-    pub fn draw(self: *const SecretInput, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Secret_Input_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-};
-
-test "all" {
-    @import("std").testing.refAllDecls(@This());
+        pub fn setTextSize(self: *const Input, sz: i32) void {
+            c.Fl_Input_set_text_size(self.input().raw(), sz);
+        }
+    };
 }

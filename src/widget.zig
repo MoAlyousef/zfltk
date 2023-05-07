@@ -1,233 +1,290 @@
-const c = @cImport({
-    @cInclude("cfl_widget.h");
-    @cInclude("cfl.h");
-});
-const enums = @import("enums.zig");
+const zfltk = @import("zfltk.zig");
+const app = zfltk.app;
+const std = @import("std");
+const enums = zfltk.enums;
 const Color = enums.Color;
-const group = @import("group.zig");
-const image = @import("image.zig");
+const Group = zfltk.Group;
+const Image = zfltk.Image;
+const c = zfltk.c;
 
-pub const WidgetPtr = ?*c.Fl_Widget;
-
-fn shim(w: Widget, data: ?*anyopaque) void {
-    _ = w;
+fn shim(_: *Widget, data: ?*anyopaque) void {
     c.Fl_awake_msg(data);
 }
 
-pub const Widget = packed struct {
-    inner: ?*c.Fl_Widget,
+pub const Widget = struct {
+    pub usingnamespace methods(Widget, *c.Fl_Widget);
 
-    pub fn new(coord_x: u16, coord_y: u16, width: u16, height: u16, title: [*c]const u8) Widget {
-        const ptr = c.Fl_Widget_new(coord_x, coord_y, width, height, title);
-        if (ptr == null) unreachable;
-        return Widget{
-            .inner = ptr,
+    pub fn OptionsImpl(comptime ctx: type) type {
+        _ = ctx;
+        return struct {
+            x: u31 = 0,
+            y: u31 = 0,
+            w: u31 = 0,
+            h: u31 = 0,
+
+            label: ?[:0]const u8 = null,
         };
     }
 
-    pub fn raw(self: *const Widget) ?*c.Fl_Widget {
-        return self.inner;
-    }
+    pub const Options = OptionsImpl(Widget);
 
-    pub fn fromRaw(ptr: ?*c.Fl_Widget) Widget {
-        return Widget{
-            .inner = ptr,
-        };
-    }
+    pub inline fn init(opts: Options) !*Widget {
+        const _label = if (opts.label != null) opts.label.?.ptr else null;
 
-    pub fn fromWidgetPtr(wid: WidgetPtr) Widget {
-        return Widget{
-            .inner = @ptrCast(?*c.Fl_Widget, wid),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Widget {
-        return Widget{
-            .inner = @ptrCast(?*c.Fl_Widget, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const Widget) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn delete(self: *const Widget) void {
-        c.Fl_Widget_delete(self.inner);
-        self.inner = null;
-    }
-
-    pub fn setCallback(self: *const Widget, comptime f: fn (w: Widget) void) void {
-        c.Fl_Widget_set_callback(self.inner, @ptrCast(*const fn (?*c.Fl_Widget, ?*anyopaque) callconv(.C) void, &f), null);
-    }
-
-    // Like `setCallback`, but also gives a data param
-    pub fn setCallbackEx(self: *const Widget, comptime f: fn (w: Widget, data: ?*anyopaque) void, data: ?*anyopaque) void {
-        c.Fl_Widget_set_callback(self.inner, @ptrCast(*const fn (?*c.Fl_Widget, ?*anyopaque) callconv(.C) void, &f), data);
-    }
-
-    pub fn emit(self: *const Widget, comptime T: type, msg: T) void {
-        self.setCallbackEx(shim, @intToPtr(?*anyopaque, @enumToInt(msg)));
-    }
-
-    pub fn setColor(self: *const Widget, col: Color) void {
-        c.Fl_Widget_set_color(self.inner, col.toRgbi());
-    }
-
-    pub fn show(self: *const Widget) void {
-        c.Fl_Widget_show(self.inner);
-    }
-
-    pub fn hide(self: *const Widget) void {
-        c.Fl_Widget_hide(self.inner);
-    }
-
-    pub fn setLabel(self: *const Widget, str: [*:0]const u8) void {
-        c.Fl_Widget_set_label(self.inner, str);
-    }
-
-    pub fn resize(self: *const Widget, coord_x: u16, coord_y: u16, width: u16, height: u16) void {
-        c.Fl_Widget_resize(self.inner, coord_x, coord_y, width, height);
-    }
-
-    pub fn redraw(self: *const Widget) void {
-        c.Fl_Widget_redraw(self.inner);
-    }
-
-    pub fn x(self: *const Widget) u16 {
-        return c.Fl_Widget_x(self.inner);
-    }
-
-    pub fn y(self: *const Widget) u16 {
-        return c.Fl_Widget_y(self.inner);
-    }
-
-    pub fn w(self: *const Widget) u16 {
-        return c.Fl_Widget_w(self.inner);
-    }
-
-    pub fn h(self: *const Widget) u16 {
-        return c.Fl_Widget_h(self.inner);
-    }
-
-    pub fn label(self: *const Widget) [*c]const u8 {
-        return c.Fl_Widget_label(self.inner);
-    }
-
-    pub fn getType(self: *const Widget, comptime T: type) T {
-        return @intToEnum(c.Fl_Widget_set_type(self.inner), T);
-    }
-
-    pub fn setType(self: *const Widget, comptime T: type, t: T) void {
-        c.Fl_Widget_set_type(self.inner, @enumToInt(t));
-    }
-
-    pub fn color(self: *const Widget) Color {
-        return Color.fromRgbi(c.Fl_Widget_color(self.inner));
-    }
-
-    pub fn labelColor(self: *const Widget) Color {
-        return Color.fromRgbi(c.Fl_Widget_label_color(self.inner));
-    }
-
-    pub fn setLabelColor(self: *const Widget, col: Color) void {
-        c.Fl_Widget_set_label_color(self.inner, col.toRgbi());
-    }
-
-    pub fn labelFont(self: *const Widget) enums.Font {
-        return @intToEnum(c.Fl_Widget_label_font(self.inner), enums.Font);
-    }
-
-    pub fn setLabelFont(self: *const Widget, font: enums.Font) void {
-        c.Fl_Widget_set_label_font(self.inner, @enumToInt(font));
-    }
-
-    pub fn labelSize(self: *const Widget) u16 {
-        @intCast(u16, c.Fl_Widget_label_size(self.inner));
-    }
-
-    pub fn setLabelSize(self: *const Widget, sz: u16) void {
-        c.Fl_Widget_set_label_size(self.inner, sz);
-    }
-
-    pub fn labelAlign(self: *const Widget) i32 {
-        return c.Fl_Widget_align(self.inner);
-    }
-
-    pub fn setLabelAlign(self: *const Widget, a: i32) void {
-        c.Fl_Widget_set_align(self.inner, a);
-    }
-
-    pub fn setTrigger(self: *const Widget, callbackTrigger: i32) void {
-        c.Fl_Widget_set_trigger(self.inner, callbackTrigger);
-    }
-
-    pub fn setBox(self: *const Widget, boxtype: enums.BoxType) void {
-        c.Fl_Widget_set_box(self.inner, @enumToInt(boxtype));
-    }
-
-    pub fn setImage(self: *const Widget, img: ?image.Image) void {
-        if (img) |i| {
-            c.Fl_Widget_set_image(self.inner, i.inner);
-        } else {
-            c.Fl_Widget_set_image(self.inner, null);
+        if (c.Fl_Widget_new(opts.x, opts.y, opts.w, opts.h, _label)) |ptr| {
+            return Widget.fromRaw(ptr);
         }
+
+        unreachable;
     }
 
-    pub fn setDeimage(self: *const Widget, img: ?image.Image) void {
-        if (img) |i| {
-            c.Fl_Widget_set_deimage(self.inner, i.inner);
-        } else {
-            c.Fl_Widget_set_deimage(self.inner, null);
-        }
-    }
-
-    pub fn trigger(self: *const Widget) i32 {
-        return c.Fl_Widget_trigger(self.inner);
-    }
-
-    pub fn parent(self: *const Widget) group.Group {
-        return group.Group{ .inner = c.Fl_Widget_parent(self.inner) };
-    }
-
-    pub fn selectionColor(self: *const Widget) enums.Color {
-        return c.Fl_Widget_selection_color(self.inner);
-    }
-
-    pub fn setSelectionColor(self: *const Widget, col: enums.Color) void {
-        c.Fl_Widget_set_selection_color(self.inner, col.toRgbi());
-    }
-
-    pub fn doCallback(self: *const Widget) void {
-        c.Fl_Widget_do_callback(self.inner);
-    }
-
-    pub fn clearVisibleFocus(self: *const Widget) void {
-        c.Fl_Widget_clear_visible_focus(self.inner);
-    }
-
-    pub fn setVisibleFocus(self: *const Widget, v: bool) void {
-        c.Fl_Widget_visible_focus(self.inner, @boolToInt(v));
-    }
-
-    pub fn setLabelType(self: *const Widget, typ: enums.LabelType) void {
-        c.Fl_Widget_set_label_type(self.inner, @enumToInt(typ));
-    }
-
-    pub fn tooltip(self: *const Widget) [*c]const u8 {
-        return c.Fl_Widget_tooltip(self.inner);
-    }
-
-    pub fn setTooltip(self: *const Widget, txt: [*c]const u8) void {
-        c.Fl_Widget_set_tooltip(
-            self.inner,
-            txt,
-        );
-    }
-
-    pub fn takeFocus(self: *const Widget) void {
-        c.Fl_set_focus(self.inner);
+    pub inline fn deinit(self: *Widget) void {
+        c.Fl_Widget_delete(self.raw());
     }
 };
+
+/// Methods to be used in everything derived from `Widget`
+pub fn methods(comptime Self: type, comptime RawPtr: type) type {
+    return struct {
+        pub inline fn widget(self: *Self) *Widget {
+            return @ptrCast(*Widget, self);
+        }
+
+        pub inline fn fromWidget(wid: *Widget) *Self {
+            return @ptrCast(*Self, wid);
+        }
+
+        pub inline fn raw(self: *Self) RawPtr {
+            return @ptrCast(RawPtr, @alignCast(1, self));
+        }
+
+        pub inline fn fromRaw(ptr: *anyopaque) *Self {
+            return @ptrCast(*Self, ptr);
+        }
+
+        /// Sets a function to be called upon `activation` of a widget such as
+        /// pushing a button
+        pub inline fn setCallback(self: *Self, f: *const fn (*Self) void) void {
+            c.Fl_Widget_set_callback(
+                self.widget().raw(),
+                &zfltk_cb_handler,
+                @intToPtr(*anyopaque, @ptrToInt(f)),
+            );
+        }
+
+        /// Like `setCallback` but allows passing data
+        pub fn setCallbackEx(self: *Self, f: *const fn (*Self, data: ?*anyopaque) void, data: ?*anyopaque) void {
+            // TODO: Make this an ArrayList or something more efficient
+            var container = app.allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @ptrToInt(f);
+            container[1] = @ptrToInt(data);
+
+            c.Fl_Widget_set_callback(
+                self.widget().raw(),
+                zfltk_cb_handler_ex,
+                @ptrCast(*anyopaque, container.ptr),
+            );
+        }
+
+        pub inline fn emit(self: *Self, comptime T: type, msg: T) void {
+            self.widget().setCallbackEx(shim, @intToPtr(?*anyopaque, @enumToInt(msg)));
+        }
+
+        pub inline fn show(self: *Self) void {
+            // `Widget_show` cannot be called on native dialogs
+            if (Self == zfltk.FileDialog(.file)) {
+                _ = c.Fl_Native_File_Chooser_show(self.raw());
+                return;
+            }
+
+            c.Fl_Widget_show(self.widget().raw());
+        }
+
+        pub inline fn hide(self: *Self) void {
+            c.Fl_Widget_hide(self.widget().raw());
+        }
+
+        pub inline fn resize(self: *Self, _x: i32, _y: i32, _w: u31, _h: u31) void {
+            c.Fl_Widget_resize(self.widget().raw(), _x, _y, _w, _h);
+        }
+
+        pub inline fn redraw(self: *Self) void {
+            c.Fl_Widget_redraw(self.widget().raw());
+        }
+
+        pub inline fn x(self: *Self) i32 {
+            return @intCast(i32, c.Fl_Widget_x(self.widget().raw()));
+        }
+
+        pub inline fn y(self: *Self) i32 {
+            return @intCast(i32, c.Fl_Widget_y(self.widget().raw()));
+        }
+
+        pub inline fn w(self: *Self) u31 {
+            return @intCast(u31, c.Fl_Widget_width(self.widget().raw()));
+        }
+
+        pub inline fn h(self: *Self) u31 {
+            return @intCast(u31, c.Fl_Widget_height(self.widget().raw()));
+        }
+
+        pub inline fn label(self: *const Self) [:0]const u8 {
+            return std.mem.span(c.Fl_Widget_label(self.widget().raw()));
+        }
+
+        pub inline fn setLabel(self: *Self, _label: [:0]const u8) void {
+            c.Fl_Widget_set_label(self.widget().raw(), _label.ptr);
+        }
+
+        pub inline fn kind(self: *const Self, comptime T: type) T {
+            return @intToEnum(c.Fl_Widget_set_type(self.widget().raw()), T);
+        }
+
+        pub inline fn setKind(self: *Self, comptime T: type, t: T) void {
+            c.Fl_Widget_set_type(self.widget().raw(), @enumToInt(t));
+        }
+
+        pub inline fn color(self: *Self) Color {
+            return Color.fromRgbi(c.Fl_Widget_color(self.widget().raw()));
+        }
+
+        pub inline fn setColor(self: *Self, col: Color) void {
+            c.Fl_Widget_set_color(self.widget().raw(), col.toRgbi());
+        }
+
+        pub inline fn labelColor(self: *Self) Color {
+            return Color.fromRgbi(c.Fl_Widget_label_color(self.widget().raw()));
+        }
+
+        pub inline fn setLabelColor(self: *Self, col: Color) void {
+            c.Fl_Widget_set_label_color(self.widget().raw(), col.toRgbi());
+        }
+
+        pub inline fn labelFont(self: *const Self) enums.Font {
+            return @intToEnum(c.Fl_Widget_label_font(self.widget().raw()), enums.Font);
+        }
+
+        pub inline fn setLabelFont(self: *Self, font: enums.Font) void {
+            c.Fl_Widget_set_label_font(self.widget().raw(), @enumToInt(font));
+        }
+
+        pub inline fn labelSize(self: *const Self) u31 {
+            return @intCast(u31, c.Fl_Widget_label_size(self.widget().raw()));
+        }
+
+        pub inline fn setLabelSize(self: *Self, size: u31) void {
+            c.Fl_Widget_set_label_size(self.widget().raw(), size);
+        }
+
+        // TODO: make alignment and trigger enums
+        pub inline fn labelAlign(self: *const Self) i32 {
+            return @intCast(i32, c.Fl_Widget_align(self.widget().raw()));
+        }
+
+        pub inline fn setLabelAlign(self: *Self, alignment: i32) void {
+            c.Fl_Widget_set_align(self.widget().raw(), @intCast(c_int, alignment));
+        }
+
+        pub inline fn trigger(self: *const Self) i32 {
+            return c.Fl_Widget_trigger(self.widget().raw());
+        }
+
+        pub inline fn setTrigger(self: *const Self, cb_trigger: i32) void {
+            c.Fl_Widget_set_trigger(self.widget().raw(), @intCast(c_int, cb_trigger));
+        }
+
+        pub inline fn box(self: *const Self) enums.BoxType {
+            return @intToEnum(enums.Boxtype, c.Fl_Widget_box(self.widget().raw()));
+        }
+
+        pub inline fn setBox(self: *Self, boxtype: enums.BoxType) void {
+            c.Fl_Widget_set_box(self.widget().raw(), @enumToInt(boxtype));
+        }
+
+        pub inline fn setImage(self: *Self, img: Image) void {
+            c.Fl_Widget_set_image(self.widget().raw(), img.inner);
+        }
+
+        pub inline fn removeImage(self: *Self) void {
+            c.Fl_Widget_set_image(self.widget().raw(), null);
+        }
+
+        pub inline fn setDeimage(self: *Self, img: Image) void {
+            c.Fl_Widget_set_deimage(self.widget().raw(), img.inner);
+        }
+
+        pub inline fn removeDeimage(self: *Self) void {
+            c.Fl_Widget_set_deimage(self.widget().raw(), null);
+        }
+
+        // TODO: fix, this causes pointer issues
+        pub inline fn parent(self: *Self) *Group(.normal) {
+            return Group(.normal).fromRaw(c.Fl_Widget_parent(self.widget().raw()).?);
+        }
+
+        pub inline fn selectionColor(self: *const Self) enums.Color {
+            return c.Fl_Widget_selection_color(self.widget().raw());
+        }
+
+        pub inline fn setSelectionColor(self: *Self, col: enums.Color) void {
+            c.Fl_Widget_set_selection_color(self.widget().raw(), col.toRgbi());
+        }
+
+        pub inline fn doCallback(self: *const Self) void {
+            c.Fl_Widget_do_callback(self.widget().raw());
+        }
+
+        pub inline fn clearVisibleFocus(self: *Self) void {
+            c.Fl_Widget_clear_visible_focus(self.widget().raw());
+        }
+
+        pub inline fn setVisibleFocus(self: *Self, v: bool) void {
+            c.Fl_Widget_visible_focus(self.widget().raw(), @boolToInt(v));
+        }
+
+        pub inline fn setLabelKind(self: *Self, typ: enums.LabelType) void {
+            c.Fl_Widget_set_label_type(self.widget().raw(), @enumToInt(typ));
+        }
+
+        pub inline fn tooltip(self: *const Self) [:0]const u8 {
+            return std.mem.span(c.Fl_Widget_tooltip(self.widget().raw()));
+        }
+
+        pub inline fn setTooltip(self: *Self, _label: [:0]const u8) void {
+            c.Fl_Widget_set_tooltip(self.widget().raw(), _label.ptr);
+        }
+
+        pub inline fn takeFocus(self: *const Self) void {
+            c.Fl_set_focus(self.widget().raw());
+        }
+    };
+}
+
+// Small wrapper utilizing FLTK's `data` argument to use non-callconv(.C)
+// functions as callbacks safely
+export fn zfltk_cb_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
+    // Fetch function pointer from the data. This is added to the data
+    // pointer on `setCallback`.
+    const cb = @ptrCast(*const fn (*Widget) void, data);
+
+    if (wid) |ptr| {
+        cb(Widget.fromRaw(ptr));
+    } else {
+        unreachable;
+    }
+}
+
+export fn zfltk_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
+    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data));
+    const cb = @intToPtr(*const fn (*Widget, ?*anyopaque) void, container[0]);
+
+    if (wid) |ptr| {
+        cb(Widget.fromRaw(ptr), @intToPtr(?*anyopaque, container[1]));
+    } else {
+        unreachable;
+    }
+}
 
 test "all" {
     @import("std").testing.refAllDecls(@This());

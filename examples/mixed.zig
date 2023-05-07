@@ -1,26 +1,122 @@
-const c = @cImport({
-    @cInclude("cfl.h"); // Fl_event_x(), Fl_event_y()
-});
+//! Example demonstrating how to combine the wrapped and raw C APIs
 
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const widget = zfltk.widget;
-const Widget = widget.Widget;
-const window = zfltk.window;
-const button = zfltk.button;
+const Widget = zfltk.Widget;
+const Window = zfltk.Window;
+const Button = zfltk.Button;
+const Color = zfltk.enums.Color;
 const std = @import("std");
+const fmt = std.fmt;
+const c = zfltk.c;
 
-pub fn butCb(w: Widget) void {
-    _ = w;
-    std.debug.print("{},{}\n", .{ c.Fl_event_x(), c.Fl_event_y() });
+fn butCb(but: *Button(.normal)) void {
+    var buf: [32]u8 = undefined;
+
+    const label = fmt.bufPrintZ(
+        &buf,
+        "X: {d}, Y: {d}",
+        .{ c.Fl_event_x(), c.Fl_event_y() },
+    ) catch unreachable;
+
+    but.widget().setLabel(label);
+}
+
+fn colorButCb(color_but: *Button(.normal), _: ?*anyopaque) void {
+    color_but.setColor(Color.fromRgbi(
+        c.Fl_show_colormap(color_but.color().toRgbi()),
+    ));
+}
+
+fn timeoutButCb(_: *Button(.normal), data: ?*anyopaque) void {
+    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data.?));
+    const wait_time: f32 = @intToPtr(*f32, container[1]).*;
+
+    app.addTimeoutEx(wait_time, timeoutCb, data);
+}
+
+fn timeoutCb(data: ?*anyopaque) void {
+    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data.?));
+
+    // Re-interpret our ints as pointers to get our objects back
+    var but = Button(.normal).fromRaw(@intToPtr(*anyopaque, container[0]));
+    const wait_time: f32 = @intToPtr(*f32, container[1]).*;
+
+    var buf: [32]u8 = undefined;
+
+    const label = fmt.bufPrintZ(
+        &buf,
+        "{d} seconds passed!\n",
+        .{wait_time},
+    ) catch unreachable;
+
+    // The same as `but.setLabel(label);`.
+    // This is just for demonstration purposes
+    c.Fl_Widget_set_label(
+        but.widget().raw(),
+        label.ptr,
+    );
 }
 
 pub fn main() !void {
     try app.init();
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var but = button.Button.new(160, 200, 80, 40, "Click");
-    win.asGroup().end();
-    win.asWidget().show();
-    but.asWidget().setCallback(butCb);
+    _ = c.Fl_set_scheme("gtk+");
+
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 300,
+        .label = "Mixed API",
+    });
+
+    var but = try Button(.normal).init(.{
+        .x = 10,
+        .y = 100,
+        .w = 380,
+        .h = 190,
+        .label = "Click to get mouse coords",
+    });
+    but.widget().setLabelSize(24);
+    but.setCallback(butCb);
+
+    var color_but = try Button(.normal).init(.{
+        .x = 10,
+        .y = 10,
+        .w = 185,
+        .h = 80,
+        .label = "Set my color!",
+    });
+    color_but.setCallbackEx(colorButCb, null);
+
+    // Change this to whatever you want
+    var wait_time = @floatCast(f32, 1);
+
+    var buf: [32]u8 = undefined;
+    const label = try fmt.bufPrintZ(
+        &buf,
+        "Add a {d} second\ntimeout!\n",
+        .{wait_time},
+    );
+
+    var timeout_but = try Button(.normal).init(.{
+        .x = 205,
+        .y = 10,
+        .w = 185,
+        .h = 80,
+        .label = label,
+    });
+
+    // Create a container to store multiple pointers as usizes
+    var container: [2]usize = undefined;
+    container[0] = @ptrToInt(timeout_but);
+    container[1] = @ptrToInt(&wait_time);
+
+    timeout_but.setCallbackEx(
+        timeoutButCb,
+        @ptrCast(*anyopaque, &container),
+    );
+
+    win.group().end();
+    win.widget().show();
+
     try app.run();
 }

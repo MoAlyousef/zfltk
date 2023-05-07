@@ -1,23 +1,40 @@
+// TODO: rename enums to snake_case to match Zig style guide
+// <https://github.com/ziglang/zig/issues/2101>
+
 const std = @import("std");
+const draw = @import("draw.zig");
+const builtin = @import("builtin");
+const native_endian = builtin.cpu.arch.endian();
 
 const c = @cImport({
     @cInclude("cfl.h");
 });
 
-// TODO: rename enums to snake_case to match Zig style guide
-// <https://github.com/ziglang/zig/issues/2101>
-
 // DO NOT add more elements to this stuct.
 // Using 4 `u8`s in a packed struct makes an identical memory layout to a u32
 // (the color format FLTK uses) so this trick can be used to make Colors both
 // efficient and easy to use
-pub const Color = packed struct {
-    // Arranged like so because a vast majority of systems are little-endian
-    i: u8 = 0,
-    b: u8 = 0,
-    g: u8 = 0,
-    r: u8 = 0,
+pub const Color = switch (native_endian) {
+    .Big => packed struct {
+        r: u8 = 0,
+        g: u8 = 0,
+        b: u8 = 0,
+        i: u8 = 0,
 
+        pub usingnamespace methods;
+    },
+
+    .Little => packed struct {
+        i: u8 = 0,
+        b: u8 = 0,
+        g: u8 = 0,
+        r: u8 = 0,
+
+        pub usingnamespace methods;
+    },
+};
+
+pub const methods = packed struct {
     pub const Names = enum(u8) {
         foreground = 0,
         background2 = 7,
@@ -64,6 +81,10 @@ pub const Color = packed struct {
         return col;
     }
 
+    pub fn mapSelection(col: Color) Color {
+        return draw.showColorMap(col);
+    }
+
     pub fn fromRgb(r: u8, g: u8, b: u8) Color {
         // This is a special exception as FLTK's `0` index is the
         // foreground for some reason. Eg: if you override the foreground
@@ -89,11 +110,11 @@ pub const Color = packed struct {
             return col.i;
         }
 
-        return std.mem.littleToNative(u32, @bitCast(u32, col));
+        return @bitCast(u32, col);
     }
 
     pub fn fromRgbi(val: u32) Color {
-        var col = @bitCast(Color, std.mem.nativeToLittle(u32, val));
+        var col = @bitCast(Color, val);
 
         // If the color is indexed, set find out what the R, G and B values
         // are and set the struct's fields
@@ -144,164 +165,165 @@ pub const Color = packed struct {
 };
 
 pub const Align = struct {
-    pub const Center = 0;
-    pub const Top = 1;
-    pub const Bottom = 2;
-    pub const Left = 4;
-    pub const Right = 8;
-    pub const Inside = 16;
-    pub const TextOverImage = 20;
-    pub const Clip = 40;
-    pub const Wrap = 80;
-    pub const ImageNextToText = 100;
-    pub const TextNextToImage = 120;
-    pub const ImageBackdrop = 200;
-    pub const TopLeft = 1 | 4;
-    pub const TopRight = 1 | 8;
-    pub const BottomLeft = 2 | 4;
-    pub const BottomRight = 2 | 8;
-    pub const LeftTop = 7;
-    pub const RightTop = 11;
-    pub const LeftBottom = 13;
-    pub const RightBottom = 14;
-    pub const PositionMask = 15;
-    pub const ImageMask = 320;
+    pub const center = 0;
+    pub const top = 1;
+    pub const bottom = 2;
+    pub const left = 4;
+    pub const right = 8;
+    pub const inside = 16;
+    pub const text_over_image = 20;
+    pub const clip = 40;
+    pub const wrap = 80;
+    pub const image_next_to_text = 100;
+    pub const text_next_to_image = 120;
+    pub const image_backdrop = 200;
+    pub const top_left = 1 | 4;
+    pub const top_right = 1 | 8;
+    pub const bottom_left = 2 | 4;
+    pub const bottom_right = 2 | 8;
+    pub const left_top = 7;
+    pub const right_top = 11;
+    pub const left_bottom = 13;
+    pub const right_bottom = 14;
+    pub const position_mask = 15;
+    pub const image_mask = 320;
 };
 
 pub const LabelType = enum(i32) {
-    Normal = 0,
-    None,
-    Shadow,
-    Engraved,
-    Embossed,
-    Multi,
-    Icon,
-    Image,
-    FreeType,
+    normal = 0,
+    none,
+    shadow,
+    engraved,
+    embossed,
+    multi,
+    icon,
+    image,
+    free,
 };
 
-pub const BoxType = enum(i32) {
-    NoBox = 0,
-    FlatBox,
-    UpBox,
-    DownBox,
-    UpFrame,
-    DownFrame,
-    ThinUpBox,
-    ThinDownBox,
-    ThinUpFrame,
-    ThinDownFrame,
-    EngraveBox,
-    EmbossedBox,
-    EngravedFrame,
-    EmbossedFrame,
-    BorderBox,
-    ShadowBox,
-    BorderFrame,
-    ShadowFrame,
-    RoundedBox,
-    RShadowBox,
-    RoundedFrame,
-    RFlatBox,
-    RoundUpBox,
-    RoundDownBox,
-    DiamondUpBox,
-    DiamondDownBox,
-    OvalBox,
-    OShadowBox,
-    OvalFrame,
-    OFlatFrame,
-    PlasticUpBox,
-    PlasticDownBox,
-    PlasticUpFrame,
-    PlasticDownFrame,
-    PlasticThinUpBox,
-    PlasticThinDownBox,
-    PlasticRoundUpBox,
-    PlasticRoundDownBox,
-    GtkUpBox,
-    GtkDownBox,
-    GtkUpFrame,
-    GtkDownFrame,
-    GtkThinUpBox,
-    GtkThinDownBox,
-    GtkThinUpFrame,
-    GtkThinDownFrame,
-    GtkRoundUpFrame,
-    GtkRoundDownFrame,
-    GleamUpBox,
-    GleamDownBox,
-    GleamUpFrame,
-    GleamDownFrame,
-    GleamThinUpBox,
-    GleamThinDownBox,
-    GleamRoundUpBox,
-    GleamRoundDownBox,
-    FreeBoxType,
+pub const BoxType = enum(c_int) {
+    none = 0,
+    flat,
+    up,
+    down,
+    up_frame,
+    down_frame,
+    thin_up,
+    thin_down,
+    thin_up_frame,
+    thin_down_frame,
+    engraved,
+    embossed,
+    engraved_frame,
+    embossed_frame,
+    border,
+    shadow,
+    border_frame,
+    shadow_frame,
+    rounded,
+    rshadow,
+    rounded_frame,
+    rflat,
+    round_up,
+    round_down,
+    diamand_up,
+    diamond_down,
+    oval,
+    oshadow,
+    oval_frame,
+    oflat,
+    plastic_up,
+    plastic_down,
+    plastic_up_frame,
+    plastic_down_frame,
+    plastic_thin_up,
+    plastic_thin_down,
+    plastic_round_up,
+    plsatic_round_down,
+    gtk_up,
+    gtk_down,
+    gtk_up_frame,
+    gtk_down_frame,
+    gtk_thin_up,
+
+    gtk_thin_down_box,
+    gtk_thin_up_frame,
+    gtk_thin_down_frame,
+    gtk_round_up_frame,
+    gtk_round_down_frame,
+    gleam_up_box,
+    gleam_down_box,
+    gleam_up_frame,
+    gleam_down_frame,
+    gleam_thin_up_box,
+    gleam_thin_down_box,
+    gleam_round_up_box,
+    gleam_round_down_box,
+    free,
 };
 
 pub const BrowserScrollbar = enum(i32) {
-    BrowserScrollbarNone = 0,
-    BrowserScrollbarHorizontal = 1,
-    BrowserScrollbarVertical = 2,
-    BrowserScrollbarBoth = 3,
-    BrowserScrollbarAlwaysOn = 4,
-    BrowserScrollbarHorizontalAlways = 5,
-    BrowserScrollbarVerticalAlways = 6,
-    BrowserScrollbarBothAlways = 7,
+    none = 0,
+    horizontal = 1,
+    vertical = 2,
+    both = 3,
+    always = 4,
+    horizontal_always = 5,
+    vertical_always = 6,
+    both_always = 7,
 };
 
-pub const Event = enum(i32) {
-    NoEvent = 0,
-    Push,
-    Released,
-    Enter,
-    Leave,
-    Drag,
-    Focus,
-    Unfocus,
-    KeyDown,
-    KeyUp,
-    Close,
-    Move,
-    Shortcut,
-    Deactivate,
-    Activate,
-    Hide,
-    Show,
-    Paste,
-    SelectionClear,
-    MouseWheel,
-    DndEnter,
-    DndDrag,
-    DndLeave,
-    DndRelease,
-    ScreenConfigChanged,
-    Fullscreen,
-    ZoomGesture,
-    ZoomEvent,
+pub const Event = enum(c_int) {
+    none = 0,
+    push,
+    release,
+    enter,
+    leave,
+    drag,
+    focus,
+    unfocus,
+    key_down,
+    key_up,
+    close,
+    move,
+    shortcut,
+    deactivate,
+    activate,
+    hide,
+    show,
+    paste,
+    selection_clear,
+    mouse_wheel,
+    dnd_enter,
+    dnd_drag,
+    dnd_leave,
+    dnd_release,
+    screen_config_changed,
+    fullscreen,
+    zoom_gesture,
+    zoom_event,
     FILLER, // FLTK sends `28` as an event occasionally and this doesn't appear
     // to be documented anywhere. This is only included to keep
     // programs from crashing from a non-existent enum
 };
 
-pub const Font = enum(i32) {
-    Helvetica = 0,
-    HelveticaBold = 1,
-    HelveticaItalic = 2,
-    HelveticaBoldItalic = 3,
-    Courier = 4,
-    CourierBold = 5,
-    CourierItalic = 6,
-    CourierBoldItalic = 7,
-    Times = 8,
-    TimesBold = 9,
-    TimesItalic = 10,
-    TimesBoldItalic = 11,
-    Symbol = 12,
-    Screen = 13,
-    ScreenBold = 14,
-    Zapfdingbats = 15,
+pub const Font = enum(c_int) {
+    helvetica = 0,
+    helvetica_bold,
+    helvetica_italic,
+    helvetica_bold_italic,
+    courier,
+    courier_bold,
+    courier_italic,
+    courier_bold_italic,
+    times,
+    times_bold,
+    times_italic,
+    times_bold_italic,
+    symbol,
+    screen,
+    screen_bold,
+    zapfdingbats,
 };
 
 pub const Key = struct {

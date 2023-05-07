@@ -1,420 +1,254 @@
-const c = @cImport({
-    @cInclude("cfl_group.h");
-});
-const widget = @import("widget.zig");
-const Widget = widget.Widget;
+const zfltk = @import("zfltk.zig");
+const app = zfltk.app;
+const Widget = zfltk.Widget;
+const c = zfltk.c;
+const std = @import("std");
+const widget_methods = zfltk.widget_methods;
 
 pub const GroupPtr = ?*c.Fl_Group;
 
-pub const Group = struct {
-    inner: ?*c.Fl_Group,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Group {
-        const ptr = c.Fl_Group_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return Group{
-            .inner = ptr,
-        };
-    }
-
-    pub fn current() Group {
-        return Group{
-            .inner = c.Fl_Group_current(),
-        };
-    }
-
-    pub fn raw(self: *const Group) ?*c.Fl_Group {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Group) Group {
-        return Group{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) Group {
-        return Group{
-            .inner = @ptrCast(?*c.Fl_Group, w),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Group {
-        return Group{
-            .inner = @ptrCast(?*c.Fl_Group, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const Group) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asWidget(self: *const Group) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
-
-    pub fn handle(self: *const Group, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Group_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
-
-    pub fn draw(self: *const Group, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Group_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-
-    pub fn begin(self: *const Group) void {
-        c.Fl_Group_begin(self.inner);
-    }
-
-    pub fn end(self: *const Group) void {
-        c.Fl_Group_end(self.inner);
-    }
-
-    pub fn find(self: *const Group, w: *const widget.Widget) u32 {
-        return c.Fl_Group_find(self.inner, w.*.raw());
-    }
-
-    pub fn add(self: *const Group, w: *const widget.Widget) void {
-        return c.Fl_Group_add(self.inner, w.*.raw());
-    }
-
-    pub fn insert(self: *const Group, w: *const widget.Widget, index: u32) void {
-        return c.Fl_Group_insert(self.inner, w.*.raw(), index);
-    }
-
-    pub fn remove(self: *const Group, w: *const widget.Widget) void {
-        return c.Fl_Group_remove(self.inner, w.*.raw());
-    }
-
-    pub fn resizable(self: *const Group, w: *const widget.Widget) void {
-        return c.Fl_Group_resizable(self.inner, w.*.raw());
-    }
-
-    pub fn clear(self: *const Group) void {
-        c.Fl_Group_clear(self.inner);
-    }
-
-    pub fn children(self: *const Group) u32 {
-        c.Fl_Group_children(self.inner);
-    }
-
-    pub fn child(self: *const Group, idx: u32) !widget.Widget {
-        const ptr = c.Fl_Group_child(self.inner, idx);
-        if (ptr == 0) unreachable;
-        return widget.Widget{
-            .inner = ptr,
-        };
-    }
+pub const GroupKind = enum {
+    normal,
+    pack,
+    tabs,
+    scroll,
+    flex,
 };
 
-pub const PackType = enum(i32) {
-    Vertical = 0,
-    Horizontal = 1,
-};
-
-pub const Pack = struct {
-    inner: ?*c.Fl_Pack,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Pack {
-        const ptr = c.Fl_Pack_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return Pack{
-            .inner = ptr,
-        };
-    }
-
-    pub fn raw(self: *const Pack) ?*c.Fl_Pack {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Pack) Pack {
-        return Pack{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) Pack {
-        return Pack{
-            .inner = @ptrCast(?*c.Fl_Pack, w),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Pack {
-        return Pack{
-            .inner = @ptrCast(?*c.Fl_Pack, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const Pack) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asWidget(self: *const Pack) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
-
-    pub fn asGroup(self: *const Pack) Group {
-        return Group{
-            .inner = @ptrCast(?*c.Fl_Group, self.inner),
-        };
-    }
-
-    pub fn handle(self: *const Pack, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Pack_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
-
-    pub fn draw(self: *const Pack, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Pack_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-
-    /// Get the spacing of the pack
-    pub fn spacing(self: *const Pack) i32 {
-        return c.Fl_Pack_spacing(self.inner);
-    }
-
-    /// Set the spacing of the pack
-    pub fn setSpacing(self: *const Pack, s: i32) void {
-        c.Fl_Pack_set_spacing(self.inner, s);
-    }
-};
-
-pub const Tabs = struct {
-    inner: ?*c.Fl_Tabs,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Tabs {
-        const ptr = c.Fl_Tabs_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return Tabs{
-            .inner = ptr,
-        };
-    }
-
-    pub fn raw(self: *const Tabs) ?*c.Fl_Tabs {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Tabs) Tabs {
-        return Tabs{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) Tabs {
-        return Tabs{
-            .inner = @ptrCast(?*c.Fl_Tabs, w),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Tabs {
-        return Tabs{
-            .inner = @ptrCast(?*c.Fl_Tabs, ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const Tabs) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
-
-    pub fn asWidget(self: *const Tabs) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
-
-    pub fn asGroup(self: *const Tabs) Group {
-        return Group{
-            .inner = @ptrCast(?*c.Fl_Group, self.inner),
-        };
-    }
-
-    pub fn setHandle(self: *const Tabs, cb: fn (w: Widget, ev: i32) i32) void {
-        c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), null);
-    }
-
-    pub fn setHandleEx(self: *const Tabs, cb: fn (w: Widget, ev: i32, data: ?*anyopaque) i32, data: ?*anyopaque) void {
-        c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
-
-    pub fn draw(self: *const Tabs, cb: fn (w: Widget, data: ?*anyopaque) void, data: ?*anyopaque) void {
-        c.Fl_Tabs_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-
-    /// Gets the currently visible group
-    pub fn value(self: *const Tabs) Group {
-        return Group{ .inner = c.Fl_Tabs_value(self.inner) };
-    }
-
-    /// Sets the currently visible group
-    pub fn set_value(self: *const Tabs, w: *const Group) void {
-        _ = c.Fl_Tabs_set_value(self.inner, w);
-    }
-
-    /// Sets the tab label alignment
-    pub fn set_tab_align(self: *const Tabs, a: i32) void {
-        c.Fl_Tabs_set_tab_align(self.inner, a);
-    }
-
-    /// Gets the tab label alignment.
-    pub fn tab_align(self: *const Tabs) i32 {
-        return c.Fl_Tabs_tab_align(self.inner);
-    }
-};
-
-pub const ScrollType = enum(i32) {
+pub const ScrollType = enum(c_int) {
     /// Never show bars
-    None = 0,
+    none = 0,
     /// Show vertical bar
-    Horizontal = 1,
+    horizontal = 1,
     /// Show vertical bar
-    Vertical = 2,
+    vertical = 2,
     /// Show both horizontal and vertical bars
-    Both = 3,
+    both = 3,
     /// Always show bars
-    AlwaysOn = 4,
+    always_on = 4,
     /// Show horizontal bar always
-    HorizontalAlways = 5,
+    horizontal_always = 5,
     /// Show vertical bar always
-    VerticalAlways = 6,
+    vertical_always = 6,
     /// Always show both horizontal and vertical bars
-    BothAlways = 7,
+    both_always = 7,
 };
 
-pub const Scroll = struct {
-    inner: ?*c.Fl_Scroll,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Scroll {
-        const ptr = c.Fl_Scroll_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return Scroll{
-            .inner = ptr,
+pub fn Group(comptime kind: GroupKind) type {
+    return struct {
+        const Self = @This();
+
+        // Expose methods from `inherited` structs
+        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
+        pub usingnamespace methods(Self);
+
+        const GroupRawPtr = *c.Fl_Group;
+
+        pub const RawPtr = switch (kind) {
+            .normal => *c.Fl_Group,
+            .pack => *c.Fl_Pack,
+            .tabs => *c.Fl_Tabs,
+            .scroll => *c.Fl_Scroll,
+            .flex => *c.Fl_Flex,
         };
-    }
 
-    pub fn raw(self: *const Scroll) ?*c.Fl_Scroll {
-        return self.inner;
-    }
+        pub const Options = struct {
+            x: u31 = 0,
+            y: u31 = 0,
+            w: u31 = 0,
+            h: u31 = 0,
 
-    pub fn fromRaw(ptr: ?*c.Fl_Scroll) Scroll {
-        return Scroll{
-            .inner = ptr,
+            spacing: u31 = 0,
+
+            label: ?[:0]const u8 = null,
+            orientation: Orientation = .vertical,
+
+            pub const Orientation = enum {
+                vertical,
+                horizontal,
+            };
         };
-    }
 
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) Scroll {
-        return Scroll{
-            .inner = @ptrCast(?*c.Fl_Scroll, w),
-        };
-    }
+        pub inline fn init(opts: Options) !*Self {
+            const initFn = switch (kind) {
+                .normal => c.Fl_Group_new,
+                .pack => c.Fl_Pack_new,
+                .tabs => c.Fl_Tabs_new,
+                .scroll => c.Fl_Scroll_new,
+                .flex => c.Fl_Flex_new,
+            };
 
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Scroll {
-        return Scroll{
-            .inner = @ptrCast(?*c.Fl_Scroll, ptr),
-        };
-    }
+            const label = if (opts.label != null) opts.label.?.ptr else null;
 
-    pub fn toVoidPtr(self: *const Scroll) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
+            if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
+                var self = Self.fromRaw(ptr);
 
-    pub fn asWidget(self: *const Scroll) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
+                switch (kind) {
+                    .pack, .flex => {
+                        self.setSpacing(opts.spacing);
 
-    pub fn asGroup(self: *const Scroll) Group {
-        return Group{
-            .inner = @ptrCast(?*c.Fl_Group, self.inner),
-        };
-    }
+                        if (opts.orientation != .vertical) {
+                            c.Fl_Widget_set_type(self.widget().raw(), 1);
+                        }
+                    },
+                    else => {},
+                }
 
-    pub fn handle(self: *const Scroll, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Scroll_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
+                return self;
+            }
 
-    pub fn draw(self: *const Scroll, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Scroll_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
-};
+            unreachable;
+        }
+    };
+}
 
-pub const FlexType = enum(i32) {
-    Vertical = 0,
-    Horizontal = 1,
-};
+pub fn methods(comptime Self: type) type {
+    return struct {
+        pub inline fn group(self: *Self) *Group(.normal) {
+            return @ptrCast(*Group(.normal), self);
+        }
 
-pub const Flex = struct {
-    inner: ?*c.Fl_Flex,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Flex {
-        const ptr = c.Fl_Flex_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return Flex{
-            .inner = ptr,
-        };
-    }
+        pub inline fn current() Self {
+            if (c.Fl_Group_current()) |grp| {
+                return Self.fromRaw(grp);
+            }
 
-    pub fn raw(self: *const Flex) ?*c.Fl_Flex {
-        return self.inner;
-    }
+            unreachable;
+        }
 
-    pub fn fromRaw(ptr: ?*c.Fl_Flex) Flex {
-        return Flex{
-            .inner = ptr,
-        };
-    }
+        pub fn handle(self: *Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+            c.Fl_Group_handle(self.raw(), @ptrCast(c.custom_handler_callback, cb), data);
+        }
 
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) Flex {
-        return Flex{
-            .inner = @ptrCast(?*c.Fl_Flex, w),
-        };
-    }
+        pub fn draw(self: *Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Group_handle(self.raw(), @ptrCast(c.custom_draw_callback, cb), data);
+        }
 
-    pub fn end(self: *const Flex) void {
-        c.Fl_Flex_end(self.inner);
-    }
+        pub fn begin(self: *Self) void {
+            c.Fl_Group_begin(self.group().raw());
+        }
 
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Flex {
-        return Flex{
-            .inner = @ptrCast(?*c.Fl_Flex, ptr),
-        };
-    }
+        pub fn end(self: *Self) void {
+            const endFn = switch (Self) {
+                Group(.flex) => c.Fl_Flex_end,
+                else => c.Fl_Group_end,
+            };
 
-    pub fn toVoidPtr(self: *const Flex) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
-    }
+            const ptr = switch (Self) {
+                Group(.flex) => self.raw(),
+                else => self.group().raw(),
+            };
 
-    pub fn asWidget(self: *const Flex) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
-        };
-    }
+            endFn(ptr);
+        }
 
-    pub fn asGroup(self: *const Flex) Group {
-        return Group{
-            .inner = @ptrCast(?*c.Fl_Group, self.inner),
-        };
-    }
+        pub fn find(self: *const Self, wid: *const Widget) u32 {
+            return c.Fl_Group_find(self.group().raw(), wid.raw());
+        }
 
-    pub fn handle(self: *const Flex, cb: fn (w: Widget, ev: i32, data: ?*anyopaque) i32, data: ?*anyopaque) void {
-        c.Fl_Flex_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
-    }
+        pub fn add(self: *Self, widgets: anytype) void {
+            const T = @TypeOf(widgets);
+            const type_info = @typeInfo(T);
 
-    pub fn draw(self: *const Flex, cb: fn (w: Widget, data: ?*anyopaque) void, data: ?*anyopaque) void {
-        c.Fl_Flex_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
-    }
+            if (type_info != .Struct) {
+                @compileError("expected tuple or struct argument, found " ++ @typeName(T));
+            }
 
-    /// Set the size of the child
-    pub fn fixed(self: *const Flex, w: *const Widget, sz: i32) void {
-        c.Fl_Flex_set_size(self.inner, @ptrCast(*c.Fl_Widget, w.*.raw()), sz);
-    }
+            inline for (std.meta.fields(T)) |w| {
+                const wid = @as(w.field_type, @field(widgets, w.name));
 
-    pub fn setPad(self: *const Flex, sz: i32) void {
-        c.Fl_Flex_set_pad(self.inner, sz);
-    }
+                if (!comptime zfltk.isWidget(w.field_type)) {
+                    @compileError("expected FLTK widget, found " ++ @typeName(w.field_type));
+                }
 
-    pub fn setMargin(self: *const Flex, sz: i32) void {
-        c.Fl_Flex_set_margin(self.inner, sz);
-    }
-};
+                c.Fl_Group_add(self.group().raw(), wid.widget().raw());
+            }
+        }
 
-test "all" {
-    @import("std").testing.refAllDecls(@This());
+        pub fn insert(self: *const Self, wid: anytype, index: u32) void {
+            const T = @TypeOf(wid);
+            if (!comptime zfltk.isWidget(T)) {
+                @compileError("expected FLTK widget, found " ++ @typeName(T));
+            }
+
+            return c.Fl_Group_insert(self.group().raw(), wid.raw(), index);
+        }
+
+        pub fn remove(self: *const Self, wid: anytype) void {
+            const T = @TypeOf(wid);
+            if (!comptime zfltk.isWidget(T)) {
+                @compileError("expected FLTK widget, found " ++ @typeName(T));
+            }
+
+            return c.Fl_Group_remove(self.group().raw(), wid.raw());
+        }
+
+        pub fn resizable(self: *Self, wid: anytype) void {
+            const T = @TypeOf(wid);
+            if (!comptime zfltk.isWidget(T)) {
+                @compileError("expected FLTK widget, found " ++ @typeName(T));
+            }
+
+            return c.Fl_Group_resizable(self.group().raw(), wid.raw());
+        }
+
+        pub fn clear(self: *const Self) void {
+            c.Fl_Group_clear(self.group().raw());
+        }
+
+        pub fn children(self: *const Self) u31 {
+            c.Fl_Group_children(self.group().raw());
+        }
+
+        pub fn child(self: *const Self, idx: u31) !Widget {
+            if (c.Fl_Group_child(self.group().raw(), idx)) |ptr| {
+                return Widget.fromRaw(ptr);
+            }
+
+            return null;
+        }
+
+        pub fn spacing(self: *const Self) u31 {
+            const spacingFn = switch (Self) {
+                Group(.flex) => c.Fl_Flex_pad,
+                Group(.pack) => c.Fl_Pack_spacing,
+
+                else => @compileError("method `spacing` only usable with flex and pack groups"),
+            };
+
+            return @intCast(u31, spacingFn(self.raw()));
+        }
+
+        pub fn setSpacing(self: *Self, sz: u31) void {
+            const spacingFn = switch (Self) {
+                Group(.flex) => c.Fl_Flex_set_pad,
+                Group(.pack) => c.Fl_Pack_set_spacing,
+
+                else => @compileError("method `setSpacing` only usable with flex and pack groups"),
+            };
+
+            spacingFn(self.raw(), sz);
+        }
+
+        pub inline fn fixed(self: *Self, wid: anytype, sz: i32) void {
+            if (Self != Group(.flex)) {
+                @compileError("method `fixed` only usable with flex groups");
+            }
+
+            const T = @TypeOf(wid);
+            if (!comptime zfltk.isWidget(T)) {
+                @compileError("expected FLTK widget, found " ++ @typeName(T));
+            }
+
+            c.Fl_Flex_set_size(self.raw(), wid.widget().raw(), sz);
+        }
+
+        pub inline fn setScrollBar(self: *Self, scrollbar: ScrollType) void {
+            if (Self != Group(.scroll)) {
+                @compileError("method `setScrollBar` only usable with scroll groups");
+            }
+
+            self.widget().setKind(ScrollType, scrollbar);
+        }
+    };
 }
