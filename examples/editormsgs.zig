@@ -25,16 +25,17 @@ pub const Message = enum(usize) {
 // Also logic can be added to prompt the user to save their work
 pub fn winCb(w: Widget) void {
     _ = w;
-    if (app.event() == enums.Event.Close) {
+    if (app.event() == .close) {
         app.send(Message, .Quit);
     }
 }
 
 pub fn main() !void {
     try app.init();
-    app.setScheme(.Gtk);
+    app.setScheme(.gtk);
+
     app.setBackground(Color.fromRgb(211, 211, 211));
-    var win = window.Window.new(0, 0, 800, 600, "Editor");
+    var win = window.Window.init(0, 0, 800, 600, "Editor");
     win.freePosition();
     var mymenu = menu.MenuBar.new(0, 0, 800, 35, "");
     var buf = text.TextBuffer.new();
@@ -42,9 +43,9 @@ pub fn main() !void {
     var editor = text.TextEditor.new(2, 37, 800 - 2, 600 - 37, "");
     editor.asTextDisplay().setBuffer(&buf);
     editor.asTextDisplay().setLinenumberWidth(24);
-    win.asGroup().end();
-    win.asWidget().show();
-    win.asWidget().setCallback(winCb);
+    win.group().end();
+    win.widget().show();
+    win.widget().setCallback(winCb);
 
     mymenu.asMenu().addEmit(
         "&File/New...\t",
@@ -127,7 +128,7 @@ pub fn main() !void {
                     _ = buf.saveFile(fname) catch unreachable;
                 }
             },
-            .Quit => win.asWidget().hide(),
+            .Quit => win.widget().hide(),
             .Cut => editor.cut(),
             .Copy => editor.copy(),
             .Paste => editor.paste(),

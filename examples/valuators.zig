@@ -1,27 +1,59 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const widget = zfltk.widget;
-const window = zfltk.window;
+const Widget = zfltk.Widget;
+const Window = zfltk.Window;
 const valuator = zfltk.valuator;
-const group = zfltk.group;
+const Group = zfltk.Group;
 const enums = zfltk.enums;
+const Valuator = zfltk.Valuator;
 
 pub fn main() !void {
     try app.init();
-    app.setScheme(.Gtk);
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var pack = group.Pack.new(0, 0, 400, 300, "");
-    pack.asWidget().setType(group.PackType, .Vertical);
-    pack.setSpacing(40);
-    var slider = valuator.Slider.new(0, 0, 0, 40, "Slider");
-    slider.asWidget().setType(valuator.SliderType, .HorizontalNice);
-    const scrollbar = valuator.Scrollbar.new(0, 0, 0, 40, "Scrollbar");
-    scrollbar.asWidget().setType(valuator.ScrollbarType, .HorizontalNice);
-    _ = valuator.Counter.new(0, 0, 0, 40, "Counter");
-    _ = valuator.Adjuster.new(0, 0, 0, 40, "Adjuster");
-    pack.asGroup().end();
-    win.asGroup().end();
-    win.asWidget().show();
+    app.setScheme(.gtk);
+
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 300,
+
+        .label = "Valuators",
+    });
+
+    var pack = try Group(.pack).init(.{
+        .w = 400,
+        .h = 300,
+
+        .spacing = 40,
+    });
+
+    pack.add(.{
+        try Valuator(.slider).init(.{
+            .h = 40,
+            .style = .nice,
+            .orientation = .horizontal,
+            .label = "Slider",
+        }),
+
+        try Valuator(.scrollbar).init(.{
+            .h = 40,
+            .style = .nice,
+            .orientation = .horizontal,
+            .label = "Scrollbar",
+        }),
+
+        try Valuator(.counter).init(.{
+            .h = 40,
+            .w = win.w(),
+            .label = "Counter",
+        }),
+
+        try Valuator(.adjuster).init(.{
+            .h = 40,
+            .label = "Adjuster",
+        }),
+    });
+
+    pack.end();
+    win.end();
+    win.show();
     try app.run();
 }
-

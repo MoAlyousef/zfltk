@@ -425,8 +425,8 @@ pub fn drawFrame2(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32) void {
 }
 
 /// Draws a box given the box type, size, position and color
-pub fn drawBox(box_type: BoxType, x: i32, y: i32, w: i32, h: i32, col: Color) void {
-    c.Fl_draw_box(box_type, x, y, w, h, col.toRgbi());
+pub fn box(box_type: BoxType, x: i32, y: i32, w: i32, h: i32, col: Color) void {
+    c.Fl_draw_box(@enumToInt(box_type), x, y, w, h, col.toRgbi());
 }
 
 /// Checks whether platform supports true alpha blending for RGBA images

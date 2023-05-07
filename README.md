@@ -88,26 +88,55 @@ Using the Zig wrapper (under development):
 ```zig
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const widget = zfltk.widget;
-const window = zfltk.window;
-const button = zfltk.button;
-const box = zfltk.box;
+const Window = zfltk.Window;
+const Button = zfltk.Button;
+const Box = zfltk.Box;
+const Color = zfltk.enums.Color;
 
-pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
-    _ = w;
-    var mybox = widget.Widget.fromVoidPtr(data);
-    mybox.setLabel("Hello World!");
+fn butCb(but: *Button(.normal), data: ?*anyopaque) void {
+    var box = Box.fromRaw(data.?);
+
+    box.setLabel("Hello World!");
+
+    but.setColor(Color.fromName(.cyan));
 }
 
 pub fn main() !void {
     try app.init();
-    app.setScheme(.Gtk);
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var but = button.Button.new(160, 200, 80, 40, "Click");
-    var mybox = box.Box.new(0, 0, 400, 200, "");
-    win.asGroup().end();
-    win.asWidget().show();
-    but.asWidget().setCallback(butCb, mybox.toVoidPtr());
+    app.setScheme(.gtk);
+
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 300,
+
+        .label = "Hello",
+    });
+
+    var but = try Button(.normal).init(.{
+        .x = 160,
+        .y = 220,
+        .w = 80,
+        .h = 40,
+
+        .label = "Click me!",
+    });
+
+    var box = try Box.init(.{
+        .x = 10,
+        .y = 10,
+        .w = 380,
+        .h = 180,
+
+        .boxtype = .up,
+    });
+
+    box.setLabelFont(.courier);
+    box.setLabelSize(18);
+
+    win.group().end();
+    win.widget().show();
+
+    but.setCallbackEx(butCb, box);
     try app.run();
 }
 ```
@@ -115,26 +144,68 @@ The messaging api can also be used:
 ```zig
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const window = zfltk.window;
-const button = zfltk.button;
-const box = zfltk.box;
+const Widget = zfltk.Widget;
+const Window = zfltk.Window;
+const Button = zfltk.Button;
+const Box = zfltk.Box;
+const enums = zfltk.enums;
 
 pub const Message = enum(usize) {
-    ButtonPushed = 1,
+    // Can't begin with Zero!
+    first = 1,
+    second,
 };
 
 pub fn main() !void {
     try app.init();
-    app.setScheme(.Gtk);
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var but = button.Button.new(160, 220, 80, 40, "Click Me");
-    var mybox = box.Box.new(10, 10, 380, 180, "");
-    win.asGroup().end();
-    win.asWidget().show();
-    but.asWidget().emit(Message, .ButtonPushed);
+    app.setScheme(.gtk);
+
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 300,
+
+        .label = "Hello",
+    });
+
+    var but1 = try Button(.normal).init(.{
+        .x = 100,
+        .y = 220,
+        .w = 80,
+        .h = 40,
+
+        .label = "Button 1",
+    });
+
+    var but2 = try Button(.normal).init(.{
+        .x = 200,
+        .y = 220,
+        .w = 80,
+        .h = 40,
+
+        .label = "Button 2",
+    });
+
+    var mybox = try Box.init(.{
+        .x = 10,
+        .y = 10,
+        .w = 380,
+        .h = 180,
+
+        .boxtype = .up,
+    });
+
+    mybox.setLabelFont(.courier);
+    mybox.setLabelSize(18);
+
+    win.group().end();
+    win.show();
+    but1.emit(Message, .first);
+    but2.emit(Message, .second);
+
     while (app.wait()) {
         if (app.recv(Message)) |msg| switch (msg) {
-            .ButtonPushed => mybox.asWidget().setLabel("Button clicked"),
+            .first => mybox.setLabel("Button 1 Clicked!"),
+            .second => mybox.setLabel("Button 2 Clicked!"),
         };
     }
 }
@@ -166,34 +237,7 @@ pub fn main() void {
     _ = c.Fl_run();
 }
 ```
-You can also mix and match for any missing functionalities in the Zig wrapper:
-```zig
-const c = @cImport({
-    @cInclude("cfl.h"); // Fl_event_x() and Fl_event_y()
-});
-const zfltk = @import("zfltk");
-const app = zfltk.app;
-const widget = zfltk.widget;
-const window = zfltk.window;
-const button = zfltk.button;
-const std = @import("std");
-
-pub fn butCb(w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void {
-    _ = w;
-    _ = data;
-    std.debug.print("{},{}\n", .{c.Fl_event_x(), c.Fl_event_y()});
-}
-
-pub fn main() !void {
-    try app.init();
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var but = button.Button.new(160, 200, 80, 40, "Click");
-    win.asGroup().end();
-    win.asWidget().show();
-    but.asWidget().setCallback(butCb, null);
-    try app.run();
-}
-```
+You can also mix and match for any missing functionalities in the Zig wrapper (see examples/mixed.zig)
 
 ![alt_test](screenshots/image.jpg)
 ![alt_test](screenshots/editor.jpg)

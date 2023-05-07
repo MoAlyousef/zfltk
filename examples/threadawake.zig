@@ -1,60 +1,91 @@
 const zfltk = @import("zfltk");
 const std = @import("std");
 const app = zfltk.app;
-const widget = zfltk.widget;
-const window = zfltk.window;
-const button = zfltk.button;
-const box = zfltk.box;
+const Window = zfltk.Window;
+const Button = zfltk.Button;
+const Box = zfltk.Box;
 const enums = zfltk.enums;
 const Color = enums.Color;
 
-var count: i32 = 0;
+var count: u32 = 0;
 
 pub fn thread_func(data: ?*anyopaque) !void {
-    var brighten = true;
+    var lighten = true;
+
+    const d = data orelse unreachable;
+    var mybox = Box.fromRaw(d);
+    var buf: [256]u8 = undefined;
+
     while (true) {
-        if (data) |d| {
-            var mybox = widget.Widget.fromVoidPtr(d);
-            std.time.sleep(10000000);
-            var buf: [100]u8 = undefined;
-            const val = try std.fmt.bufPrintZ(buf[0..], "Hello {d}!", .{count});
-            mybox.setLabel(val);
+        std.time.sleep(10_000_000);
 
-            if (mybox.labelColor().toHex() == 0xffffff) {
-                brighten = false;
-            } else if (mybox.labelColor().toHex() == 0x000000) {
-                brighten = true;
-            }
+        const val = try std.fmt.bufPrintZ(buf[0..], "Hello!\n{d}", .{count});
 
-            if (brighten) {
-                mybox.setLabelColor(mybox.labelColor().lighten(1));
-            } else {
-                mybox.setLabelColor(mybox.labelColor().darken(1));
-            }
+        mybox.setLabel(val);
 
-            app.awake();
+        const col = mybox.labelColor();
+
+        if (col.toHex() == 0xffffff) {
+            lighten = false;
+        } else if (col.toHex() == 0x000000) {
+            lighten = true;
         }
+
+        if (lighten) {
+            mybox.setLabelColor(col.lighten(4));
+        } else {
+            mybox.setLabelColor(col.darken(4));
+        }
+
+        app.awake();
         count += 1;
     }
 }
 
-pub fn butCb(w: widget.Widget, data: ?*anyopaque) void {
-    _ = w;
+pub fn butCb(_: *Button(.normal), data: ?*anyopaque) void {
     var thread = std.Thread.spawn(.{}, thread_func, .{data}) catch {
         return;
     };
+
     thread.detach();
 }
 
 pub fn main() !void {
     try app.init();
-    app.setScheme(.Oxy);
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var but = button.Button.new(160, 220, 80, 40, "Click");
-    but.asWidget().clearVisibleFocus();
-    var mybox = box.Box.new(10, 10, 380, 180, "");
-    win.asGroup().end();
-    win.asWidget().show();
-    but.asWidget().setCallbackEx(butCb, mybox.toVoidPtr());
+    app.setScheme(.oxy);
+
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 300,
+
+        .label = "Thread awake",
+    });
+
+    var but = try Button(.normal).init(.{
+        .x = 120,
+        .y = 220,
+        .w = 160,
+        .h = 40,
+
+        .label = "Start threading!",
+    });
+
+    but.clearVisibleFocus();
+
+    var mybox = try Box.init(.{
+        .x = 10,
+        .y = 10,
+        .w = 380,
+        .h = 180,
+
+        .label = "Hello!\n ",
+    });
+
+    but.setCallbackEx(butCb, mybox.raw());
+    mybox.setLabelSize(48);
+
+    win.end();
+    win.show();
+
     try app.run();
 }

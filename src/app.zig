@@ -1,83 +1,109 @@
-const c = @cImport({
-    @cInclude("cfl.h");
-    @cInclude("cfl_image.h");
-});
-const widget = @import("widget.zig");
+const zfltk = @import("zfltk.zig");
+const Widget = @import("widget.zig").Widget;
 const enums = @import("enums.zig");
 const Color = enums.Color;
 const Font = enums.Font;
 const std = @import("std");
+const c = zfltk.c;
 
 const Scheme = enum {
-    Base,
-    Gtk,
-    Plastic,
-    Gleam,
-    Oxy,
+    base,
+    gtk,
+    plastic,
+    gleam,
+    oxy,
 };
+
+// TODO: allow setting this
+pub var allocator: std.mem.Allocator = std.heap.c_allocator;
+
+// TODO: Add more error types
+pub const AppError = error{
+    Error,
+};
+
+// Converts a C error code to a Zig error enum
+inline fn AppErrorFromInt(err: c_int) AppError!void {
+    return switch (err) {
+        0 => {},
+
+        else => AppError.Error,
+    };
+}
 
 // fltk initizialization of optional functionalities
 pub fn init() !void {
     c.Fl_init_all(); // inits all styles, if needed
     c.Fl_register_images(); // register image types supported by fltk, if needed
-    const ret = c.Fl_lock(); // enable multithreading, if needed
-    if (ret != 0)
-        unreachable;
+
+    // Enable multithreading
+    if (c.Fl_lock() != 0) return error.LockError;
 }
 
-pub fn run() !void {
-    const ret = c.Fl_run();
-    if (ret != 0)
-        unreachable;
+pub inline fn run() !void {
+    return AppErrorFromInt(c.Fl_run());
 }
 
-pub fn setScheme(scheme: Scheme) void {
+pub inline fn setScheme(scheme: Scheme) void {
     _ = c.Fl_set_scheme(switch (scheme) {
-        .Base => "base",
-        .Gtk => "gtk+",
-        .Plastic => "plastic",
-        .Gleam => "gleam",
-        .Oxy => "oxy",
+        .base => "base",
+        .gtk => "gtk+",
+        .plastic => "plastic",
+        .gleam => "gleam",
+        .oxy => "oxy",
     });
 }
 
-pub fn lock() !void {
-    if (c.Fl_lock() != 0) {
-        return error.LockError;
-    }
+pub inline fn lock() !void {
+    if (c.Fl_lock() != 0) return error.LockError;
 }
 
-pub fn unlock() void {
+pub inline fn unlock() void {
     c.Fl_unlock();
 }
 
 // Set the boxtype's draw callback
-pub fn setBoxTypeEx(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, enums.Color) void, ox: i32, oy: i32, ow: i32, oh: i32) void {
-    c.Fl_set_box_type_cb(@enumToInt(box),
-    // The function must be casted into an exported function before passing
-    @ptrCast(*const fn (i32, i32, i32, i32, u32) callconv(.C) void, &f), ox, oy, ow, oh);
+pub inline fn setBoxTypeEx(
+    box: enums.BoxType,
+    f: *const fn (i32, i32, i32, i32, enums.Color) callconv(.C) void,
+    off_x: i32,
+    off_y: i32,
+    off_w: i32,
+    off_h: i32,
+) void {
+    c.Fl_set_box_type_cb(
+        @enumToInt(box),
+        @ptrCast(?*const fn (c_int, c_int, c_int, c_int, c_uint) callconv(.C) void, f),
+        off_x,
+        off_y,
+        off_w,
+        off_h,
+    );
 }
 
 // Simplified version of setBoxTypeEx to keep code a bit cleaner when offsets
 // are unneeded
-pub fn setBoxType(box: enums.BoxType, comptime f: fn (i32, i32, i32, i32, enums.Color) void) void {
+pub inline fn setBoxType(
+    box: enums.BoxType,
+    f: *const fn (i32, i32, i32, i32, enums.Color) callconv(.C) void,
+) void {
     setBoxTypeEx(box, f, 0, 0, 0, 0);
 }
 
 // Overriding the boxtype's draw is probably more likely to be a usecase than
 // copying an existing box, and because C++ allows multiple APIs to have the
 // same function name, one must be renamed to allow it to be used in Zig
-pub fn copyBoxType(destBox: enums.BoxType, srcBox: enums.BoxType) void {
+pub inline fn copyBoxType(destBox: enums.BoxType, srcBox: enums.BoxType) void {
     c.Fl_set_box_type(@enumToInt(destBox), @enumToInt(srcBox));
 }
 
-pub fn setVisibleFocus(focus: bool) void {
+pub inline fn setVisibleFocus(focus: bool) void {
     c.Fl_set_visible_focus(@boolToInt(focus));
 }
 
 /// Sets a `free` color in the FLTK color table. These are meant to be
 /// user-defined
-pub fn setColor(idx: u4, col: enums.Color) void {
+pub inline fn setColor(idx: u4, col: enums.Color) void {
     // FLTK enumerations.H defines `FREE_COLOR` as 16
     setColorAny(@intCast(u8, idx) + 16, col);
 }
@@ -86,63 +112,66 @@ pub fn setColor(idx: u4, col: enums.Color) void {
 /// Most colors are not intended to be overridden, `setColor` should be
 /// preferred unless the goal is to override the theme's color scheme.
 /// Overriding these may cause display elements to look incorrect
-pub fn setColorAny(idx: u8, col: enums.Color) void {
+pub inline fn setColorAny(idx: u8, col: enums.Color) void {
     c.Fl_set_color(idx, col.r, col.g, col.b);
 }
 
-pub fn loadFont(path: [:0]const u8) !void {
+pub inline fn loadFont(path: [:0]const u8) !void {
     _ = c.Fl_load_font(path.ptr);
 }
 
-pub fn unloadFont(path: [:0]const u8) !void {
+pub inline fn unloadFont(path: [:0]const u8) !void {
     c.Fl_unload_font(path.ptr);
 }
 
-pub fn setFont(face: Font, name: [:0]const u8) void {
+pub inline fn setFont(face: Font, name: [:0]const u8) void {
     c.Fl_set_font2(@enumToInt(face), name.ptr);
 }
 
-pub fn setFontSize(sz: i32) void {
+pub inline fn setFontSize(sz: u31) void {
     c.Fl_set_font_size(sz);
 }
 
-pub fn event() enums.Event {
+pub inline fn event() enums.Event {
     return @intToEnum(enums.Event, c.Fl_event());
 }
 
-pub fn eventX() i32 {
+pub inline fn eventX() i32 {
     return c.Fl_event_x();
 }
 
-pub fn eventY() i32 {
+pub inline fn eventY() i32 {
     return c.Fl_event_y();
 }
 
 // TODO: Implement as an enum (maybe have another function for unknown keys?)
-pub fn eventKey() i32 {
+pub inline fn eventKey() i32 {
     return c.Fl_event_key();
 }
 
-pub fn setBackground(col: Color) void {
+pub inline fn setBackground(col: Color) void {
     c.Fl_background(col.r, col.g, col.b);
 }
 
-pub fn setBackground2(col: Color) void {
+pub inline fn setBackground2(col: Color) void {
     c.Fl_background2(col.r, col.g, col.b);
 }
 
-pub fn setForeground(col: Color) void {
+pub inline fn setForeground(col: Color) void {
     c.Fl_foreground(col.r, col.g, col.b);
 }
 
 pub const WidgetTracker = struct {
-    inner: ?*c.Fl_Widget_Tracker,
-    pub fn new(w: widget.Widget) WidgetTracker {
-        const ptr = c.Fl_Widget_Tracker_new(@ptrCast(?*c.Fl_Widget, w.inner));
-        if (ptr == null) unreachable;
-        return WidgetTracker{
-            .inner = ptr,
-        };
+    inner: RawPointer,
+
+    pub const RawPointer = *c.Fl_Widget_Tracker;
+
+    pub fn init(w: Widget) WidgetTracker {
+        if (c.Fl_Widget_Tracker_new(w.inner)) |ptr| {
+            return WidgetTracker{ .inner = ptr };
+        }
+
+        unreachable;
     }
 
     pub fn deleted() bool {
@@ -154,45 +183,66 @@ pub const WidgetTracker = struct {
     }
 };
 
-pub fn awake() void {
+pub inline fn awake() void {
     c.Fl_awake();
 }
 
-pub fn wait() bool {
+pub inline fn wait() bool {
     return c.Fl_wait() != 0;
 }
 
-pub fn waitFor(v: f64) bool {
+pub inline fn waitFor(v: f64) bool {
     return c.Fl_wait_for(v) != 0;
 }
 
-pub fn check() i32 {
+pub inline fn check() i32 {
     return c.Fl_check();
 }
 
-pub fn send(comptime T: type, t: T) void {
+pub inline fn send(comptime T: type, t: T) void {
     c.Fl_awake_msg(@intToPtr(?*anyopaque, @enumToInt(t)));
 }
 
 pub fn recv(comptime T: type) ?T {
     var temp = c.Fl_thread_msg();
+
     if (temp) |ptr| {
         const v = @ptrToInt(ptr);
         return @intToEnum(T, v);
     }
+
     return null;
 }
 
 // Executes the callback function after `d` (duration in seconds) has passed
-pub fn timeout(d: f32, comptime f: fn () void) void {
-    const v: ?*anyopaque = null;
-    c.Fl_add_timeout(d, @ptrCast(?*const fn (?*anyopaque) callconv(.C) void, &f), v);
+// TODO: refactor these like `Widget.setCallback`
+pub fn addTimeout(d: f32, f: *const fn () void) void {
+    c.Fl_add_timeout(d, &zfltk_timeout_handler, @intToPtr(*anyopaque, @ptrToInt(f)));
+}
+
+fn zfltk_timeout_handler(data: ?*anyopaque) callconv(.C) void {
+    const cb = @ptrCast(*const fn () void, data);
+    cb();
 }
 
 // The same as `timeout` but allows for data to be passed in
-pub fn timeoutEx(d: f32, comptime f: fn (?*anyopaque) void) void {
-    const v: ?*anyopaque = null;
-    c.Fl_add_timeout(d, @ptrCast(?*const fn (?*anyopaque) callconv(.C) void, &f), v);
+pub fn addTimeoutEx(d: f32, f: *const fn (?*anyopaque) void, data: ?*anyopaque) void {
+    var container = allocator.alloc(usize, 2) catch unreachable;
+
+    container[0] = @ptrToInt(f);
+    container[1] = @ptrToInt(data);
+
+    c.Fl_add_timeout(d, &zfltk_timeout_handler_ex, @ptrCast(*anyopaque, container.ptr));
+}
+
+fn zfltk_timeout_handler_ex(data: ?*anyopaque) callconv(.C) void {
+    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data));
+
+    const cb = @intToPtr(*const fn (?*anyopaque) void, container[0]);
+
+    //    std.debug.print("test1 {d}\n", .{container[0]});
+
+    cb(@intToPtr(?*anyopaque, container[1]));
 }
 
 pub fn setMenuLinespacing(h: i32) void {

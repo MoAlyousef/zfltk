@@ -86,12 +86,12 @@ pub const Menu = struct {
         c.Fl_Menu_Bar_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
     }
 
-    pub fn add(self: *const Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime f: fn (w: Widget) void, data: ?*anyopaque) void {
-        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, @ptrCast(*const fn (?*c.Fl_Widget, ?*anyopaque) callconv(.C) void, &f), data, @enumToInt(flag));
+    pub fn add(self: *const Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Widget) void) void {
+        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, @ptrCast(*const fn (?*c.Fl_Widget, ?*anyopaque) callconv(.C) void, f), null, @enumToInt(flag));
     }
 
-    pub fn addEx(self: *const Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime f: fn (w: Widget, data: ?*anyopaque) void, data: ?*anyopaque) void {
-        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, @ptrCast(*const fn (?*c.Fl_Widget, ?*anyopaque) callconv(.C) void, &f), data, @enumToInt(flag));
+    pub fn addEx(self: *const Menu, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Widget, data: ?*anyopaque) void, data: ?*anyopaque) void {
+        _ = c.Fl_Menu_Bar_add(self.inner, name, shortcut, @ptrCast(*const fn (?*c.Fl_Widget, ?*anyopaque) callconv(.C) void, f), data, @enumToInt(flag));
     }
 
     pub fn insert(self: *const Menu, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {

@@ -1,26 +1,52 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const widget = zfltk.widget;
-const window = zfltk.window;
-const button = zfltk.button;
-const group = zfltk.group;
+const Window = zfltk.Window;
+const Box = zfltk.Box;
+const Button = zfltk.Button;
+const Group = zfltk.Group;
+const Color = enums.Color;
 const enums = zfltk.enums;
 
 pub fn main() !void {
     try app.init();
-    app.setScheme(.Gtk);
-    var win = window.Window.new(100, 100, 400, 300, "Hello");
-    var pack = group.Pack.new(0, 0, 400, 300, "");
-    pack.asWidget().setType(group.PackType, .Vertical);
-    pack.setSpacing(40);
-    @import("std").debug.print("{}\n", .{pack.spacing()});
-    _ = button.Button.new(0, 0, 0, 40, "Button 1");
-    _ = button.Button.new(0, 0, 0, 40, "Button 2");
-    _ = button.Button.new(0, 0, 0, 40, "Button 3");
-    win.asGroup().add(&pack.asWidget());
-    win.asGroup().resizable(&pack.asWidget());
-    pack.asGroup().end();
-    win.asGroup().end();
-    win.asWidget().show();
+
+    var win = try Window.init(.{
+        .w = 400,
+        .h = 300,
+
+        .label = "Hello",
+    });
+
+    var pack = try Group(.pack).init(.{
+        .w = 400,
+        .h = 300,
+
+        // The orientation is vertical by default so this isn't necessary to
+        // set; this is just for reference
+        .orientation = .vertical,
+        .spacing = 6,
+    });
+
+    win.group().resizable(pack);
+
+    var btn = try Button(.normal).init(.{
+        .h = 48,
+        .label = "Button",
+    });
+
+    // In pack groups, the size must be provided as they don't automatically
+    // adjust like flex groups. See `flex.zig`
+    pack.add(.{
+        try Box.init(.{ .h = 48, .boxtype = .down }),
+        btn,
+        try Box.init(.{ .h = 48, .boxtype = .down }),
+    });
+
+    // Flex has its own `end` method which recalculates layouts but the API
+    // remains consistent by utilizing Zig's comptime
+    pack.end();
+
+    win.group().end();
+    win.widget().show();
     try app.run();
 }

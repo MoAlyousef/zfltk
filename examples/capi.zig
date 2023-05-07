@@ -8,11 +8,10 @@ const c = @cImport({
 });
 
 // fltk initizialization of optional functionalities
-pub fn fltkInit() !void {
+pub fn fltkInit() void {
     c.Fl_init_all(); // inits all styles, if needed
     c.Fl_register_images(); // register image types supported by fltk, if needed
-    const ret = c.Fl_lock(); // enable multithreading, if needed
-    if (ret != 0) unreachable;
+    _ = c.Fl_lock(); // enable multithreading, if needed
 }
 
 // Button callback
@@ -22,7 +21,8 @@ pub fn butCb(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
 }
 
 pub fn main() !void {
-    try fltkInit();
+    fltkInit();
+
     _ = c.Fl_set_scheme("gtk+");
     var win = c.Fl_Window_new(100, 100, 400, 300, "Hello");
     var but = c.Fl_Button_new(160, 220, 80, 40, "Click me!");
