@@ -1,0 +1,127 @@
+diff --git a/build.zig b/build.zig
+index c590a88..31f8d81 100644
+--- a/build.zig
++++ b/build.zig
+@@ -37,22 +37,29 @@ const examples = &[_]Example{
+ 
+ pub fn build(b: *Builder) !void {
+     const target = b.standardTargetOptions(.{});
+-    const mode = b.standardReleaseOptions();
++    const mode = b.standardOptimizeOption(.{});
+     const sdk = Sdk.init(b);
+ 
+     const examples_step = b.step("examples", "build the examples");
+     b.default_step.dependOn(examples_step);
+ 
++    const zfltk_module = b.createModule(.{
++        .source_file = .{ .path = "src/zfltk.zig" },
++    });
++
+     for (examples) |example| {
+-        const exe = b.addExecutable(example.output, example.input);
+-        exe.setTarget(target);
+-        exe.setBuildMode(mode);
+-        exe.addPackagePath("zfltk", "src/zfltk.zig");
++        const exe = b.addExecutable(.{
++            .name = example.output,
++            .root_source_file = .{.path = example.input },
++            .optimize = mode,
++            .target = target,
++        });
++        exe.addModule("zfltk", zfltk_module);
+         try sdk.link(".", exe);
+         examples_step.dependOn(&exe.step);
+         b.installArtifact(exe);
+ 
+-        const run_cmd = exe.run();
++        const run_cmd = b.addRunArtifact(exe);
+         const run_step = b.step(b.fmt("run-{s}", .{example.output}), example.description.?);
+         run_step.dependOn(&run_cmd.step);
+     }
+diff --git a/sdk.zig b/sdk.zig
+index bbe2574..8534847 100644
+--- a/sdk.zig
++++ b/sdk.zig
+@@ -28,8 +28,10 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
+         var cmake_bin_path = try std.fmt.bufPrint(bin_buf[0..], "{s}/vendor/bin", .{sdk_path});
+         var cmake_src_path = try std.fmt.bufPrint(src_buf[0..], "{s}/vendor/cfltk", .{sdk_path});
+         var cmake_inst_path = try std.fmt.bufPrint(inst_buf[0..], "-DCMAKE_INSTALL_PREFIX={s}/vendor/lib", .{sdk_path});
++        const zfltk_config_run = b.step("build cfltk", "Build executable for fuzz testing using afl-clang-lto");
++        var zfltk_config: *std.Build.Step.Run = undefined;
+         if (target.isWindows()) {
+-            const zfltk_config = b.addSystemCommand(&[_][]const u8{
++            zfltk_config = b.addSystemCommand(&[_][]const u8{
+                 "cmake",
+                 "-B",
+                 cmake_bin_path,
+@@ -46,9 +48,8 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
+                 "-DCFLTK_USE_OPENGL=ON",
+                 "-DFLTK_BUILD_FLUID=OFF",
+             });
+-            try zfltk_config.step.make();
+         } else if (target.isDarwin()) {
+-            const zfltk_config = b.addSystemCommand(&[_][]const u8{
++            zfltk_config = b.addSystemCommand(&[_][]const u8{
+                 "cmake",
+                 "-B",
+                 cmake_bin_path,
+@@ -64,9 +65,8 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
+                 "-DCFLTK_USE_OPENGL=ON",
+                 "-DFLTK_BUILD_FLUID=OFF",
+             });
+-            try zfltk_config.step.make();
+         } else {
+-            const zfltk_config = b.addSystemCommand(&[_][]const u8{
++            zfltk_config = b.addSystemCommand(&[_][]const u8{
+                 "cmake",
+                 "-B",
+                 cmake_bin_path,
+@@ -85,9 +85,9 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
+                 "-DOPTION_USE_CAIRO=ON",
+                 "-DFLTK_BUILD_FLUID=OFF",
+             });
+-            try zfltk_config.step.make();
+         }
+-
++        zfltk_config_run.dependOn(&zfltk_config.step);
++        const zfltk_build_run = b.step("build cfltk", "");
+         const zfltk_build = b.addSystemCommand(&[_][]const u8{
+             "cmake",
+             "--build",
+@@ -96,15 +96,16 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
+             "Release",
+             "--parallel",
+         });
+-        try zfltk_build.step.make();
++        zfltk_build_run.dependOn(&zfltk_build.step);
+ 
++        const zfltk_install_run = b.step("install cfltk", "");
+         // This only needs to run once!
+         const zfltk_install = b.addSystemCommand(&[_][]const u8{
+             "cmake",
+             "--install",
+             cmake_bin_path,
+         });
+-        try zfltk_install.step.make();
++        zfltk_install_run.dependOn(&zfltk_install.step);
+     };
+     var inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/cfltk/include", .{sdk_path});
+     exe.addIncludePath(inc_dir);
+diff --git a/src/group.zig b/src/group.zig
+index 914c46d..69b217d 100644
+--- a/src/group.zig
++++ b/src/group.zig
+@@ -155,10 +155,10 @@ pub fn methods(comptime Self: type) type {
+             }
+ 
+             inline for (std.meta.fields(T)) |w| {
+-                const wid = @as(w.field_type, @field(widgets, w.name));
++                const wid = @as(w.type, @field(widgets, w.name));
+ 
+-                if (!comptime zfltk.isWidget(w.field_type)) {
+-                    @compileError("expected FLTK widget, found " ++ @typeName(w.field_type));
++                if (!comptime zfltk.isWidget(w.type)) {
++                    @compileError("expected FLTK widget, found " ++ @typeName(w.type));
+                 }
+ 
+                 c.Fl_Group_add(self.group().raw(), wid.widget().raw());
