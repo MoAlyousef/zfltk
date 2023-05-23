@@ -46,7 +46,7 @@ index bbe2574..8534847 100644
          var cmake_bin_path = try std.fmt.bufPrint(bin_buf[0..], "{s}/vendor/bin", .{sdk_path});
          var cmake_src_path = try std.fmt.bufPrint(src_buf[0..], "{s}/vendor/cfltk", .{sdk_path});
          var cmake_inst_path = try std.fmt.bufPrint(inst_buf[0..], "-DCMAKE_INSTALL_PREFIX={s}/vendor/lib", .{sdk_path});
-+        const zfltk_config_run = b.step("build cfltk", "Build executable for fuzz testing using afl-clang-lto");
++        const zfltk_config_run = b.step("configure cfltk", "");
 +        var zfltk_config: *std.Build.Step.Run = undefined;
          if (target.isWindows()) {
 -            const zfltk_config = b.addSystemCommand(&[_][]const u8{
