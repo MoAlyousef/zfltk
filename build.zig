@@ -38,7 +38,7 @@ const examples = &[_]Example{
 pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardOptimizeOption(.{});
-    const sdk = Sdk.init(b);
+    const sdk = try Sdk.init(b, ".");
 
     const examples_step = b.step("examples", "build the examples");
     b.default_step.dependOn(examples_step);
@@ -55,7 +55,7 @@ pub fn build(b: *Builder) !void {
             .target = target,
         });
         exe.addModule("zfltk", zfltk_module);
-        try sdk.link(".", exe);
+        try sdk.link(exe);
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);
 

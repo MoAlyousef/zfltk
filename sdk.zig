@@ -6,23 +6,17 @@ const LibExeObjStep = build.LibExeObjStep;
 
 const Sdk = @This();
 builder: *Builder,
+path: []const u8,
+install_step: std.Build.Step,
 
-pub fn init(b: *Builder) *Sdk {
-    const sdk = b.allocator.create(Sdk) catch @panic("out of memory");
-    sdk.* = .{
-        .builder = b,
-    };
-    return sdk;
-}
-
-pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
-    const b = sdk.builder;
+pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
+    var zfltk_install: *std.Build.Step.Run = undefined;
     const zig_exe = b.zig_exe;
     var zig_cc_buf: [250]u8 = undefined;
     var zig_cpp_buf: [250]u8 = undefined;
-    const zig_cc = try std.fmt.bufPrint(zig_cc_buf[0..], "-DCMAKE_C_COMPILER=\"{s} cc\"", .{zig_exe});
-    const zig_cpp = try std.fmt.bufPrint(zig_cpp_buf[0..], "-DCMAKE_CXX_COMPILER=\"{s} c++\"", .{zig_exe});
-    const target = exe.target;
+    const zig_cc = try std.fmt.bufPrint(zig_cc_buf[0..], "-DCMAKE_C_COMPILER={s};cc", .{zig_exe});
+    const zig_cpp = try std.fmt.bufPrint(zig_cpp_buf[0..], "-DCMAKE_CXX_COMPILER={s};c++", .{zig_exe});
+    const target = b.host.target;
     var buf: [1024]u8 = undefined;
     var sdk_lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/lib", .{sdk_path});
     _ = fs.cwd().openDir(sdk_lib_dir, .{}) catch |err| {
@@ -33,9 +27,8 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
         var cmake_bin_path = try std.fmt.bufPrint(bin_buf[0..], "{s}/vendor/bin", .{sdk_path});
         var cmake_src_path = try std.fmt.bufPrint(src_buf[0..], "{s}/vendor/cfltk", .{sdk_path});
         var cmake_inst_path = try std.fmt.bufPrint(inst_buf[0..], "-DCMAKE_INSTALL_PREFIX={s}/vendor/lib", .{sdk_path});
-        const zfltk_config_run = b.step("configure cfltk", "");
         var zfltk_config: *std.Build.Step.Run = undefined;
-        if (target.isWindows()) {
+        if (target.os.tag == .windows) {
             zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
@@ -97,8 +90,6 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
                 "-DFLTK_BUILD_FLUID=OFF",
             });
         }
-        zfltk_config_run.dependOn(&zfltk_config.step);
-        const zfltk_build_run = b.step("build cfltk", "");
         const zfltk_build = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--build",
@@ -107,17 +98,30 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
             "Release",
             "--parallel",
         });
-        zfltk_build_run.dependOn(&zfltk_build.step);
+        zfltk_build.step.dependOn(&zfltk_config.step);
 
-        const zfltk_install_run = b.step("install cfltk", "");
         // This only needs to run once!
-        const zfltk_install = b.addSystemCommand(&[_][]const u8{
+        zfltk_install = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--install",
             cmake_bin_path,
         });
-        zfltk_install_run.dependOn(&zfltk_install.step);
+        zfltk_install.step.dependOn(&zfltk_build.step);
     };
+    const sdk = b.allocator.create(Sdk) catch @panic("out of memory");
+    sdk.* = .{
+        .builder = b,
+        .path = sdk_path,
+        .install_step = zfltk_install.step,
+    };
+    return sdk;
+}
+
+pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
+    exe.step.dependOn(&sdk.install_step);
+    const sdk_path = sdk.path;
+    const target = exe.target;
+    var buf: [1024]u8 = undefined;
     var inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/cfltk/include", .{sdk_path});
     exe.addIncludePath(inc_dir);
     var lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/lib/lib", .{sdk_path});
