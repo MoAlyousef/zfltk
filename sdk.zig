@@ -7,10 +7,9 @@ const LibExeObjStep = build.LibExeObjStep;
 const Sdk = @This();
 builder: *Builder,
 path: []const u8,
-install_step: std.Build.Step,
+zfltk_module: *std.Build.Module,
 
 pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
-    var zfltk_install: *std.Build.Step.Run = undefined;
     const zig_exe = b.zig_exe;
     var zig_cc_buf: [250]u8 = undefined;
     var zig_cpp_buf: [250]u8 = undefined;
@@ -101,24 +100,27 @@ pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
         zfltk_build.step.dependOn(&zfltk_config.step);
 
         // This only needs to run once!
-        zfltk_install = b.addSystemCommand(&[_][]const u8{
+        const zfltk_install = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--install",
             cmake_bin_path,
         });
         zfltk_install.step.dependOn(&zfltk_build.step);
+        b.default_step.dependOn(&zfltk_install.step);
     };
     const sdk = b.allocator.create(Sdk) catch @panic("out of memory");
+    const zfltk_module = b.createModule(.{
+        .source_file = .{ .path = "src/zfltk.zig" },
+    });
     sdk.* = .{
         .builder = b,
         .path = sdk_path,
-        .install_step = zfltk_install.step,
+        .zfltk_module = zfltk_module,
     };
     return sdk;
 }
 
 pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
-    exe.step.dependOn(&sdk.install_step);
     const sdk_path = sdk.path;
     const target = exe.target;
     var buf: [1024]u8 = undefined;

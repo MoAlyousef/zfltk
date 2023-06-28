@@ -43,10 +43,6 @@ pub fn build(b: *Builder) !void {
     const examples_step = b.step("examples", "build the examples");
     b.default_step.dependOn(examples_step);
 
-    const zfltk_module = b.createModule(.{
-        .source_file = .{ .path = "src/zfltk.zig" },
-    });
-
     for (examples) |example| {
         const exe = b.addExecutable(.{
             .name = example.output,
@@ -54,7 +50,7 @@ pub fn build(b: *Builder) !void {
             .optimize = mode,
             .target = target,
         });
-        exe.addModule("zfltk", zfltk_module);
+        exe.addModule("zfltk", sdk.zfltk_module);
         try sdk.link(exe);
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);
