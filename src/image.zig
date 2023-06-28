@@ -86,13 +86,13 @@ pub const Image = struct {
             .shared => {
                 if (loadFn(path.ptr, 0, 0)) |ptr| {
                     try ImageErrorFromInt(failFn(ptr));
-                    return Image.fromRaw(@ptrCast(RawPtr, ptr));
+                    return Image.fromRaw(@ptrCast(ptr));
                 }
             },
             else => {
                 if (loadFn(path.ptr)) |ptr| {
                     try ImageErrorFromInt(failFn(ptr));
-                    return Image.fromRaw(@ptrCast(RawPtr, ptr));
+                    return Image.fromRaw(@ptrCast(ptr));
                 }
             },
         };
@@ -127,13 +127,13 @@ pub const Image = struct {
             .jpeg, .svg => {
                 if (loadFn(data.ptr)) |ptr| {
                     try ImageErrorFromInt(failFn(ptr));
-                    return Image.fromRaw(@ptrCast(RawPtr, ptr));
+                    return Image.fromRaw(@ptrCast(ptr));
                 }
             },
             else => {
-                if (loadFn(data.ptr, @intCast(c_int, data.len))) |ptr| {
+                if (loadFn(data.ptr,  @intCast(data.len))) |ptr| {
                     try ImageErrorFromInt(failFn(ptr));
-                    return Image.fromRaw(@ptrCast(RawPtr, ptr));
+                    return Image.fromRaw(@ptrCast(ptr));
                 }
             },
         }
@@ -144,7 +144,7 @@ pub const Image = struct {
     /// Only used on raw image types (grayscale, RGB, RGBA)
     pub inline fn fromRawData(opts: RawImageOptions) Image {
         // TODO error handling
-        if (c.Fl_RGB_Image_new(opts.data.ptr, opts.w, opts.h, @enumToInt(opts.depth), opts.line_data)) |ptr| {
+        if (c.Fl_RGB_Image_new(opts.data.ptr, opts.w, opts.h, @intFromEnum(opts.depth), opts.line_data)) |ptr| {
             try ImageErrorFromInt(c.Fl_RGB_Image_fail(ptr));
             return Image.fromRaw(ptr);
         }
@@ -153,7 +153,7 @@ pub const Image = struct {
     }
 
     pub inline fn scale(self: *const Image, width: u31, height: u31, proportional: bool, can_expand: bool) void {
-        c.Fl_Image_scale(@ptrCast(RawPtr, self.inner), width, height, @boolToInt(proportional), @boolToInt(can_expand));
+        c.Fl_Image_scale(@ptrCast(self.inner), width, height, @intFromBool(proportional), @intFromBool(can_expand));
     }
 
     pub inline fn raw(self: *const Image) RawPtr {
@@ -165,21 +165,21 @@ pub const Image = struct {
     }
 
     pub inline fn fromVoidPtr(ptr: *anyopaque) Image {
-        return Image.fromRaw(@ptrCast(RawPtr, ptr));
+        return Image.fromRaw(@ptrCast(ptr));
     }
 
     pub inline fn toVoidPtr(self: *const Image) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
+        return  @ptrCast(self.inner);
     }
 
     pub inline fn deinit(self: *const Image) void {
-        c.Fl_Image_delete(@ptrCast(RawPtr, self.inner));
+        c.Fl_Image_delete(@ptrCast(self.inner));
     }
 
     /// Returns a tiled version of the input image
     pub inline fn tile(self: *const Image, _w: u31, _h: u31) Image {
         if (c.Fl_Tiled_Image_new(self.inner, _w, _h)) |ptr| {
-            return Image.fromRaw(@ptrCast(RawPtr, ptr));
+            return Image.fromRaw(@ptrCast(ptr));
         }
 
         unreachable;

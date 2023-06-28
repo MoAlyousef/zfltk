@@ -105,7 +105,7 @@ pub fn Group(comptime kind: GroupKind) type {
 pub fn methods(comptime Self: type) type {
     return struct {
         pub inline fn group(self: *Self) *Group(.normal) {
-            return @ptrCast(*Group(.normal), self);
+            return @ptrCast(self);
         }
 
         pub inline fn current() Self {
@@ -117,11 +117,11 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn handle(self: *Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-            c.Fl_Group_handle(self.raw(), @ptrCast(c.custom_handler_callback, cb), data);
+            c.Fl_Group_handle(self.raw(), @ptrCast(cb), data);
         }
 
         pub fn draw(self: *Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Group_handle(self.raw(), @ptrCast(c.custom_draw_callback, cb), data);
+            c.Fl_Group_handle(self.raw(),  @ptrCast(cb), data);
         }
 
         pub fn begin(self: *Self) void {
@@ -155,10 +155,10 @@ pub fn methods(comptime Self: type) type {
             }
 
             inline for (std.meta.fields(T)) |w| {
-                const wid = @as(w.field_type, @field(widgets, w.name));
+                const wid = @as(w.type, @field(widgets, w.name));
 
-                if (!comptime zfltk.isWidget(w.field_type)) {
-                    @compileError("expected FLTK widget, found " ++ @typeName(w.field_type));
+                if (!comptime zfltk.isWidget(w.type)) {
+                    @compileError("expected FLTK widget, found " ++ @typeName(w.type));
                 }
 
                 c.Fl_Group_add(self.group().raw(), wid.widget().raw());
@@ -216,7 +216,7 @@ pub fn methods(comptime Self: type) type {
                 else => @compileError("method `spacing` only usable with flex and pack groups"),
             };
 
-            return @intCast(u31, spacingFn(self.raw()));
+            return @intCast(spacingFn(self.raw()));
         }
 
         pub fn setSpacing(self: *Self, sz: u31) void {

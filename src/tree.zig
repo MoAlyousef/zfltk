@@ -27,32 +27,32 @@ pub const Tree = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Tree {
         return Tree{
-            .inner = @ptrCast(?*c.Fl_Tree, w),
+            .inner = @ptrCast(w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*anyopaque) Tree {
         return Tree{
-            .inner = @ptrCast(?*c.Fl_Tree, ptr),
+            .inner = @ptrCast(ptr),
         };
     }
 
     pub fn toVoidPtr(self: *const Tree) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
+        return  @ptrCast(self.inner);
     }
 
     pub fn asWidget(self: *const Tree) widget.Widget {
         return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
+            .inner = @ptrCast(self.inner),
         };
     }
 
     pub fn handle(self: *const Tree, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Tree_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
+        c.Fl_Tree_handle(self.inner, @ptrCast(cb), data);
     }
 
     pub fn draw(self: *const Tree, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Tree_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
+        c.Fl_Tree_handle(self.inner,  @ptrCast(cb), data);
     }
 };
 
@@ -70,12 +70,12 @@ pub const TreeItem = struct {
 
     pub fn fromVoidPtr(ptr: ?*anyopaque) TreeItem {
         return TreeItem{
-            .inner = @ptrCast(?*c.Fl_Tree_Item, ptr),
+            .inner = @ptrCast(ptr),
         };
     }
 
     pub fn toVoidPtr(self: *const TreeItem) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
+        return  @ptrCast(self.inner);
     }
 };
 

@@ -70,7 +70,7 @@ pub fn Button(comptime kind: ButtonKind) type {
         }
 
         pub inline fn fromDynWidgetPtr(w: *c.Fl_Widget) ?Self {
-            if (c.Fl_Button_from_dyn_ptr(@ptrCast(*c.Fl_Widget, w))) |v| {
+            if (c.Fl_Button_from_dyn_ptr(@ptrCast(w))) |v| {
                 return .{ .inner = v };
             }
 
@@ -82,14 +82,14 @@ pub fn Button(comptime kind: ButtonKind) type {
 pub fn methods(comptime Self: type) type {
     return struct {
         pub inline fn button(self: *Self) *Button(.normal) {
-            return @ptrCast(*Button(.normal), self);
+            return @ptrCast(self);
         }
 
         pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, Event) bool) void {
             c.Fl_Button_handle(
                 self.button().raw(),
                 &zfltk_button_event_handler,
-                @intToPtr(*anyopaque, @ptrToInt(&f)),
+                 @ptrFromInt(@intFromPtr(&f)),
             );
         }
 
@@ -97,18 +97,18 @@ pub fn methods(comptime Self: type) type {
             var allocator = std.heap.c_allocator;
             var container = allocator.alloc(usize, 2) catch unreachable;
 
-            container[0] = @ptrToInt(&f);
-            container[1] = @ptrToInt(data);
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
 
             c.Fl_Button_handle(
                 self.button().raw(),
                 &zfltk_button_event_handler_ex,
-                @ptrCast(*anyopaque, container.ptr),
+                @ptrCast(container.ptr),
             );
         }
 
         pub fn draw(self: *const Self, cb: fn (w: Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Button_handle(self.button().raw(), @ptrCast(c.custom_draw_callback, cb), data);
+            c.Fl_Button_handle(self.button().raw(),  @ptrCast(cb), data);
         }
 
         pub fn shortcut(self: *const Self) i32 {
@@ -128,7 +128,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn setValue(self: *const Self, flag: bool) void {
-            c.Fl_Button_set_value(self.button().raw(), @boolToInt(flag));
+            c.Fl_Button_set_value(self.button().raw(), @intFromBool(flag));
         }
 
         pub fn setDownBox(self: *const Self, f: enums.BoxType) void {
@@ -143,29 +143,27 @@ pub fn methods(comptime Self: type) type {
 
 // TODO: work these into `widget.methods`
 export fn zfltk_button_event_handler(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const cb = @ptrCast(
-        *const fn (*Widget, Event) bool,
+    const cb: *const fn (*Widget, Event) bool = @ptrCast(
         data,
     );
 
-    return @boolToInt(cb(
+    return @intFromBool(cb(
         Widget.fromRaw(wid.?),
-        @intToEnum(Event, ev),
+        @enumFromInt(ev),
     ));
 }
 
 export fn zfltk_button_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data));
+    const container: *[2]usize = @ptrCast(@alignCast(data));
 
-    const cb = @intToPtr(
-        *const fn (*Widget, Event, ?*anyopaque) bool,
+    const cb: *const fn (*Widget, Event, ?*anyopaque) bool = @ptrFromInt(
         container[0],
     );
 
-    return @boolToInt(cb(
+    return @intFromBool(cb(
         Widget.fromRaw(wid.?),
-        @intToEnum(Event, ev),
-        @intToPtr(?*anyopaque, container[1]),
+        @enumFromInt(ev),
+        @ptrFromInt(container[1]),
     ));
 }
 

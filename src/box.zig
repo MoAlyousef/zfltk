@@ -27,10 +27,10 @@ pub const Box = struct {
 
         if (c.Fl_Box_new(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
             if (opts.boxtype != .none) {
-                c.Fl_Widget_set_box(@ptrCast(*c.Fl_Widget, ptr), @enumToInt(opts.boxtype));
+                c.Fl_Widget_set_box(@ptrCast(ptr), @intFromEnum(opts.boxtype));
             }
 
-            return @ptrCast(*Self, ptr);
+            return @ptrCast(ptr);
         }
 
         unreachable;
@@ -42,7 +42,7 @@ pub const Box = struct {
     }
 
     pub inline fn fromDynWidgetPtr(w: *c.Fl_Widget) ?Self {
-        if (c.Fl_Box_from_dyn_ptr(@ptrCast(Widget.RawPoiner, w))) |v| {
+        if (c.Fl_Box_from_dyn_ptr(@ptrCast(w))) |v| {
             return .{
                 .inner = v,
             };
@@ -55,53 +55,51 @@ pub const Box = struct {
         c.Fl_Box_handle(
             self.raw(),
             zfltk_box_event_handler,
-            @intToPtr(*anyopaque, @ptrToInt(&f)),
+             @ptrFromInt(@intFromPtr(&f)),
         );
     }
 
     pub inline fn setEventHandlerEx(self: *Self, f: *const fn (*Self, Event, ?*anyopaque) bool, data: ?*anyopaque) void {
         var container = app.allocator.alloc(usize, 2) catch unreachable;
 
-        container[0] = @ptrToInt(f);
-        container[1] = @ptrToInt(data);
+        container[0] = @intFromPtr(f);
+        container[1] = @intFromPtr(data);
 
         c.Fl_Box_handle(
             self.raw(),
             zfltk_box_event_handler_ex,
-            @ptrCast(*anyopaque, container.ptr),
+            @ptrCast(container.ptr),
         );
     }
 
     // TODO: refactor this to match `setHandle` for memory safety
     pub fn draw(self: *const Self, cb: fn (w: *c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Box_handle(self.raw(), @ptrCast(c.custom_draw_callback, cb), data);
+        c.Fl_Box_handle(self.raw(), @ptrCast(cb), data);
     }
 };
 
 export fn zfltk_box_event_handler(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const cb = @ptrCast(
-        *const fn (*Widget, Event) bool,
+    const cb: *const fn (*Widget, Event) bool = @ptrCast(
         data,
     );
 
-    return @boolToInt(cb(
+    return @intFromBool(cb(
         Widget.fromRaw(wid.?),
-        @intToEnum(Event, ev),
+        @enumFromInt(ev),
     ));
 }
 
 export fn zfltk_box_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const container = @ptrCast(*[2]usize, @alignCast(@alignOf(usize), data));
+    const container: *[2]usize = @ptrCast(@alignCast(data));
 
-    const cb = @intToPtr(
-        *const fn (*Widget, Event, ?*anyopaque) bool,
+    const cb: *const fn (*Widget, Event, ?*anyopaque) bool = @ptrFromInt(
         container[0],
     );
 
-    return @boolToInt(cb(
+    return @intFromBool(cb(
         Widget.fromRaw(wid.?),
-        @intToEnum(Event, ev),
-        @intToPtr(?*anyopaque, container[1]),
+        @enumFromInt(ev),
+        @ptrFromInt(container[1]),
     ));
 }
 

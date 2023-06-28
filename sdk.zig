@@ -17,6 +17,11 @@ pub fn init(b: *Builder) *Sdk {
 
 pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
     const b = sdk.builder;
+    const zig_exe = b.zig_exe;
+    var zig_cc_buf: [250]u8 = undefined;
+    var zig_cpp_buf: [250]u8 = undefined;
+    const zig_cc = try std.fmt.bufPrint(zig_cc_buf[0..], "-DCMAKE_C_COMPILER=\"{s} cc\"", .{zig_exe});
+    const zig_cpp = try std.fmt.bufPrint(zig_cpp_buf[0..], "-DCMAKE_CXX_COMPILER=\"{s} c++\"", .{zig_exe});
     const target = exe.target;
     var buf: [1024]u8 = undefined;
     var sdk_lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/lib", .{sdk_path});
@@ -28,8 +33,10 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
         var cmake_bin_path = try std.fmt.bufPrint(bin_buf[0..], "{s}/vendor/bin", .{sdk_path});
         var cmake_src_path = try std.fmt.bufPrint(src_buf[0..], "{s}/vendor/cfltk", .{sdk_path});
         var cmake_inst_path = try std.fmt.bufPrint(inst_buf[0..], "-DCMAKE_INSTALL_PREFIX={s}/vendor/lib", .{sdk_path});
+        const zfltk_config_run = b.step("configure cfltk", "");
+        var zfltk_config: *std.Build.Step.Run = undefined;
         if (target.isWindows()) {
-            const zfltk_config = b.addSystemCommand(&[_][]const u8{
+            zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
                 cmake_bin_path,
@@ -37,6 +44,8 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
                 cmake_src_path,
                 "-GNinja",
                 "-DCMAKE_BUILD_TYPE=Release",
+                zig_cc,
+                zig_cpp,
                 cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
@@ -46,15 +55,16 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
                 "-DCFLTK_USE_OPENGL=ON",
                 "-DFLTK_BUILD_FLUID=OFF",
             });
-            try zfltk_config.step.make();
         } else if (target.isDarwin()) {
-            const zfltk_config = b.addSystemCommand(&[_][]const u8{
+            zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
                 cmake_bin_path,
                 "-S",
                 cmake_src_path,
                 "-DCMAKE_BUILD_TYPE=Release",
+                zig_cc,
+                zig_cpp,
                 cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
@@ -64,15 +74,16 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
                 "-DCFLTK_USE_OPENGL=ON",
                 "-DFLTK_BUILD_FLUID=OFF",
             });
-            try zfltk_config.step.make();
         } else {
-            const zfltk_config = b.addSystemCommand(&[_][]const u8{
+            zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
                 "-B",
                 cmake_bin_path,
                 "-S",
                 cmake_src_path,
                 "-DCMAKE_BUILD_TYPE=Release",
+                zig_cc,
+                zig_cpp,
                 cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
@@ -85,9 +96,9 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
                 "-DOPTION_USE_CAIRO=ON",
                 "-DFLTK_BUILD_FLUID=OFF",
             });
-            try zfltk_config.step.make();
         }
-
+        zfltk_config_run.dependOn(&zfltk_config.step);
+        const zfltk_build_run = b.step("build cfltk", "");
         const zfltk_build = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--build",
@@ -96,15 +107,16 @@ pub fn link(sdk: *Sdk, sdk_path: []const u8, exe: *LibExeObjStep) !void {
             "Release",
             "--parallel",
         });
-        try zfltk_build.step.make();
+        zfltk_build_run.dependOn(&zfltk_build.step);
 
+        const zfltk_install_run = b.step("install cfltk", "");
         // This only needs to run once!
         const zfltk_install = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--install",
             cmake_bin_path,
         });
-        try zfltk_install.step.make();
+        zfltk_install_run.dependOn(&zfltk_install.step);
     };
     var inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/cfltk/include", .{sdk_path});
     exe.addIncludePath(inc_dir);

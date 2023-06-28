@@ -133,8 +133,8 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
             if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
                 var self = Self.fromRaw(ptr);
 
-                const orientation = @enumToInt(opts.orientation);
-                const style = @enumToInt(opts.style);
+                const orientation = @intFromEnum(opts.orientation);
+                const style = @intFromEnum(opts.style);
 
                 c.Fl_Widget_set_type(self.widget().raw(), orientation + style);
 
@@ -149,15 +149,15 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
 pub fn methods(comptime Self: type) type {
     return struct {
         pub inline fn valuator(self: *Self) *Valuator(.slider) {
-            return @ptrCast(*Valuator(.slider), self);
+            return @ptrCast(self);
         }
 
         //        pub fn handle(self: *const Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        //            c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
+        //            c.Fl_Slider_handle(self.inner, @ptrCast(cb), data);
         //        }
         //
         //        pub fn draw(self: *const Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        //            c.Fl_Slider_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
+        //            c.Fl_Slider_handle(self.inner,  @ptrCast(cb), data);
         //        }
 
         pub inline fn setBounds(self: *Self, a: f64, b: f64) void {

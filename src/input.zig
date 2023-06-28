@@ -64,20 +64,20 @@ pub fn Input(comptime kind: InputKind) type {
         }
 
         pub inline fn input(self: *Self) *Input(.normal) {
-            return @ptrCast(*Input(.normal), self);
+            return @ptrCast(self);
         }
 
         // TODO: refactor like `group.zig`
         pub fn setHandle(self: *const Input, comptime f: fn (w: Widget, ev: Event) bool) void {
-            c.Fl_Input_handle(self.input().raw(), @ptrCast(c.custom_handler_callback, &f), null);
+            c.Fl_Input_handle(self.input().raw(), @ptrCast(&f), null);
         }
 
         pub fn setHandleEx(self: *const Input, comptime f: fn (w: Widget, ev: Event, data: ?*anyopaque) i32, data: ?*anyopaque) void {
-            c.Fl_Input_handle(self.input().raw(), @ptrCast(c.custom_handler_callback, &f), data);
+            c.Fl_Input_handle(self.input().raw(), @ptrCast(&f), data);
         }
 
         pub fn draw(self: *const Input, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Input_handle(self.input().raw(), @ptrCast(c.custom_draw_callback, cb), data);
+            c.Fl_Input_handle(self.input().raw(),  @ptrCast(cb), data);
         }
 
         pub fn value(self: *Self) [:0]const u8 {
@@ -94,7 +94,7 @@ pub fn Input(comptime kind: InputKind) type {
         }
 
         pub fn position(self: *const Input) u16 {
-            return @intCast(u16, c.Fl_Input_position(self.input().raw()));
+            return  @intCast(c.Fl_Input_position(self.input().raw()));
         }
 
         pub fn setPosition(self: *const Input, sz: u16) !void {
@@ -102,7 +102,7 @@ pub fn Input(comptime kind: InputKind) type {
         }
 
         pub fn setTextFont(self: *const Input, font: Font) void {
-            c.Fl_Input_set_text_font(self.input().raw(), @enumToInt(font));
+            c.Fl_Input_set_text_font(self.input().raw(), @intFromEnum(font));
         }
 
         pub fn setTextColor(self: *const Input, col: Color) void {

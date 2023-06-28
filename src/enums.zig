@@ -65,7 +65,7 @@ pub const methods = packed struct {
     };
 
     pub fn fromName(name: Names) Color {
-        return Color.fromIndex(@enumToInt(name));
+        return Color.fromIndex(@intFromEnum(name));
     }
 
     pub fn fromIndex(idx: u8) Color {
@@ -110,11 +110,11 @@ pub const methods = packed struct {
             return col.i;
         }
 
-        return @bitCast(u32, col);
+        return @bitCast(col);
     }
 
     pub fn fromRgbi(val: u32) Color {
-        var col = @bitCast(Color, val);
+        var col: Color =  @bitCast(val);
 
         // If the color is indexed, set find out what the R, G and B values
         // are and set the struct's fields
@@ -126,7 +126,8 @@ pub const methods = packed struct {
     }
 
     pub fn toHex(col: Color) u24 {
-        return @truncate(u24, @bitCast(u32, col) >> 8);
+        const temp: u32 = @bitCast(col);
+        return @truncate(temp >> 8);
     }
 
     pub fn fromHex(val: u24) Color {
@@ -134,7 +135,7 @@ pub const methods = packed struct {
             return Color.fromName(.black);
         }
 
-        return @bitCast(Color, std.mem.nativeToLittle(u32, @intCast(u32, val) << 8));
+        return  @bitCast(std.mem.nativeToLittle(u32, @as(u32, val) << 8));
     }
 
     // Seems really redundant and the FLTK docs don't even appear to document

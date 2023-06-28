@@ -345,7 +345,7 @@ pub fn endComplexPolygon() void {
 
 /// Sets the current font, which is then used in various drawing routines
 pub fn setFont(face: Font, fsize: u32) void {
-    c.Fl_set_draw_font(@enumToInt(face), fsize);
+    c.Fl_set_draw_font(@intFromEnum(face), fsize);
 }
 
 /// Gets the current font, which is used in various drawing routines
@@ -365,7 +365,7 @@ pub fn height() i32 {
 
 /// Sets the line spacing for the current font
 pub fn setHeight(f: Font, sz: u32) void {
-    c.Fl_set_height(@enumToInt(f), sz);
+    c.Fl_set_height(@intFromEnum(f), sz);
 }
 
 /// Returns the recommended distance above the bottom of a height() tall box to
@@ -426,7 +426,7 @@ pub fn drawFrame2(string: [*c]const u8, x: i32, y: i32, w: i32, h: i32) void {
 
 /// Draws a box given the box type, size, position and color
 pub fn box(box_type: BoxType, x: i32, y: i32, w: i32, h: i32, col: Color) void {
-    c.Fl_draw_box(@enumToInt(box_type), x, y, w, h, col.toRgbi());
+    c.Fl_draw_box(@intFromEnum(box_type), x, y, w, h, col.toRgbi());
 }
 
 /// Checks whether platform supports true alpha blending for RGBA images
@@ -451,12 +451,12 @@ pub fn overlayClear() void {
 
 /// Sets the cursor style
 pub fn setCursor(cursor: Cursor) void {
-    c.Fl_set_cursor(@enumToInt(cursor));
+    c.Fl_set_cursor(@intFromEnum(cursor));
 }
 
 /// Sets the cursor style
 pub fn setCursorWithColor(cursor: Cursor, fg: Color, bg: Color) void {
-    c.Fl_set_cursor2(@enumToInt(cursor), fg.toRgbi(), bg.toRgbi());
+    c.Fl_set_cursor2(@intFromEnum(cursor), fg.toRgbi(), bg.toRgbi());
 }
 
 test "all" {

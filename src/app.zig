@@ -72,8 +72,8 @@ pub inline fn setBoxTypeEx(
     off_h: i32,
 ) void {
     c.Fl_set_box_type_cb(
-        @enumToInt(box),
-        @ptrCast(?*const fn (c_int, c_int, c_int, c_int, c_uint) callconv(.C) void, f),
+        @intFromEnum(box),
+        @ptrCast(f),
         off_x,
         off_y,
         off_w,
@@ -94,18 +94,18 @@ pub inline fn setBoxType(
 // copying an existing box, and because C++ allows multiple APIs to have the
 // same function name, one must be renamed to allow it to be used in Zig
 pub inline fn copyBoxType(destBox: enums.BoxType, srcBox: enums.BoxType) void {
-    c.Fl_set_box_type(@enumToInt(destBox), @enumToInt(srcBox));
+    c.Fl_set_box_type(@intFromEnum(destBox), @intFromEnum(srcBox));
 }
 
 pub inline fn setVisibleFocus(focus: bool) void {
-    c.Fl_set_visible_focus(@boolToInt(focus));
+    c.Fl_set_visible_focus(@intFromBool(focus));
 }
 
 /// Sets a `free` color in the FLTK color table. These are meant to be
 /// user-defined
 pub inline fn setColor(idx: u4, col: enums.Color) void {
     // FLTK enumerations.H defines `FREE_COLOR` as 16
-    setColorAny(@intCast(u8, idx) + 16, col);
+    setColorAny(@as(u8, idx) + 16, col);
 }
 
 /// Allows setting any color in the color table
@@ -125,7 +125,7 @@ pub inline fn unloadFont(path: [:0]const u8) !void {
 }
 
 pub inline fn setFont(face: Font, name: [:0]const u8) void {
-    c.Fl_set_font2(@enumToInt(face), name.ptr);
+    c.Fl_set_font2(@intFromEnum(face), name.ptr);
 }
 
 pub inline fn setFontSize(sz: u31) void {
@@ -133,7 +133,7 @@ pub inline fn setFontSize(sz: u31) void {
 }
 
 pub inline fn event() enums.Event {
-    return @intToEnum(enums.Event, c.Fl_event());
+    return @enumFromInt(c.Fl_event());
 }
 
 pub inline fn eventX() i32 {
@@ -200,15 +200,14 @@ pub inline fn check() i32 {
 }
 
 pub inline fn send(comptime T: type, t: T) void {
-    c.Fl_awake_msg(@intToPtr(?*anyopaque, @enumToInt(t)));
+    c.Fl_awake_msg( @ptrFromInt(@intFromEnum(t)));
 }
 
 pub fn recv(comptime T: type) ?T {
     var temp = c.Fl_thread_msg();
 
     if (temp) |ptr| {
-        const v = @ptrToInt(ptr);
-        return @intToEnum(T, v);
+        return @enumFromInt(@intFromPtr(ptr));
     }
 
     return null;
@@ -217,11 +216,11 @@ pub fn recv(comptime T: type) ?T {
 // Executes the callback function after `d` (duration in seconds) has passed
 // TODO: refactor these like `Widget.setCallback`
 pub fn addTimeout(d: f32, f: *const fn () void) void {
-    c.Fl_add_timeout(d, &zfltk_timeout_handler, @intToPtr(*anyopaque, @ptrToInt(f)));
+    c.Fl_add_timeout(d, &zfltk_timeout_handler,  @ptrFromInt(@intFromPtr(f)));
 }
 
 fn zfltk_timeout_handler(data: ?*anyopaque) callconv(.C) void {
-    const cb = @ptrCast(*const fn () void, data);
+    const cb: *const fn () void = @ptrCast(data);
     cb();
 }
 
@@ -229,20 +228,20 @@ fn zfltk_timeout_handler(data: ?*anyopaque) callconv(.C) void {
 pub fn addTimeoutEx(d: f32, f: *const fn (?*anyopaque) void, data: ?*anyopaque) void {
     var container = allocator.alloc(usize, 2) catch unreachable;
 
-    container[0] = @ptrToInt(f);
-    container[1] = @ptrToInt(data);
+    container[0] = @intFromPtr(f);
+    container[1] = @intFromPtr(data);
 
-    c.Fl_add_timeout(d, &zfltk_timeout_handler_ex, @ptrCast(*anyopaque, container.ptr));
+    c.Fl_add_timeout(d, &zfltk_timeout_handler_ex, @ptrCast(container.ptr));
 }
 
 fn zfltk_timeout_handler_ex(data: ?*anyopaque) callconv(.C) void {
-    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data));
+    const container: *[2]usize = @ptrCast(@alignCast(data));
 
-    const cb = @intToPtr(*const fn (?*anyopaque) void, container[0]);
+    const cb: *const fn (?*anyopaque) void = @ptrFromInt(container[0]);
 
     //    std.debug.print("test1 {d}\n", .{container[0]});
 
-    cb(@intToPtr(?*anyopaque, container[1]));
+    cb(@ptrFromInt(container[1]));
 }
 
 pub fn setMenuLinespacing(h: i32) void {

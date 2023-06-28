@@ -16,8 +16,8 @@ pub fn fltkInit() void {
 
 // Button callback
 pub fn butCb(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
-    c.Fl_Box_set_label(@ptrCast(?*c.Fl_Box, data), "Hello World!");
-    c.Fl_Button_set_color(@ptrCast(?*c.Fl_Button, w), c.Fl_Color_Cyan);
+    c.Fl_Box_set_label(@ptrCast(data), "Hello World!");
+    c.Fl_Button_set_color(@ptrCast(w), c.Fl_Color_Cyan);
 }
 
 pub fn main() !void {

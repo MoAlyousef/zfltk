@@ -29,18 +29,18 @@ fn colorButCb(color_but: *Button(.normal), _: ?*anyopaque) void {
 }
 
 fn timeoutButCb(_: *Button(.normal), data: ?*anyopaque) void {
-    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data.?));
-    const wait_time: f32 = @intToPtr(*f32, container[1]).*;
+    const container: *[2]usize = @ptrCast(@alignCast(data.?));
+    const wait_time: f32 = @as(*f32, @ptrFromInt(container[1])).*;
 
     app.addTimeoutEx(wait_time, timeoutCb, data);
 }
 
 fn timeoutCb(data: ?*anyopaque) void {
-    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data.?));
+    const container: *[2]usize = @ptrCast(@alignCast(data.?));
 
     // Re-interpret our ints as pointers to get our objects back
-    var but = Button(.normal).fromRaw(@intToPtr(*anyopaque, container[0]));
-    const wait_time: f32 = @intToPtr(*f32, container[1]).*;
+    var but = Button(.normal).fromRaw( @ptrFromInt(container[0]));
+    const wait_time: f32 = @as(*f32, @ptrFromInt(container[1])).*;
 
     var buf: [32]u8 = undefined;
 
@@ -88,7 +88,7 @@ pub fn main() !void {
     color_but.setCallbackEx(colorButCb, null);
 
     // Change this to whatever you want
-    var wait_time = @floatCast(f32, 1);
+    var wait_time: f32 = @floatCast(1);
 
     var buf: [32]u8 = undefined;
     const label = try fmt.bufPrintZ(
@@ -107,12 +107,12 @@ pub fn main() !void {
 
     // Create a container to store multiple pointers as usizes
     var container: [2]usize = undefined;
-    container[0] = @ptrToInt(timeout_but);
-    container[1] = @ptrToInt(&wait_time);
+    container[0] = @intFromPtr(timeout_but);
+    container[1] = @intFromPtr(&wait_time);
 
     timeout_but.setCallbackEx(
         timeoutButCb,
-        @ptrCast(*anyopaque, &container),
+        @ptrCast(&container),
     );
 
     win.group().end();

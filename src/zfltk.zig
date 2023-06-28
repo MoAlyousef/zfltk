@@ -52,9 +52,8 @@ pub const c = @cImport({
 });
 
 pub fn widgetCast(comptime T: type, wid: anytype) T {
-    var t = T{ .inner = null };
     return T{
-        .inner = @ptrCast(@TypeOf(t.inner), wid.inner),
+        .inner = @ptrCast(wid.inner),
     };
 }
 

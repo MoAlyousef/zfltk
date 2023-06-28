@@ -37,22 +37,29 @@ const examples = &[_]Example{
 
 pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
+    const mode = b.standardOptimizeOption(.{});
     const sdk = Sdk.init(b);
 
     const examples_step = b.step("examples", "build the examples");
     b.default_step.dependOn(examples_step);
 
+    const zfltk_module = b.createModule(.{
+        .source_file = .{ .path = "src/zfltk.zig" },
+    });
+
     for (examples) |example| {
-        const exe = b.addExecutable(example.output, example.input);
-        exe.setTarget(target);
-        exe.setBuildMode(mode);
-        exe.addPackagePath("zfltk", "src/zfltk.zig");
+        const exe = b.addExecutable(.{
+            .name = example.output,
+            .root_source_file = .{.path = example.input },
+            .optimize = mode,
+            .target = target,
+        });
+        exe.addModule("zfltk", zfltk_module);
         try sdk.link(".", exe);
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);
 
-        const run_cmd = exe.run();
+        const run_cmd = b.addRunArtifact(exe);
         const run_step = b.step(b.fmt("run-{s}", .{example.output}), example.description.?);
         run_step.dependOn(&run_cmd.step);
     }

@@ -241,11 +241,11 @@ const Switch = struct {
     }
 
     pub fn fromVoidPtr(ptr: *anyopaque) *Switch {
-        return @ptrCast(*Switch, @alignCast(@alignOf(Switch), ptr));
+        return @ptrCast(@alignCast(ptr));
     }
 
     pub fn widget(self: *Switch) *Widget {
-        //return @ptrCast(*Widget, self);
+        //return  @ptrCast(self);
         return self.box1.widget();
     }
 

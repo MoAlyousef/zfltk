@@ -15,6 +15,7 @@ pub const FileDialogKind = enum(c_int) {
 
 // TODO: refactor to contain all dialog types
 pub fn FileDialog(comptime kind: FileDialogKind) type {
+    // _ = kind;
     return struct {
         const Self = @This();
 
@@ -31,10 +32,10 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
 
         pub inline fn init(opts: Options) !*Self {
             // Convert bools to OR'd int
-            const save_as_confirm = @intCast(c_int, @boolToInt(opts.save_as_confirm));
-            const new_folder = @intCast(c_int, @boolToInt(opts.new_folder)) << 1;
-            const preview = @intCast(c_int, @boolToInt(opts.preview)) << 2;
-            const use_filter_extension = @intCast(c_int, @boolToInt(opts.use_filter_extension)) << 3;
+            const save_as_confirm =  @as(c_int, @intFromBool(opts.save_as_confirm));
+            const new_folder =  @as(c_int, @intFromBool(opts.new_folder)) << 1;
+            const preview =  @as(c_int, @intFromBool(opts.preview)) << 2;
+            const use_filter_extension =  @as(c_int, @intFromBool(opts.use_filter_extension)) << 3;
 
             const flags = save_as_confirm | new_folder | preview | use_filter_extension;
 
@@ -54,11 +55,11 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
         }
 
         pub inline fn dialog(self: *Self) *FileDialog(.file) {
-            return @ptrCast(*FileDialog(.file), self);
+            return @as(*FileDialog(.file), self);
         }
 
         pub fn setOptions(self: *Self, opt: FileDialogKind) void {
-            c.Fl_Native_File_Chooser_set_option(self.raw(), @enumToInt(opt));
+            c.Fl_Native_File_Chooser_set_option(self.raw(), @intFromEnum(opt));
         }
 
         pub fn filename(self: *Self) [:0]const u8 {

@@ -47,19 +47,19 @@ pub const Widget = struct {
 pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     return struct {
         pub inline fn widget(self: *Self) *Widget {
-            return @ptrCast(*Widget, self);
+            return  @ptrCast(self);
         }
 
         pub inline fn fromWidget(wid: *Widget) *Self {
-            return @ptrCast(*Self, wid);
+            return  @ptrCast(wid);
         }
 
         pub inline fn raw(self: *Self) RawPtr {
-            return @ptrCast(RawPtr, @alignCast(1, self));
+            return @ptrCast(@alignCast(self));
         }
 
         pub inline fn fromRaw(ptr: *anyopaque) *Self {
-            return @ptrCast(*Self, ptr);
+            return  @ptrCast(ptr);
         }
 
         /// Sets a function to be called upon `activation` of a widget such as
@@ -68,7 +68,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_callback(
                 self.widget().raw(),
                 &zfltk_cb_handler,
-                @intToPtr(*anyopaque, @ptrToInt(f)),
+                 @ptrFromInt(@intFromPtr(f)),
             );
         }
 
@@ -77,18 +77,18 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             // TODO: Make this an ArrayList or something more efficient
             var container = app.allocator.alloc(usize, 2) catch unreachable;
 
-            container[0] = @ptrToInt(f);
-            container[1] = @ptrToInt(data);
+            container[0] = @intFromPtr(f);
+            container[1] = @intFromPtr(data);
 
             c.Fl_Widget_set_callback(
                 self.widget().raw(),
                 zfltk_cb_handler_ex,
-                @ptrCast(*anyopaque, container.ptr),
+                @ptrCast(container.ptr),
             );
         }
 
         pub inline fn emit(self: *Self, comptime T: type, msg: T) void {
-            self.widget().setCallbackEx(shim, @intToPtr(?*anyopaque, @enumToInt(msg)));
+            self.widget().setCallbackEx(shim, @ptrFromInt(@intFromEnum(msg)));
         }
 
         pub inline fn show(self: *Self) void {
@@ -114,19 +114,19 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn x(self: *Self) i32 {
-            return @intCast(i32, c.Fl_Widget_x(self.widget().raw()));
+            return  @intCast(c.Fl_Widget_x(self.widget().raw()));
         }
 
         pub inline fn y(self: *Self) i32 {
-            return @intCast(i32, c.Fl_Widget_y(self.widget().raw()));
+            return  @intCast(c.Fl_Widget_y(self.widget().raw()));
         }
 
         pub inline fn w(self: *Self) u31 {
-            return @intCast(u31, c.Fl_Widget_width(self.widget().raw()));
+            return @intCast(c.Fl_Widget_width(self.widget().raw()));
         }
 
         pub inline fn h(self: *Self) u31 {
-            return @intCast(u31, c.Fl_Widget_height(self.widget().raw()));
+            return @intCast(c.Fl_Widget_height(self.widget().raw()));
         }
 
         pub inline fn label(self: *const Self) [:0]const u8 {
@@ -138,11 +138,11 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn kind(self: *const Self, comptime T: type) T {
-            return @intToEnum(c.Fl_Widget_set_type(self.widget().raw()), T);
+            return @enumFromInt(c.Fl_Widget_set_type(self.widget().raw()));
         }
 
         pub inline fn setKind(self: *Self, comptime T: type, t: T) void {
-            c.Fl_Widget_set_type(self.widget().raw(), @enumToInt(t));
+            c.Fl_Widget_set_type(self.widget().raw(), @intFromEnum(t));
         }
 
         pub inline fn color(self: *Self) Color {
@@ -162,15 +162,15 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn labelFont(self: *const Self) enums.Font {
-            return @intToEnum(c.Fl_Widget_label_font(self.widget().raw()), enums.Font);
+            return @enumFromInt(c.Fl_Widget_label_font(self.widget().raw()));
         }
 
         pub inline fn setLabelFont(self: *Self, font: enums.Font) void {
-            c.Fl_Widget_set_label_font(self.widget().raw(), @enumToInt(font));
+            c.Fl_Widget_set_label_font(self.widget().raw(), @intFromEnum(font));
         }
 
         pub inline fn labelSize(self: *const Self) u31 {
-            return @intCast(u31, c.Fl_Widget_label_size(self.widget().raw()));
+            return @intCast(c.Fl_Widget_label_size(self.widget().raw()));
         }
 
         pub inline fn setLabelSize(self: *Self, size: u31) void {
@@ -179,11 +179,11 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         // TODO: make alignment and trigger enums
         pub inline fn labelAlign(self: *const Self) i32 {
-            return @intCast(i32, c.Fl_Widget_align(self.widget().raw()));
+            return  @intCast(c.Fl_Widget_align(self.widget().raw()));
         }
 
         pub inline fn setLabelAlign(self: *Self, alignment: i32) void {
-            c.Fl_Widget_set_align(self.widget().raw(), @intCast(c_int, alignment));
+            c.Fl_Widget_set_align(self.widget().raw(),  @intCast(alignment));
         }
 
         pub inline fn trigger(self: *const Self) i32 {
@@ -191,15 +191,15 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setTrigger(self: *const Self, cb_trigger: i32) void {
-            c.Fl_Widget_set_trigger(self.widget().raw(), @intCast(c_int, cb_trigger));
+            c.Fl_Widget_set_trigger(self.widget().raw(),  @intCast(cb_trigger));
         }
 
         pub inline fn box(self: *const Self) enums.BoxType {
-            return @intToEnum(enums.Boxtype, c.Fl_Widget_box(self.widget().raw()));
+            return  @enumFromInt(c.Fl_Widget_box(self.widget().raw()));
         }
 
         pub inline fn setBox(self: *Self, boxtype: enums.BoxType) void {
-            c.Fl_Widget_set_box(self.widget().raw(), @enumToInt(boxtype));
+            c.Fl_Widget_set_box(self.widget().raw(), @intFromEnum(boxtype));
         }
 
         pub inline fn setImage(self: *Self, img: Image) void {
@@ -240,11 +240,11 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setVisibleFocus(self: *Self, v: bool) void {
-            c.Fl_Widget_visible_focus(self.widget().raw(), @boolToInt(v));
+            c.Fl_Widget_visible_focus(self.widget().raw(), @intFromBool(v));
         }
 
         pub inline fn setLabelKind(self: *Self, typ: enums.LabelType) void {
-            c.Fl_Widget_set_label_type(self.widget().raw(), @enumToInt(typ));
+            c.Fl_Widget_set_label_type(self.widget().raw(), @intFromEnum(typ));
         }
 
         pub inline fn tooltip(self: *const Self) [:0]const u8 {
@@ -266,7 +266,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 export fn zfltk_cb_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     // Fetch function pointer from the data. This is added to the data
     // pointer on `setCallback`.
-    const cb = @ptrCast(*const fn (*Widget) void, data);
+    const cb: *const fn (*Widget) void = @ptrCast(data);
 
     if (wid) |ptr| {
         cb(Widget.fromRaw(ptr));
@@ -276,11 +276,11 @@ export fn zfltk_cb_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) v
 }
 
 export fn zfltk_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
-    const container = @ptrCast(*[2]usize, @alignCast(@sizeOf(usize), data));
-    const cb = @intToPtr(*const fn (*Widget, ?*anyopaque) void, container[0]);
+    const container: *[2]usize = @ptrCast(@alignCast(data));
+    const cb: *const fn (*Widget, ?*anyopaque) void = @ptrFromInt(container[0]);
 
     if (wid) |ptr| {
-        cb(Widget.fromRaw(ptr), @intToPtr(?*anyopaque, container[1]));
+        cb(Widget.fromRaw(ptr), @ptrFromInt(container[1]));
     } else {
         unreachable;
     }

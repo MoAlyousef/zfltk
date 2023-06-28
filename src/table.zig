@@ -27,32 +27,32 @@ pub const Table = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) Table {
         return Table{
-            .inner = @ptrCast(?*c.Fl_Table, w),
+            .inner = @ptrCast(w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*anyopaque) Table {
         return Table{
-            .inner = @ptrCast(?*c.Fl_Table, ptr),
+            .inner = @ptrCast(ptr),
         };
     }
 
     pub fn toVoidPtr(self: *const Table) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
+        return  @ptrCast(self.inner);
     }
 
     pub fn asWidget(self: *const Table) widget.Widget {
         return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
+            .inner = @ptrCast(self.inner),
         };
     }
 
     pub fn handle(self: *const Table, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Table_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
+        c.Fl_Table_handle(self.inner, @ptrCast(cb), data);
     }
 
     pub fn draw(self: *const Table, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Table_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
+        c.Fl_Table_handle(self.inner,  @ptrCast(cb), data);
     }
 };
 
@@ -78,38 +78,38 @@ pub const TableRow = struct {
 
     pub fn fromWidgetPtr(w: widget.WidgetPtr) TableRow {
         return TableRow{
-            .inner = @ptrCast(?*c.Fl_Table_Row, w),
+            .inner = @ptrCast(w),
         };
     }
 
     pub fn fromVoidPtr(ptr: ?*anyopaque) TableRow {
         return TableRow{
-            .inner = @ptrCast(?*c.Fl_Table_Row, ptr),
+            .inner = @ptrCast(ptr),
         };
     }
 
     pub fn toVoidPtr(self: *const TableRow) ?*anyopaque {
-        return @ptrCast(?*anyopaque, self.inner);
+        return  @ptrCast(self.inner);
     }
 
     pub fn asWidget(self: *const TableRow) widget.Widget {
         return widget.Widget{
-            .inner = @ptrCast(widget.WidgetPtr, self.inner),
+            .inner = @ptrCast(self.inner),
         };
     }
 
     pub fn asTable(self: *const TableRow) Table {
         return Table{
-            .inner = @ptrCast(?*c.Fl_Table, self.inner),
+            .inner = @ptrCast(self.inner),
         };
     }
 
     pub fn handle(self: *const TableRow, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Table_Row_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
+        c.Fl_Table_Row_handle(self.inner, @ptrCast(cb), data);
     }
 
     pub fn draw(self: *const TableRow, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Table_Row_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
+        c.Fl_Table_Row_handle(self.inner,  @ptrCast(cb), data);
     }
 };
 

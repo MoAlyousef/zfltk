@@ -17,7 +17,7 @@ pub const Window = struct {
         const label = if (opts.label != null) opts.label.?.ptr else null;
 
         if (c.Fl_Double_Window_new(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
-            return @ptrCast(*Window, ptr);
+            return @ptrCast(ptr);
         }
 
         unreachable;
@@ -31,11 +31,11 @@ pub const Window = struct {
 pub fn methods(comptime Self: type) type {
     return struct {
         pub fn handle(self: *const Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-            c.Fl_Double_Window_handle(self.raw(), @ptrCast(c.custom_handler_callback, cb), data);
+            c.Fl_Double_Window_handle(self.raw(), @ptrCast(cb), data);
         }
 
         pub fn draw(self: *const Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Double_Window_handle(self.raw(), @ptrCast(c.custom_draw_callback, cb), data);
+            c.Fl_Double_Window_handle(self.raw(),  @ptrCast(cb), data);
         }
 
         pub fn setSizeRange(self: *const Self, min_w: u31, min_h: u31, max_w: u31, max_h: u31) void {
@@ -55,11 +55,11 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn makeModal(self: *Self, val: bool) void {
-            return c.Fl_Double_Window_make_modal(self.raw(), @boolToInt(val));
+            return c.Fl_Double_Window_make_modal(self.raw(), @intFromBool(val));
         }
 
         pub fn setFullscreen(self: *Window, val: bool) void {
-            return c.Fl_Double_Window_fullscreen(self.raw(), @boolToInt(val));
+            return c.Fl_Double_Window_fullscreen(self.raw(), @intFromBool(val));
         }
     };
 }

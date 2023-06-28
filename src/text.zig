@@ -56,7 +56,7 @@ pub const TextBuffer = struct {
 
     /// Get the length of the buffer
     pub fn length(self: *TextBuffer) u31 {
-        return @intCast(u31, c.Fl_Text_Buffer_length(self.raw()));
+        return @intCast(c.Fl_Text_Buffer_length(self.raw()));
     }
 
     /// Removes from the buffer
@@ -103,7 +103,7 @@ pub const TextBuffer = struct {
 
     /// Sets whether the buffer can undo
     pub fn canUndo(self: *const TextBuffer, flag: bool) void {
-        c.Fl_Text_Buffer_canUndo(self.inner, @boolToInt(flag));
+        c.Fl_Text_Buffer_canUndo(self.inner, @intFromBool(flag));
     }
 
     pub fn lineStart(self: *const TextBuffer, pos: u32) u32 {
@@ -207,11 +207,11 @@ pub fn TextDisplay(comptime kind: TextKind) type {
         }
 
         //        pub fn handle(self: *const Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        //            c.Fl_Text_Display_handle(self.inner, @ptrCast(c.custom_handler_callback, cb), data);
+        //            c.Fl_Text_Display_handle(self.inner, @ptrCast(cb), data);
         //        }
 
         //        pub fn draw(self: *const TextDisplay, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        //            c.Fl_Text_Display_handle(self.inner, @ptrCast(c.custom_draw_callback, cb), data);
+        //            c.Fl_Text_Display_handle(self.inner,  @ptrCast(cb), data);
         //        }
 
     };
@@ -220,7 +220,7 @@ pub fn TextDisplay(comptime kind: TextKind) type {
 pub fn methods(comptime Self: type) type {
     return struct {
         pub inline fn textDisplay(self: *Self) *TextDisplay(.normal) {
-            return @ptrCast(*TextDisplay(.normal), self);
+            return @ptrCast(self);
         }
 
         pub inline fn buffer(self: *Self) ?*TextBuffer {
@@ -250,18 +250,18 @@ pub fn methods(comptime Self: type) type {
             var bgcolors: [28]c_uint = undefined;
             var i: usize = 0;
             for (entries) |e| {
-                colors[i] = @bitCast(c_uint, e.color);
-                fonts[i] = @enumToInt(e.font);
+                colors[i] =  @bitCast(e.color);
+                fonts[i] = @intFromEnum(e.font);
                 fontszs[i] = e.size;
                 attrs[i] = 0;
                 bgcolors[i] = 0;
                 i += 1;
             }
-            c.Fl_Text_Display_set_highlight_data(self.inner, sbuf.*.inner, &colors, &fonts, &fontszs, &attrs, &bgcolors, @intCast(i32, sz));
+            c.Fl_Text_Display_set_highlight_data(self.inner, sbuf.*.inner, &colors, &fonts, &fontszs, &attrs, &bgcolors,  @intCast(sz));
         }
 
         pub fn setTextFont(self: *Self, font: enums.Font) void {
-            c.Fl_Text_Display_set_text_font(self.inner, @enumToInt(font));
+            c.Fl_Text_Display_set_text_font(self.inner, @intFromEnum(font));
         }
 
         pub fn setTextColor(self: *Self, col: enums.Color) void {
@@ -289,7 +289,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn countLines(self: *Self, start: u32, end: u32, is_line_start: bool) u32 {
-            return c.Fl_Text_Display_count_lines(self.inner, start, end, @boolToInt(is_line_start));
+            return c.Fl_Text_Display_count_lines(self.inner, start, end, @intFromBool(is_line_start));
         }
 
         pub fn moveRight(self: *Self) void {
@@ -309,11 +309,11 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn showCursor(self: *Self, val: bool) void {
-            c.Fl_Text_Display_show_cursor(self.inner, @boolToInt(val));
+            c.Fl_Text_Display_show_cursor(self.inner, @intFromBool(val));
         }
 
         pub fn setCursorStyle(self: *Self, style: enums.TextCursor) void {
-            c.Fl_Text_Display_set_cursor_style(self.inner, @enumToInt(style));
+            c.Fl_Text_Display_set_cursor_style(self.inner, @intFromEnum(style));
         }
 
         pub fn setCursorColor(self: *Self, col: enums.Color) void {
