@@ -17,6 +17,8 @@ zig build run-mixed
 Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
 ```
 git submodule add https://github.com/moalyousef/zfltk
+cd zfltk
+git checkout v011
 git submodule update --init --recursive
 ```
 then you will need a build.zig file as follows:
@@ -30,12 +32,15 @@ pub fn build(b: *Builder) !void {
     const mode = b.standardOptimizeOption(.{});
     const sdk = try Sdk.init(b, "zfltk");
     const exe = b.addExecutable(.{
-            .name = "app",
-            .root_source_file = .{.path = "src/main.cpp" },
-            .optimize = mode,
-            .target = target,
-        });
-    exe.addModule("zfltk", sdk.zfltk_module);
+        .name = "app",
+        .root_source_file = .{.path = "src/main.zig" },
+        .optimize = mode,
+        .target = target,
+    });
+    const zfltk_module = b.createModule(.{
+        .source_file = .{ .path = "zfltk/src/zfltk.zig" },
+    });
+    exe.addModule("zfltk", zfltk_module);
     try sdk.link(exe);
     b.installArtifact(exe);
 
