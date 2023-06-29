@@ -37,12 +37,11 @@ pub fn build(b: *Builder) !void {
             .optimize = mode,
             .target = target,
         });
-        exe.addModule("zfltk", sdk.zfltk_module);
-        try sdk.link(exe);
-        b.installArtifact(exe);
+    exe.addModule("zfltk", sdk.zfltk_module);
+    try sdk.link(exe);
+    b.installArtifact(exe);
 
-        const run_cmd = b.addRunArtifact(exe);
-          run_cmd.step.dependOn(b.getInstallStep());
+    const run_cmd = b.addRunArtifact(exe);
     if (b.args) |args| {
         run_cmd.addArgs(args);
     }
