@@ -8,6 +8,7 @@ const Sdk = @This();
 builder: *Builder,
 path: []const u8,
 zfltk_module: *std.Build.Module,
+finalize_cfltk: *std.Build.Step,
 
 pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
     const zig_exe = b.zig_exe;
@@ -18,6 +19,7 @@ pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
     const target = b.host.target;
     var buf: [1024]u8 = undefined;
     var sdk_lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/lib", .{sdk_path});
+    const finalize_cfltk = b.step("finalize cfltk install", "Installs cfltk");
     _ = fs.cwd().openDir(sdk_lib_dir, .{}) catch |err| {
         std.debug.print("Warning: {!}. The cfltk library will be grabbed and built from source!\n", .{err});
         var bin_buf: [250]u8 = undefined;
@@ -106,8 +108,9 @@ pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
             cmake_bin_path,
         });
         zfltk_install.step.dependOn(&zfltk_build.step);
-        b.default_step.dependOn(&zfltk_install.step);
+        finalize_cfltk.dependOn(&zfltk_install.step);
     };
+    b.default_step.dependOn(finalize_cfltk);
     const sdk = b.allocator.create(Sdk) catch @panic("out of memory");
     const zfltk_module = b.createModule(.{
         .source_file = .{ .path = "src/zfltk.zig" },
@@ -116,14 +119,16 @@ pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
         .builder = b,
         .path = sdk_path,
         .zfltk_module = zfltk_module,
+        .finalize_cfltk = finalize_cfltk,
     };
     return sdk;
 }
 
 pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
+    exe.step.dependOn(sdk.finalize_cfltk);
     const sdk_path = sdk.path;
-    const target = exe.target;
     var buf: [1024]u8 = undefined;
+    const target = exe.target;
     var inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/cfltk/include", .{sdk_path});
     exe.addIncludePath(inc_dir);
     var lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/vendor/lib/lib", .{sdk_path});
