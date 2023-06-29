@@ -50,7 +50,10 @@ pub fn build(b: *Builder) !void {
             .optimize = mode,
             .target = target,
         });
-        exe.addModule("zfltk", sdk.zfltk_module);
+        const zfltk_module = b.createModule(.{
+            .source_file = .{ .path = "src/zfltk.zig" },
+        });
+        exe.addModule("zfltk", zfltk_module);
         try sdk.link(exe);
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);

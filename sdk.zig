@@ -7,7 +7,6 @@ const LibExeObjStep = build.LibExeObjStep;
 const Sdk = @This();
 builder: *Builder,
 path: []const u8,
-zfltk_module: *std.Build.Module,
 finalize_cfltk: *std.Build.Step,
 
 pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
@@ -112,13 +111,9 @@ pub fn init(b: *Builder, sdk_path: []const u8) !*Sdk {
     };
     b.default_step.dependOn(finalize_cfltk);
     const sdk = b.allocator.create(Sdk) catch @panic("out of memory");
-    const zfltk_module = b.createModule(.{
-        .source_file = .{ .path = "src/zfltk.zig" },
-    });
     sdk.* = .{
         .builder = b,
         .path = sdk_path,
-        .zfltk_module = zfltk_module,
         .finalize_cfltk = finalize_cfltk,
     };
     return sdk;
