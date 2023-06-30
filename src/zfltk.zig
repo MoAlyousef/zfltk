@@ -27,7 +27,6 @@ pub const Button = button.Button;
 pub const Box = box.Box;
 pub const Browser = browser.Browser;
 pub const Menu = menu.Menu;
-pub const MenuBar = menu.MenuBar;
 pub const Input = input.Input;
 pub const Output = input.Output;
 pub const TextDisplay = text.TextDisplay;
@@ -42,6 +41,7 @@ pub const c = @cImport({
     @cInclude("cfl_button.h");
     @cInclude("cfl_window.h");
     @cInclude("cfl_browser.h");
+    @cInclude("cfl_menu.h");
     @cInclude("cfl_input.h");
     @cInclude("cfl_text.h");
     @cInclude("cfl_image.h");
