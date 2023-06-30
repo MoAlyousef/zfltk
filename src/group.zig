@@ -243,6 +243,16 @@ pub fn methods(comptime Self: type) type {
             c.Fl_Flex_set_size(self.raw(), wid.widget().raw(), sz);
         }
 
+        pub fn setMargin(self: *Self, sz: u31) void {
+            const marginFn = switch (Self) {
+                Group(.flex) => c.Fl_Flex_set_margin,
+
+                else => @compileError("method `setMargin` only usable with flex groups"),
+            };
+
+            marginFn(self.raw(), sz);
+        }
+
         pub inline fn setScrollBar(self: *Self, scrollbar: ScrollType) void {
             if (Self != Group(.scroll)) {
                 @compileError("method `setScrollBar` only usable with scroll groups");

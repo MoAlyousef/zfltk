@@ -34,6 +34,7 @@ pub const TextDisplay = text.TextDisplay;
 pub const TextBuffer = text.TextBuffer;
 pub const FileDialog = dialog.FileDialog;
 pub const Valuator = valuator.Valuator;
+pub const Tree = tree.Tree;
 
 pub const c = @cImport({
     @cInclude("cfl.h");
@@ -52,6 +53,7 @@ pub const c = @cImport({
     @cInclude("cfl_draw.h");
     @cInclude("cfl_table.h");
     @cInclude("cfl_valuator.h");
+    @cInclude("cfl_tree.h");
 });
 
 pub fn widgetCast(comptime T: type, wid: anytype) T {

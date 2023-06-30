@@ -1,60 +1,61 @@
-//TODO: update to new API
-
-const c = @cImport({
-    @cInclude("cfl_tree.h");
-});
+const zfltk = @import("zfltk.zig");
+const app = zfltk.app;
 const widget = @import("widget.zig");
+const Widget = widget.Widget;
+const enums = @import("enums.zig");
+const Event = enums.Event;
+const std = @import("std");
+const c = zfltk.c;
 
-pub const Tree = struct {
-    inner: ?*c.Fl_Tree,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Tree {
-        const ptr = c.Fl_Tree_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return Tree{
-            .inner = ptr,
+pub fn Tree() type {
+    return struct {
+        const Self = @This();
+
+        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
+        pub usingnamespace methods(Self);
+
+        pub const RawPtr = *c.Fl_Tree;
+
+        pub const Options = struct {
+            x: i32 = 0,
+            y: i32 = 0,
+            w: u31 = 0,
+            h: u31 = 0,
+
+            label: ?[:0]const u8 = null,
         };
-    }
 
-    pub fn raw(self: *const Tree) ?*c.Fl_Tree {
-        return self.inner;
-    }
+        pub inline fn init(opts: Options) !*Self {
+            const initFn = c.Fl_Tree_new;
 
-    pub fn fromRaw(ptr: ?*c.Fl_Tree) Tree {
-        return Tree{
-            .inner = ptr,
-        };
-    }
+            const label = if (opts.label != null) opts.label.?.ptr else null;
 
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) Tree {
-        return Tree{
-            .inner = @ptrCast(w),
-        };
-    }
+            if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
+                var self = Self.fromRaw(ptr);
+                return self;
+            }
 
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Tree {
-        return Tree{
-            .inner = @ptrCast(ptr),
-        };
-    }
+            unreachable;
+        }
+    };
+}
 
-    pub fn toVoidPtr(self: *const Tree) ?*anyopaque {
-        return  @ptrCast(self.inner);
-    }
 
-    pub fn asWidget(self: *const Tree) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(self.inner),
-        };
-    }
+pub fn methods(comptime Self: type) type {
+    return struct {
+        pub inline fn tree(self: *Self) *Tree {
+            return @ptrCast(self);
+        }
 
-    pub fn handle(self: *const Tree, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Tree_handle(self.inner, @ptrCast(cb), data);
-    }
+        pub fn handle(self: *const Self, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+            c.Fl_Tree_handle(self.tree().raw(), @ptrCast(cb), data);
+        }
 
-    pub fn draw(self: *const Tree, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Tree_handle(self.inner,  @ptrCast(cb), data);
-    }
-};
+        pub fn draw(self: *const Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Tree_handle(self.tree().raw(),  @ptrCast(cb), data);
+        }
+    };
+}
 
 pub const TreeItem = struct {
     inner: ?*c.Fl_Tree_Item,
@@ -78,6 +79,7 @@ pub const TreeItem = struct {
         return  @ptrCast(self.inner);
     }
 };
+
 
 test "all" {
     @import("std").testing.refAllDecls(@This());
