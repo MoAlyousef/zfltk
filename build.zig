@@ -1,14 +1,14 @@
 const std = @import("std");
 const fs = std.fs;
-const Builder = std.build.Builder;
+const Build = std.Build;
 const LibExeObjStep = std.build.LibExeObjStep;
 
 const Sdk = @This();
-builder: *Builder,
+builder: *Build,
 path: []const u8,
 finalize_cfltk: *std.Build.Step,
 
-pub fn init(b: *Builder) !*Sdk {
+pub fn init(b: *Build) !*Sdk {
     const sdk_path = b.install_prefix;
     const zig_exe = b.zig_exe;
     var zig_cc_buf: [250]u8 = undefined;
@@ -220,11 +220,21 @@ const examples = &[_]Example{
     Example.init("threadawake", "examples/threadawake.zig", "Thread awake example"),
 };
 
-pub fn build(b: *Builder) !void {
+inline fn thisDir() []const u8 {
+    return comptime std.fs.path.dirname(@src().file) orelse @panic("error");
+}
+
+pub fn getZfltkModule(b: *Build) *Build.Module {
+    return b.createModule(.{
+        .source_file = .{ .path = thisDir() ++ "/src/zfltk.zig" },
+    });
+}
+
+pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardOptimizeOption(.{});
+    const zfltk_module = getZfltkModule(b);
     const sdk = try Sdk.init(b);
-
     const examples_step = b.step("examples", "build the examples");
     b.default_step.dependOn(examples_step);
 
@@ -234,9 +244,6 @@ pub fn build(b: *Builder) !void {
             .root_source_file = .{.path = example.input },
             .optimize = mode,
             .target = target,
-        });
-        const zfltk_module = b.createModule(.{
-            .source_file = .{ .path = "src/zfltk.zig" },
         });
         exe.addModule("zfltk", zfltk_module);
         try sdk.link(exe);
