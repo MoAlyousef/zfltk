@@ -21,11 +21,10 @@ git submodule add https://github.com/moalyousef/zfltk
 cd zfltk
 git checkout v011
 cd ..
-git submodule update --init --recursive
 ```
 ```
 # via git clone
-git clone https://github.com/moalyousef/zfltk --recurse-submodules
+git clone https://github.com/moalyousef/zfltk
 cd zfltk
 git checkout v011
 cd ..
@@ -33,13 +32,13 @@ cd ..
 then you will need a build.zig file as follows:
 ```zig
 const std = @import("std");
-const Sdk = @import("zfltk/sdk.zig");
+const Sdk = @import("zfltk/build.zig");
 const Builder = std.build.Builder;
 
 pub fn build(b: *Builder) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardOptimizeOption(.{});
-    const sdk = try Sdk.init(b, "zfltk");
+    const sdk = try Sdk.init(b);
     const exe = b.addExecutable(.{
         .name = "app",
         .root_source_file = .{.path = "src/main.zig" },
