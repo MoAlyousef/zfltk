@@ -3,7 +3,7 @@ A Zig wrapper for the FLTK gui library.
 
 ## Running the examples
 ```
-git clone https://github.com/MoAlyousef/zfltk --recurse-submodules
+git clone https://github.com/MoAlyousef/zfltk
 cd zfltk
 zig build run-simple
 zig build run-capi
@@ -66,7 +66,7 @@ Then you can run:
 zig build run
 ```
 
-### Using vendoring
+### Via vendoring
 You can either use git clone or git submodules:
 ```
 # via git submodule
