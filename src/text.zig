@@ -46,12 +46,12 @@ pub const TextBuffer = struct {
 
     /// Returns the text of the buffer
     pub fn text(self: *const TextBuffer) [*]const u8 {
-        return c.Fl_Text_Buffer_txt(self.inner);
+        return c.Fl_Text_Buffer_txt(self.raw());
     }
 
     /// Appends to the buffer
     pub fn append(self: *const TextBuffer, str: [*]const u8) void {
-        return c.Fl_Text_Buffer_append(self.inner, str);
+        return c.Fl_Text_Buffer_append(self.raw(), str);
     }
 
     /// Get the length of the buffer
@@ -61,21 +61,21 @@ pub const TextBuffer = struct {
 
     /// Removes from the buffer
     pub fn remove(self: *const TextBuffer, start: u32, end: u32) void {
-        return c.Fl_Text_Buffer_remove(self.inner, start, end);
+        return c.Fl_Text_Buffer_remove(self.raw(), start, end);
     }
     /// Returns the text within the range
     pub fn textRange(self: *const TextBuffer, start: u32, end: u32) [*]const u8 {
-        return c.Fl_Text_Buffer_text_range(self.inner, start, end);
+        return c.Fl_Text_Buffer_text_range(self.raw(), start, end);
     }
 
     /// Inserts text into a position
     pub fn insert(self: *const TextBuffer, pos: u32, str: [*]const u8) void {
-        c.Fl_Text_Buffer_insert(self.inner, pos, str.as_ptr());
+        c.Fl_Text_Buffer_insert(self.raw(), pos, str.as_ptr());
     }
 
     /// Replaces text from position ```start``` to ```end```
     pub fn replace(self: *const TextBuffer, start: u32, end: u32, txt: [*]const u8) void {
-        c.Fl_Text_Buffer_replace(self.inner, start, end, txt);
+        c.Fl_Text_Buffer_replace(self.raw(), start, end, txt);
     }
 
     /// Copies text from a source buffer into the current buffer
@@ -98,16 +98,16 @@ pub const TextBuffer = struct {
 
     /// Performs an undo operation on the buffer
     pub fn undo(self: *const TextBuffer) void {
-        _ = c.Fl_Text_Buffer_undo(self.inner, null);
+        _ = c.Fl_Text_Buffer_undo(self.raw(), null);
     }
 
     /// Sets whether the buffer can undo
     pub fn canUndo(self: *const TextBuffer, flag: bool) void {
-        c.Fl_Text_Buffer_canUndo(self.inner, @intFromBool(flag));
+        c.Fl_Text_Buffer_canUndo(self.raw(), @intFromBool(flag));
     }
 
     pub fn lineStart(self: *const TextBuffer, pos: u32) u32 {
-        return c.Fl_Text_Buffer_line_start(self.inner, pos);
+        return c.Fl_Text_Buffer_line_start(self.raw(), pos);
     }
     /// Loads a file into the buffer
     pub fn loadFile(self: *TextBuffer, path: [:0]const u8) !void {
@@ -123,27 +123,27 @@ pub const TextBuffer = struct {
 
     /// Returns the tab distance for the buffer
     pub fn tabDistance(self: *const TextBuffer) u32 {
-        c.Fl_Text_Buffer_tab_distance(self.inner);
+        c.Fl_Text_Buffer_tab_distance(self.raw());
     }
 
     /// Sets the tab distance
     pub fn setTabDistance(self: *TextBuffer, tab_dist: u32) void {
-        c.Fl_Text_Buffer_set_tab_distance(self.inner, tab_dist);
+        c.Fl_Text_Buffer_set_tab_distance(self.raw(), tab_dist);
     }
 
     /// Selects the text from start to end
     pub fn select(self: *TextBuffer, start: u32, end: u32) void {
-        c.Fl_Text_Buffer_select(self.inner, start, end);
+        c.Fl_Text_Buffer_select(self.raw(), start, end);
     }
 
     /// Returns whether text is selected
     pub fn selected(self: *const TextBuffer) bool {
-        return c.Fl_Text_Buffer_selected(self.inner) != 0;
+        return c.Fl_Text_Buffer_selected(self.raw()) != 0;
     }
 
     /// Unselects text
     pub fn unselect(self: *const TextBuffer) void {
-        return c.Fl_Text_Buffer_unselect(self.inner);
+        return c.Fl_Text_Buffer_unselect(self.raw());
     }
 };
 
@@ -202,16 +202,16 @@ pub fn TextDisplay(comptime kind: TextKind) type {
                 .editor => c.Fl_Text_Editor_delete,
             };
 
-            deinitFn(self.inner);
+            deinitFn(self.raw());
             app.allocator.destroy(self);
         }
 
         pub fn handle(self: *const Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-            c.Fl_Text_Display_handle(self.inner, @ptrCast(cb), data);
+            c.Fl_Text_Display_handle(self.raw(), @ptrCast(cb), data);
         }
 
         pub fn draw(self: *const TextDisplay, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Text_Display_handle(self.inner,  @ptrCast(cb), data);
+            c.Fl_Text_Display_handle(self.raw(),  @ptrCast(cb), data);
         }
 
     };
@@ -238,7 +238,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub inline fn setBuffer(self: *Self, buf: *TextBuffer) void {
-            c.Fl_Text_Display_set_buffer(self.textDisplay().raw(), buf.raw());
+            c.Fl_Text_Display_set_buffer(self.textDisplay().textDisplay().raw(), buf.raw());
         }
 
         pub fn setHighlightData(self: *Self, sbuf: *TextBuffer, entries: []const StyleTableEntry) void {
@@ -257,75 +257,75 @@ pub fn methods(comptime Self: type) type {
                 bgcolors[i] = 0;
                 i += 1;
             }
-            c.Fl_Text_Display_set_highlight_data(self.inner, sbuf.*.inner, &colors, &fonts, &fontszs, &attrs, &bgcolors,  @intCast(sz));
+            c.Fl_Text_Display_set_highlight_data(self.textDisplay().raw(), sbuf.*.inner, &colors, &fonts, &fontszs, &attrs, &bgcolors,  @intCast(sz));
         }
 
         pub fn setTextFont(self: *Self, font: enums.Font) void {
-            c.Fl_Text_Display_set_text_font(self.inner, @intFromEnum(font));
+            c.Fl_Text_Display_set_text_font(self.textDisplay().raw(), @intFromEnum(font));
         }
 
         pub fn setTextColor(self: *Self, col: enums.Color) void {
-            c.Fl_Text_Display_set_text_color(self.inner, col.inner());
+            c.Fl_Text_Display_set_text_color(self.textDisplay().raw(), col.inner());
         }
 
         pub fn setTextSize(self: *Self, sz: i32) void {
-            c.Fl_Text_Display_set_text_size(self.inner, sz);
+            c.Fl_Text_Display_set_text_size(self.textDisplay().raw(), sz);
         }
 
         pub fn scroll(self: *Self, topLineNum: i32, horizOffset: i32) void {
-            c.Fl_Text_Display_scroll(self.inner, topLineNum, horizOffset);
+            c.Fl_Text_Display_scroll(self.textDisplay().raw(), topLineNum, horizOffset);
         }
 
         pub fn insert(self: *Self, text: [*c]const u8) void {
-            c.Fl_Text_Display_insert(self.inner, text);
+            c.Fl_Text_Display_insert(self.textDisplay().raw(), text);
         }
 
         pub fn setInsertPosition(self: *Self, newPos: u32) void {
-            c.Fl_Text_Display_set_insert_position(self.inner, newPos);
+            c.Fl_Text_Display_set_insert_position(self.textDisplay().raw(), newPos);
         }
 
         pub fn insertPosition(self: *Self) u32 {
-            return c.Fl_Text_Display_insert_position(self.inner);
+            return c.Fl_Text_Display_insert_position(self.textDisplay().raw());
         }
 
         pub fn countLines(self: *Self, start: u32, end: u32, is_line_start: bool) u32 {
-            return c.Fl_Text_Display_count_lines(self.inner, start, end, @intFromBool(is_line_start));
+            return c.Fl_Text_Display_count_lines(self.textDisplay().raw(), start, end, @intFromBool(is_line_start));
         }
 
         pub fn moveRight(self: *Self) void {
-            _ = c.Fl_Text_Display_move_right(self.inner);
+            _ = c.Fl_Text_Display_move_right(self.textDisplay().raw());
         }
 
         pub fn moveLeft(self: *Self) void {
-            _ = c.Fl_Text_Display_move_left(self.inner);
+            _ = c.Fl_Text_Display_move_left(self.textDisplay().raw());
         }
 
         pub fn moveUp(self: *Self) void {
-            _ = c.Fl_Text_Display_move_up(self.inner);
+            _ = c.Fl_Text_Display_move_up(self.textDisplay().raw());
         }
 
         pub fn moveDown(self: *Self) void {
-            _ = c.Fl_Text_Display_move_down(self.inner);
+            _ = c.Fl_Text_Display_move_down(self.textDisplay().raw());
         }
 
         pub fn showCursor(self: *Self, val: bool) void {
-            c.Fl_Text_Display_show_cursor(self.inner, @intFromBool(val));
+            c.Fl_Text_Display_show_cursor(self.textDisplay().raw(), @intFromBool(val));
         }
 
         pub fn setCursorStyle(self: *Self, style: enums.TextCursor) void {
-            c.Fl_Text_Display_set_cursor_style(self.inner, @intFromEnum(style));
+            c.Fl_Text_Display_set_cursor_style(self.textDisplay().raw(), @intFromEnum(style));
         }
 
         pub fn setCursorColor(self: *Self, col: enums.Color) void {
-            c.Fl_Text_Display_set_cursor_color(self.inner, col.inner());
+            c.Fl_Text_Display_set_cursor_color(self.textDisplay().raw(), col.inner());
         }
 
         pub fn setScrollbarSize(self: *Self, size: u32) void {
-            c.Fl_Text_Display_set_scrollbar_size(self.inner, size);
+            c.Fl_Text_Display_set_scrollbar_size(self.textDisplay().raw(), size);
         }
 
         pub fn setScrollbarAlign(self: *Self, a: i32) void {
-            c.Fl_Text_Display_set_scrollbar_align(self.inner, a);
+            c.Fl_Text_Display_set_scrollbar_align(self.textDisplay().raw(), a);
         }
 
         pub fn setLinenumberWidth(self: *Self, w: i32) void {

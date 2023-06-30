@@ -96,6 +96,7 @@ pub fn main() !void {
     });
 
     editor.setLinenumberWidth(24);
+    editor.showCursor(true);
     win.group().end();
 
     win.group().add(.{editor});
