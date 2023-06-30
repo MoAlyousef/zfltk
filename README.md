@@ -14,7 +14,60 @@ zig build run-mixed
 ```
 
 ## Usage
-Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
+### Official Zig package manager:
+If you're using the official package manager:
+```zig
+// in your build.zig.zon
+.{
+    .name = "app",
+    .version = "0.0.1",
+    .dependencies = .{
+        .zfltk = .{
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/v011test2.tar.gz",
+            .hash = "12201563ec07037e31c00339b4df8edb0e8967e17bee56c9f2263e68b2262ba7e459",
+        },
+    }
+}
+```
+In your build.zig:
+```zig
+const std = @import("std");
+const Sdk = @import("zfltk");
+const Build = std.Build;
+
+pub fn build(b: *Build) !void {
+    const target = b.standardTargetOptions(.{});
+    const mode = b.standardOptimizeOption(.{});
+    const exe = b.addExecutable(.{
+        .name = "app",
+        .root_source_file = .{.path = "src/main.zig" },
+        .optimize = mode,
+        .target = target,
+    });
+
+    const sdk = try Sdk.init(b);
+    const zfltk_module = sdk.getZfltkModule(b);
+    exe.addModule("zfltk", zfltk_module);
+    try sdk.link(exe);
+
+    b.installArtifact(exe);
+
+    const run_cmd = b.addRunArtifact(exe);
+    if (b.args) |args| {
+        run_cmd.addArgs(args);
+    }
+
+    const run_step = b.step("run", "Run the app");
+    run_step.dependOn(&run_cmd.step);
+}
+```
+Then you can run:
+```
+zig build run
+```
+
+### Using vendoring
+You can either use git clone or git submodules:
 ```
 # via git submodule
 git submodule add https://github.com/moalyousef/zfltk
@@ -38,16 +91,19 @@ const Build = std.Build;
 pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardOptimizeOption(.{});
-    const sdk = try Sdk.init(b);
-    const zfltk_module = sdk.getZfltkModule(b);
+
     const exe = b.addExecutable(.{
         .name = "app",
         .root_source_file = .{.path = "src/main.zig" },
         .optimize = mode,
         .target = target,
     });
+
+    const sdk = try Sdk.init(b);
+    const zfltk_module = sdk.getZfltkModule(b);
     exe.addModule("zfltk", zfltk_module);
     try sdk.link(exe);
+    
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
