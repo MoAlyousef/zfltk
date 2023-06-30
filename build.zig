@@ -1,7 +1,7 @@
 const std = @import("std");
 const fs = std.fs;
 const Build = std.Build;
-const LibExeObjStep = std.build.LibExeObjStep;
+const CompileStep = std.build.CompileStep;
 
 const Sdk = @This();
 builder: *Build,
@@ -55,6 +55,7 @@ pub fn init(b: *Build) !*Sdk {
                 "-DOPTION_USE_GL=ON",
                 "-DCFLTK_USE_OPENGL=ON",
                 "-DFLTK_BUILD_FLUID=OFF",
+                "-DFLTK_BUILD_FLTK_OPTIONS=OFF",
             });
         } else if (target.isDarwin()) {
             zfltk_config = b.addSystemCommand(&[_][]const u8{
@@ -74,6 +75,7 @@ pub fn init(b: *Build) !*Sdk {
                 "-DOPTION_USE_GL=ON",
                 "-DCFLTK_USE_OPENGL=ON",
                 "-DFLTK_BUILD_FLUID=OFF",
+                "-DFLTK_BUILD_FLTK_OPTIONS=OFF",
             });
         } else {
             zfltk_config = b.addSystemCommand(&[_][]const u8{
@@ -96,6 +98,7 @@ pub fn init(b: *Build) !*Sdk {
                 "-DOPTION_USE_WAYLAND=OFF",
                 "-DOPTION_USE_CAIRO=ON",
                 "-DFLTK_BUILD_FLUID=OFF",
+                "-DFLTK_BUILD_FLTK_OPTIONS=OFF",
             });
         }
         zfltk_config.step.dependOn(&cfltk_fetch.step);
@@ -128,7 +131,7 @@ pub fn init(b: *Build) !*Sdk {
     return sdk;
 }
 
-pub fn link(sdk: *Sdk, exe: *LibExeObjStep) !void {
+pub fn link(sdk: *Sdk, exe: *CompileStep) !void {
     exe.step.dependOn(sdk.finalize_cfltk);
     const sdk_path = sdk.path;
     var buf: [1024]u8 = undefined;

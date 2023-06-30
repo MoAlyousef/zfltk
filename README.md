@@ -33,9 +33,9 @@ then you will need a build.zig file as follows:
 ```zig
 const std = @import("std");
 const Sdk = @import("zfltk/build.zig");
-const Builder = std.build.Builder;
+const Build = std.Build;
 
-pub fn build(b: *Builder) !void {
+pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardOptimizeOption(.{});
     const sdk = try Sdk.init(b);
@@ -45,9 +45,7 @@ pub fn build(b: *Builder) !void {
         .optimize = mode,
         .target = target,
     });
-    const zfltk_module = b.createModule(.{
-        .source_file = .{ .path = "zfltk/src/zfltk.zig" },
-    });
+    const zfltk_module = Sdk.getZfltkModule(b);
     exe.addModule("zfltk", zfltk_module);
     try sdk.link(exe);
     b.installArtifact(exe);
