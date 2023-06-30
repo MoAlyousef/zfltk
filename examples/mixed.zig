@@ -19,7 +19,7 @@ fn butCb(but: *Button(.normal)) void {
         .{ c.Fl_event_x(), c.Fl_event_y() },
     ) catch unreachable;
 
-    but.widget().setLabel(label);
+    but.setLabel(label);
 }
 
 fn colorButCb(color_but: *Button(.normal), _: ?*anyopaque) void {
@@ -52,8 +52,8 @@ fn timeoutCb(data: ?*anyopaque) void {
 
     // The same as `but.setLabel(label);`.
     // This is just for demonstration purposes
-    c.Fl_Widget_set_label(
-        but.widget().raw(),
+    c.Fl_Button_set_label(
+        but.raw(),
         label.ptr,
     );
 }
@@ -75,7 +75,7 @@ pub fn main() !void {
         .h = 190,
         .label = "Click to get mouse coords",
     });
-    but.widget().setLabelSize(24);
+    but.setLabelSize(24);
     but.setCallback(butCb);
 
     var color_but = try Button(.normal).init(.{
@@ -115,8 +115,8 @@ pub fn main() !void {
         @ptrCast(&container),
     );
 
-    win.group().end();
-    win.widget().show();
+    win.end();
+    win.show();
 
     try app.run();
 }

@@ -33,13 +33,13 @@ pub fn main() !void {
     });
 
     scroll.add(.{mybox});
-    win.group().add(.{scroll});
+    win.add(.{scroll});
 
     var img = try Image.load(.png, "screenshots/logo.png");
 
-    mybox.widget().setImage(img);
+    mybox.setImage(img);
 
-    win.group().end();
+    win.end();
     win.show();
 
     try app.run();

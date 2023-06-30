@@ -200,8 +200,8 @@ pub fn main() !void {
     box.setLabelFont(.courier);
     box.setLabelSize(18);
 
-    win.group().end();
-    win.widget().show();
+    win.end();
+    win.show();
 
     but.setCallbackEx(butCb, box);
     try app.run();
@@ -264,7 +264,7 @@ pub fn main() !void {
     mybox.setLabelFont(.courier);
     mybox.setLabelSize(18);
 
-    win.group().end();
+    win.end();
     win.show();
     but1.emit(Message, .first);
     but2.emit(Message, .second);

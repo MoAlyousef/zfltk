@@ -25,7 +25,7 @@ pub const Message = enum(usize) {
 
 // To avoid exiting when hitting escape.
 // Also logic can be added to prompt the user to save their work
-pub fn winCb(w: *Widget) void {
+pub fn winCb(w: *window.Window) void {
     if (app.event() == .close) {
         w.hide();
     }
@@ -51,7 +51,7 @@ pub fn main() !void {
     editor.setLinenumberWidth(24);
     win.end();
     win.show();
-    win.widget().setCallback(winCb);
+    win.setCallback(winCb);
 
     mymenu.addEmit(
         "&File/New...\t",
@@ -134,7 +134,7 @@ pub fn main() !void {
                     editor.buffer().?.saveFile(fname) catch unreachable;
                 }
             },
-            .Quit => win.widget().hide(),
+            .Quit => win.hide(),
             .Cut => editor.cut(),
             .Copy => editor.copy(),
             .Paste => editor.paste(),

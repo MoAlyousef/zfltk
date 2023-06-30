@@ -16,7 +16,7 @@ const std = @import("std");
 
 // To avoid exiting when hitting escape.
 // Also logic can be added to prompt the user to save their work
-pub fn winCb(w: *Widget) void {
+pub fn winCb(w: *Window) void {
     if (app.event() == .close) {
         w.hide();
     }
@@ -97,13 +97,13 @@ pub fn main() !void {
 
     editor.setLinenumberWidth(24);
     editor.showCursor(true);
-    win.group().end();
+    win.end();
 
-    win.group().add(.{editor});
-    win.group().resizable(editor);
+    win.add(.{editor});
+    win.resizable(editor);
 
-    win.widget().show();
-    win.widget().setCallback(winCb);
+    win.show();
+    win.setCallback(winCb);
 
     mymenu.addEx(
         "&File/New...\t",

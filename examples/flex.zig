@@ -27,7 +27,7 @@ pub fn main() !void {
         .spacing = 6,
     });
 
-    win.group().resizable(flex);
+    win.resizable(flex);
 
     var btn = try Button(.normal).init(.{
         .h = 48,
@@ -48,7 +48,7 @@ pub fn main() !void {
     // remains consistent by utilizing Zig's comptime
     flex.end();
 
-    win.group().end();
-    win.widget().show();
+    win.end();
+    win.show();
     try app.run();
 }

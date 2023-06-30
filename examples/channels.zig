@@ -53,7 +53,7 @@ pub fn main() !void {
     mybox.setLabelFont(.courier);
     mybox.setLabelSize(18);
 
-    win.group().end();
+    win.end();
     win.show();
     but1.emit(Message, .first);
     but2.emit(Message, .second);

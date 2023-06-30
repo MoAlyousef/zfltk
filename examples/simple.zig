@@ -45,8 +45,8 @@ pub fn main() !void {
     box.setLabelFont(.courier);
     box.setLabelSize(18);
 
-    win.group().end();
-    win.widget().show();
+    win.end();
+    win.show();
 
     but.setCallbackEx(butCb, box);
     try app.run();
