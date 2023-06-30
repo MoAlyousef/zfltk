@@ -1,117 +1,73 @@
-//TODO: update to new API
-
-const c = @cImport({
-    @cInclude("cfl_table.h");
-});
+const zfltk = @import("zfltk.zig");
+const app = zfltk.app;
 const widget = @import("widget.zig");
+const Widget = widget.Widget;
+const enums = @import("enums.zig");
+const Event = enums.Event;
+const std = @import("std");
+const c = zfltk.c;
 
-pub const Table = struct {
-    inner: ?*c.Fl_Table,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) Table {
-        const ptr = c.Fl_Table_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return Table{
-            .inner = ptr,
-        };
-    }
-
-    pub fn raw(self: *const Table) ?*c.Fl_Table {
-        return self.inner;
-    }
-
-    pub fn fromRaw(ptr: ?*c.Fl_Table) Table {
-        return Table{
-            .inner = ptr,
-        };
-    }
-
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) Table {
-        return Table{
-            .inner = @ptrCast(w),
-        };
-    }
-
-    pub fn fromVoidPtr(ptr: ?*anyopaque) Table {
-        return Table{
-            .inner = @ptrCast(ptr),
-        };
-    }
-
-    pub fn toVoidPtr(self: *const Table) ?*anyopaque {
-        return  @ptrCast(self.inner);
-    }
-
-    pub fn asWidget(self: *const Table) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(self.inner),
-        };
-    }
-
-    pub fn handle(self: *const Table, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Table_handle(self.inner, @ptrCast(cb), data);
-    }
-
-    pub fn draw(self: *const Table, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Table_handle(self.inner,  @ptrCast(cb), data);
-    }
+pub const TableKind = enum {
+    table,
+    table_row,
 };
 
-pub const TableRow = struct {
-    inner: ?*c.Fl_Table_Row,
-    pub fn new(x: i32, y: i32, w: i32, h: i32, title: [*c]const u8) TableRow {
-        const ptr = c.Fl_Table_Row_new(x, y, w, h, title);
-        if (ptr == null) unreachable;
-        return TableRow{
-            .inner = ptr,
+
+pub fn Table(comptime kind: TableKind) type {
+    return struct {
+        const Self = @This();
+
+        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
+        pub usingnamespace methods(Self);
+
+        pub const RawPtr = switch (kind) {
+            .table => *c.Fl_Table,
+            .table_row => *c.Fl_Table_Row,
         };
-    }
 
-    pub fn raw(self: *const TableRow) ?*c.Fl_Table_Row {
-        return self.inner;
-    }
+        pub const Options = struct {
+            x: i32 = 0,
+            y: i32 = 0,
+            w: u31 = 0,
+            h: u31 = 0,
 
-    pub fn fromRaw(ptr: ?*c.Fl_Table_Row) TableRow {
-        return TableRow{
-            .inner = ptr,
+            label: ?[:0]const u8 = null,
         };
-    }
 
-    pub fn fromWidgetPtr(w: widget.WidgetPtr) TableRow {
-        return TableRow{
-            .inner = @ptrCast(w),
-        };
-    }
+        pub inline fn init(opts: Options) !*Self {
+            const initFn = switch (kind) {
+                .table => c.Fl_Table,
+                .table_row => c.Fl_Table_Row,
+            };
 
-    pub fn fromVoidPtr(ptr: ?*anyopaque) TableRow {
-        return TableRow{
-            .inner = @ptrCast(ptr),
-        };
-    }
+            const label = if (opts.label != null) opts.label.?.ptr else null;
 
-    pub fn toVoidPtr(self: *const TableRow) ?*anyopaque {
-        return  @ptrCast(self.inner);
-    }
+            if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
+                var self = Self.fromRaw(ptr);
+                return self;
+            }
 
-    pub fn asWidget(self: *const TableRow) widget.Widget {
-        return widget.Widget{
-            .inner = @ptrCast(self.inner),
-        };
-    }
+            unreachable;
+        }
+    };
+}
 
-    pub fn asTable(self: *const TableRow) Table {
-        return Table{
-            .inner = @ptrCast(self.inner),
-        };
-    }
 
-    pub fn handle(self: *const TableRow, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-        c.Fl_Table_Row_handle(self.inner, @ptrCast(cb), data);
-    }
+pub fn methods(comptime Self: type) type {
+    return struct {
+        pub inline fn table(self: *Self) *Table(.table) {
+            return @ptrCast(self);
+        }
 
-    pub fn draw(self: *const TableRow, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Table_Row_handle(self.inner,  @ptrCast(cb), data);
-    }
-};
+        pub fn handle(self: *const Self, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+            c.Fl_Table_Row_handle(self.table().raw(), @ptrCast(cb), data);
+        }
+
+        pub fn draw(self: *const Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Table_Row_handle(self.table().raw(),  @ptrCast(cb), data);
+        }
+    };
+}
 
 test "all" {
     @import("std").testing.refAllDecls(@This());

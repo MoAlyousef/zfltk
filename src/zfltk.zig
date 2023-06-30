@@ -27,6 +27,7 @@ pub const Button = button.Button;
 pub const Box = box.Box;
 pub const Browser = browser.Browser;
 pub const Menu = menu.Menu;
+pub const Table = table.Table;
 pub const Input = input.Input;
 pub const Output = input.Output;
 pub const TextDisplay = text.TextDisplay;
@@ -49,6 +50,7 @@ pub const c = @cImport({
     @cInclude("cfl_dialog.h");
     @cInclude("cfl_group.h");
     @cInclude("cfl_draw.h");
+    @cInclude("cfl_table.h");
     @cInclude("cfl_valuator.h");
 });
 
