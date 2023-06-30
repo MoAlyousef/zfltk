@@ -289,12 +289,12 @@ const c = @cImport({
 });
 
 pub fn butCb(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
-    c.Fl_Box_set_label(@ptrCast(?*c.Fl_Box, data), "Hello World!");
-    c.Fl_Button_set_color(@ptrCast(?*c.Fl_Button, w), c.Fl_Color_Cyan);
+    c.Fl_Box_set_label(@ptrCast(data), "Hello World!");
+    c.Fl_Button_set_color(@ptrCast(w), c.Fl_Color_Cyan);
 }
 
 pub fn main() void {
-    c.Fl_set_scheme("gtk+");
+    _ = c.Fl_set_scheme("gtk+");
     var win = c.Fl_Window_new(100, 100, 400, 300, "Hello");
     var but = c.Fl_Button_new(160, 220, 80, 40, "Click me!");
     var box = c.Fl_Box_new(10, 10, 380, 180, "");

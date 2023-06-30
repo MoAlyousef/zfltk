@@ -8,6 +8,8 @@ const enums = zfltk.enums;
 const Color = enums.Color;
 const text = zfltk.text;
 const dialog = zfltk.dialog;
+const FileDialog = zfltk.FileDialog;
+const std = @import("std");
 
 pub const Message = enum(usize) {
     // Can't begin with 0
@@ -23,10 +25,9 @@ pub const Message = enum(usize) {
 
 // To avoid exiting when hitting escape.
 // Also logic can be added to prompt the user to save their work
-pub fn winCb(w: Widget) void {
-    _ = w;
+pub fn winCb(w: *Widget) void {
     if (app.event() == .close) {
-        app.send(Message, .Quit);
+        w.hide();
     }
 }
 
@@ -35,68 +36,73 @@ pub fn main() !void {
     app.setScheme(.gtk);
 
     app.setBackground(Color.fromRgb(211, 211, 211));
-    var win = window.Window.init(0, 0, 800, 600, "Editor");
+    var win = try window.Window.init(.{.w = 800, .h = 600, .label = "Editor"});
     win.freePosition();
-    var mymenu = menu.MenuBar.new(0, 0, 800, 35, "");
-    var buf = text.TextBuffer.new();
-    defer buf.delete();
-    var editor = text.TextEditor.new(2, 37, 800 - 2, 600 - 37, "");
-    editor.asTextDisplay().setBuffer(&buf);
-    editor.asTextDisplay().setLinenumberWidth(24);
-    win.group().end();
-    win.widget().show();
+    var mymenu = try menu.Menu(.menu_bar).init(.{.w = 800, .h = 35 });
+    var buf = try text.TextBuffer.init();
+    defer buf.deinit();
+    var editor = try text.TextDisplay(.editor).init(.{
+        .x = 2,
+        .y = 37,
+        .w = 800 - 2,
+        .h = 600 - 37,
+    });
+    editor.setBuffer(buf);
+    editor.setLinenumberWidth(24);
+    win.end();
+    win.show();
     win.widget().setCallback(winCb);
 
-    mymenu.asMenu().addEmit(
+    mymenu.addEmit(
         "&File/New...\t",
         enums.Shortcut.Ctrl | 'n',
         .Normal,
         Message,
         .New,
     );
-    mymenu.asMenu().addEmit(
+    mymenu.addEmit(
         "&File/Open...\t",
         enums.Shortcut.Ctrl | 'o',
         .Normal,
         Message,
         .Open,
     );
-    mymenu.asMenu().addEmit(
+    mymenu.addEmit(
         "&File/Save...\t",
         enums.Shortcut.Ctrl | 's',
         .MenuDivider,
         Message,
         .Save,
     );
-    mymenu.asMenu().addEmit(
+    mymenu.addEmit(
         "&File/Quit...\t",
         enums.Shortcut.Ctrl | 'q',
         .Normal,
         Message,
         .Quit,
     );
-    mymenu.asMenu().addEmit(
+    mymenu.addEmit(
         "&Edit/Cut...\t",
         enums.Shortcut.Ctrl | 'x',
         .Normal,
         Message,
         .Cut,
     );
-    mymenu.asMenu().addEmit(
+    mymenu.addEmit(
         "&Edit/Copy...\t",
         enums.Shortcut.Ctrl | 'c',
         .Normal,
         Message,
         .Copy,
     );
-    mymenu.asMenu().addEmit(
+    mymenu.addEmit(
         "&Edit/Paste...\t",
         enums.Shortcut.Ctrl | 'v',
         .Normal,
         Message,
         .Paste,
     );
-    mymenu.asMenu().addEmit(
+    mymenu.addEmit(
         "&Help/About...\t",
         enums.Shortcut.Ctrl | 'q',
         .Normal,
@@ -104,28 +110,28 @@ pub fn main() !void {
         .About,
     );
 
-    var item = mymenu.asMenu().findItem("&File/Quit...\t");
+    var item = mymenu.findItem("&File/Quit...\t");
     item.setLabelColor(Color.fromName(.red));
 
     while (app.wait()) {
         if (app.recv(Message)) |msg| switch (msg) {
             .New => buf.setText(""),
             .Open => {
-                var dlg = dialog.NativeFileDialog.new(.BrowseFile);
+                var dlg = try FileDialog(.file).init(.{});
                 dlg.setFilter("*.{txt,zig}");
                 dlg.show();
                 var fname = dlg.filename();
-                if (fname != null) {
-                    _ = buf.loadFile(fname) catch unreachable;
+                if (!std.mem.eql(u8, fname, "")) {
+                    editor.buffer().?.loadFile(fname) catch unreachable;
                 }
             },
             .Save => {
-                var dlg = dialog.NativeFileDialog.new(.BrowseSaveFile);
+                var dlg = try FileDialog(.file).init(.{});
                 dlg.setFilter("*.{txt,zig}");
                 dlg.show();
                 var fname = dlg.filename();
-                if (fname != null) {
-                    _ = buf.saveFile(fname) catch unreachable;
+                if (!std.mem.eql(u8, fname, "")) {
+                    editor.buffer().?.saveFile(fname) catch unreachable;
                 }
             },
             .Quit => win.widget().hide(),

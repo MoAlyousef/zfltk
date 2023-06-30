@@ -112,15 +112,15 @@ pub fn methods(comptime Self: type) type {
             _ = c.Fl_Menu_Bar_insert(self.menu().raw(), idx, name, shortcut, cb, data, @intFromEnum(flag));
         }
 
-        pub fn addEmit(self: *const Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+        pub fn addEmit(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
             _ = c.Fl_Menu_Bar_add(self.menu().raw(), name, shortcut, shim, @ptrFromInt(@intFromEnum(msg)), @intFromEnum(flag));
         }
 
-        pub fn insertEmit(self: *const Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+        pub fn insertEmit(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
             _ = c.Fl_Menu_Bar_insert(self.menu().raw(), idx, name, shortcut, shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
         }
 
-        pub fn remove(self: *const Self, idx: u32) void {
+        pub fn remove(self: *Self, idx: u32) void {
             _ = c.Fl_Menu_Bar_remove(self.menu().raw(), idx);
         }
 

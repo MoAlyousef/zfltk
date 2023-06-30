@@ -45,7 +45,7 @@ pub fn saveCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
     dlg.show();
     var fname = dlg.filename();
     if (!std.mem.eql(u8, fname, "")) {
-        editor.buffer().?.loadFile(fname) catch unreachable;
+        editor.buffer().?.saveFile(fname) catch unreachable;
     }
 }
 
@@ -61,7 +61,7 @@ pub fn cutCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
 
 pub fn copyCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
     const editor = TextDisplay(.editor).fromRaw(data.?);
-    _ = try editor.buffer().?.copy();
+    _ = editor.copy();
 }
 
 pub fn pasteCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {

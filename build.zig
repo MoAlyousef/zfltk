@@ -216,8 +216,7 @@ const examples = &[_]Example{
     Example.init("layout", "examples/layout.zig", "Layout example"),
     Example.init("valuators", "examples/valuators.zig", "valuators example"),
     Example.init("channels", "examples/channels.zig", "Use messages to handle events"),
-    // Disable until this example is updated to the new API
-    //    Example.init("editormsgs", "examples/editormsgs.zig", "Use messages in the editor example"),
+    Example.init("editormsgs", "examples/editormsgs.zig", "Use messages in the editor example"),
     Example.init("browser", "examples/browser.zig", "Browser example"),
     Example.init("flex", "examples/flex.zig", "Flex example"),
     Example.init("threadawake", "examples/threadawake.zig", "Thread awake example"),

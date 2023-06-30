@@ -34,7 +34,7 @@ pub const TextBuffer = struct {
     }
 
     pub inline fn deinit(self: *Self) void {
-        c.Fl_Text_Buffer_delete(self.inner);
+        c.Fl_Text_Buffer_delete(self.raw());
         app.allocator.destroy(self);
     }
 
@@ -116,8 +116,8 @@ pub const TextBuffer = struct {
     }
 
     /// Saves a buffer into a file
-    pub fn saveFile(self: *const TextBuffer, path: [:0]const u8) !void {
-        const ret = c.Fl_Text_Buffer_save_file(self.inner, path.ptr);
+    pub fn saveFile(self: *TextBuffer, path: [:0]const u8) !void {
+        const ret = c.Fl_Text_Buffer_save_file(self.raw(), path.ptr);
         if (ret != 0) return error.InvalidParameter;
     }
 
@@ -339,6 +339,10 @@ pub fn methods(comptime Self: type) type {
 
         pub fn paste(self: *TextDisplay(.editor)) void {
             _ = c.Fl_Text_Editor_kf_paste(self.raw());
+        }
+
+        pub fn copy(self: *TextDisplay(.editor)) void {
+            _ = c.Fl_Text_Editor_kf_copy(self.raw());
         }
     };
 }
