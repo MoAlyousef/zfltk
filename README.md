@@ -39,13 +39,13 @@ pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardOptimizeOption(.{});
     const sdk = try Sdk.init(b);
+    const zfltk_module = sdk.getZfltkModule(b);
     const exe = b.addExecutable(.{
         .name = "app",
         .root_source_file = .{.path = "src/main.zig" },
         .optimize = mode,
         .target = target,
     });
-    const zfltk_module = Sdk.getZfltkModule(b);
     exe.addModule("zfltk", zfltk_module);
     try sdk.link(exe);
     b.installArtifact(exe);

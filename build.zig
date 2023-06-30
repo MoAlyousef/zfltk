@@ -227,7 +227,8 @@ inline fn thisDir() []const u8 {
     return comptime std.fs.path.dirname(@src().file) orelse @panic("error");
 }
 
-pub fn getZfltkModule(b: *Build) *Build.Module {
+pub fn getZfltkModule(sdk: *Sdk, b: *Build) *Build.Module {
+    _ = sdk;
     return b.createModule(.{
         .source_file = .{ .path = thisDir() ++ "/src/zfltk.zig" },
     });
@@ -236,8 +237,8 @@ pub fn getZfltkModule(b: *Build) *Build.Module {
 pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardOptimizeOption(.{});
-    const zfltk_module = getZfltkModule(b);
     const sdk = try Sdk.init(b);
+    const zfltk_module = sdk.getZfltkModule(b);
     const examples_step = b.step("examples", "build the examples");
     b.default_step.dependOn(examples_step);
 
