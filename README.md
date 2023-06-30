@@ -23,7 +23,7 @@ If you're using the official package manager:
     .version = "0.0.1",
     .dependencies = .{
         .zfltk = .{
-            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/v011test2.tar.gz",
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.0.1.tar.gz",
             .hash = "12201563ec07037e31c00339b4df8edb0e8967e17bee56c9f2263e68b2262ba7e459",
         },
     }
