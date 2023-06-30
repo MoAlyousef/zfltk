@@ -252,3 +252,7 @@ pub fn methods(comptime Self: type) type {
         }
     };
 }
+
+test "all" {
+    @import("std").testing.refAllDecls(@This());
+}

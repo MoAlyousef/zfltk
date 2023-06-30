@@ -29,6 +29,7 @@ pub const Browser = browser.Browser;
 pub const Menu = menu.Menu;
 pub const MenuBar = menu.MenuBar;
 pub const Input = input.Input;
+pub const Output = input.Output;
 pub const TextDisplay = text.TextDisplay;
 pub const TextBuffer = text.TextBuffer;
 pub const FileDialog = dialog.FileDialog;

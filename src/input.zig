@@ -114,3 +114,7 @@ pub fn Input(comptime kind: InputKind) type {
         }
     };
 }
+
+test "all" {
+    @import("std").testing.refAllDecls(@This());
+}
