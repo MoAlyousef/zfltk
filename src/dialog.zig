@@ -126,7 +126,7 @@ pub fn alert(x: i32, y: i32, txt: [*c]const u8) void {
 /// Displays a choice box with upto three choices
 /// An empty choice will not be shown
 pub fn choice(x: i32, y: i32, txt: [*c]const u8, b0: [*c]const u8, b1: [*c]const u8, b2: [*c]const u8) u32 {
-    c.Fl_choice(x, y, txt, b0, b1, b2);
+    return @intCast(c.Fl_choice(x, y, txt, b0, b1, b2));
 }
 
 /// Displays an input box, which returns the inputted string.

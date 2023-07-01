@@ -77,7 +77,7 @@ pub fn setColor(col: Color) void {
 
 /// Gets the last used color
 pub fn color() Color {
-    return Color.fromRbgi(c.Fl_get_color());
+    return Color.fromRgbi(c.Fl_get_color());
 }
 
 /// Draws a line
@@ -143,7 +143,7 @@ pub fn pie(x: i32, y: i32, w: i32, h: i32, a: f64, b: f64) void {
 /// Sets the line style
 pub fn setLineStyle(style: LineStyle, thickness: i32) void {
     c.Fl_line_style(
-        style,
+        @intFromEnum(style),
         thickness,
         null,
     );
@@ -345,17 +345,17 @@ pub fn endComplexPolygon() void {
 
 /// Sets the current font, which is then used in various drawing routines
 pub fn setFont(face: Font, fsize: u32) void {
-    c.Fl_set_draw_font(@intFromEnum(face), fsize);
+    c.Fl_set_draw_font(@intFromEnum(face), @intCast(fsize));
 }
 
 /// Gets the current font, which is used in various drawing routines
 pub fn font() Font {
-    return c.Fl_font();
+    return @enumFromInt(c.Fl_font());
 }
 
 /// Gets the current font size, which is used in various drawing routines
 pub fn size() u32 {
-    return c.Fl_size();
+    return @intCast(c.Fl_size());
 }
 
 /// Returns the recommended minimum line spacing for the current font
@@ -365,7 +365,7 @@ pub fn height() i32 {
 
 /// Sets the line spacing for the current font
 pub fn setHeight(f: Font, sz: u32) void {
-    c.Fl_set_height(@intFromEnum(f), sz);
+    _ = c.Fl_set_height(@intFromEnum(f), @intCast(sz));
 }
 
 /// Returns the recommended distance above the bottom of a height() tall box to
@@ -436,7 +436,7 @@ pub fn canDoAlphaBlending() bool {
 
 /// Get a human-readable string from a shortcut value
 pub fn shortcutLabel(shortcut: i32) [*c]const u8 {
-    return c.Fl_shortcut_label(shortcut);
+    return c.Fl_shortcut_label(@intCast(shortcut));
 }
 
 /// Draws a selection rectangle, erasing a previous one by XOR'ing it first.
@@ -456,7 +456,7 @@ pub fn setCursor(cursor: Cursor) void {
 
 /// Sets the cursor style
 pub fn setCursorWithColor(cursor: Cursor, fg: Color, bg: Color) void {
-    c.Fl_set_cursor2(@intFromEnum(cursor), fg.toRgbi(), bg.toRgbi());
+    c.Fl_set_cursor2(@intFromEnum(cursor), @intCast(fg.toRgbi()), @intCast(bg.toRgbi()));
 }
 
 test "all" {

@@ -51,7 +51,7 @@ pub const Box = struct {
         }
     }
 
-    pub inline fn setEventHandler(self: *const Self, f: *const fn (*Self, Event) bool) void {
+    pub inline fn setEventHandler(self: *Self, f: *const fn (*Self, Event) bool) void {
         c.Fl_Box_handle(
             self.raw(),
             zfltk_box_event_handler,

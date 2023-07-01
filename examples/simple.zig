@@ -33,6 +33,8 @@ pub fn main() !void {
         .label = "Click me!",
     });
 
+    but.setDownBox(.flat);
+
     var box = try Box.init(.{
         .x = 10,
         .y = 10,

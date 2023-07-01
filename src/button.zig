@@ -115,7 +115,7 @@ pub fn methods(comptime Self: type) type {
             return c.Fl_Button_shortcut(self.button().raw());
         }
 
-        pub fn setShortcut(self: *const Self, shrtct: i32) void {
+        pub fn setShortcut(self: *Self, shrtct: i32) void {
             c.Fl_Button_set_shortcut(self.button().raw(), shrtct);
         }
 
@@ -127,7 +127,7 @@ pub fn methods(comptime Self: type) type {
             return c.Fl_Button_value(self.button().raw()) != 0;
         }
 
-        pub fn setValue(self: *const Self, flag: bool) void {
+        pub fn setValue(self: *Self, flag: bool) void {
             c.Fl_Button_set_value(self.button().raw(), @intFromBool(flag));
         }
 
