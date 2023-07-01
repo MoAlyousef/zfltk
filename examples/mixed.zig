@@ -39,7 +39,7 @@ fn timeoutCb(data: ?*anyopaque) void {
     const container: *[2]usize = @ptrCast(@alignCast(data.?));
 
     // Re-interpret our ints as pointers to get our objects back
-    var but = Button(.normal).fromRaw( @ptrFromInt(container[0]));
+    var but = Button(.normal).fromRaw(@ptrFromInt(container[0]));
     const wait_time: f32 = @as(*f32, @ptrFromInt(container[1])).*;
 
     var buf: [32]u8 = undefined;
