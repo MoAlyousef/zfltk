@@ -152,12 +152,12 @@ pub fn methods(comptime Self: type) type {
             return @ptrCast(self);
         }
 
-        pub fn handle(self: *Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-            c.Fl_Slider_handle(self.inner, @ptrCast(cb), data);
+        pub fn handle(self: *Self, comptime cb: fn (w: Self.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+            c.Fl_Slider_handle(self.raw(), @ptrCast(cb), data);
         }
 
-        pub fn draw(self: *Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Slider_handle(self.inner, @ptrCast(cb), data);
+        pub fn draw(self: *Self, comptime cb: fn (w: Self.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Slider_draw(self.raw(), @ptrCast(cb), data);
         }
 
         pub inline fn setBounds(self: *Self, a: f64, b: f64) void {
@@ -223,5 +223,5 @@ pub fn methods(comptime Self: type) type {
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

@@ -41,7 +41,7 @@ pub const Offscreen = struct {
         return Offscreen{ .inner = c.Fl_create_offscreen(w, h) };
     }
     /// Begins drawing in the offscreen
-    pub fn begin(self: *const Offscreen) void {
+    pub fn begin(self: *Offscreen) void {
         c.Fl_begin_offscreen(self.inner);
     }
 
@@ -51,17 +51,17 @@ pub const Offscreen = struct {
     }
 
     /// Copies the offscreen
-    pub fn copy(self: *const Offscreen, x: i32, y: i32, w: i32, h: i32, srcx: i32, srcy: i32) void {
+    pub fn copy(self: *Offscreen, x: i32, y: i32, w: i32, h: i32, srcx: i32, srcy: i32) void {
         c.Fl_copy_offscreen(x, y, w, h, self.inner, srcx, srcy);
     }
 
     /// Rescales the offscreen
-    pub fn rescale(self: *const Offscreen) void {
-        c.Fl_rescale_offscreen(self.inner);
+    pub fn rescale(self: *Offscreen) void {
+        c.Fl_rescale_offscreen(&self.inner);
     }
 
-    pub fn delete(self: *const Offscreen) void {
-        c.Fl_delete_offscreen(self._inner);
+    pub fn delete(self: *Offscreen) void {
+        c.Fl_delete_offscreen(self.inner);
     }
 };
 
@@ -460,5 +460,5 @@ pub fn setCursorWithColor(cursor: Cursor, fg: Color, bg: Color) void {
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

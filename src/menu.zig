@@ -88,12 +88,12 @@ pub fn methods(comptime Self: type) type {
             return @ptrCast(self);
         }
 
-        pub fn handle(self: *Self, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+        pub fn handle(self: *Self, comptime cb: fn (w: widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
             c.Fl_Menu_Bar_handle(self.menu().raw(), @ptrCast(cb), data);
         }
 
-        pub fn draw(self: *Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Menu_Bar_handle(self.menu().raw(), @ptrCast(cb), data);
+        pub fn draw(self: *Self, comptime cb: fn (w: widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Menu_Bar_draw(self.menu().raw(), @ptrCast(cb), data);
         }
 
         pub fn add(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
@@ -107,7 +107,7 @@ pub fn methods(comptime Self: type) type {
             _ = c.Fl_Menu_Bar_add(self.menu().raw(), name, shortcut, zfltk_menu_cb_handler_ex, @ptrCast(container.ptr), @intFromEnum(flag));
         }
 
-        pub fn insert(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        pub fn insert(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
             _ = c.Fl_Menu_Bar_insert(self.menu().raw(), idx, name, shortcut, cb, data, @intFromEnum(flag));
         }
 
@@ -147,47 +147,43 @@ pub fn methods(comptime Self: type) type {
 
 pub const MenuItem = struct {
     inner: ?*c.Fl_Menu_Item,
-    pub fn setCallback(self: *const MenuItem, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn setCallback(self: *MenuItem, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Menu_Item_set_callback(self.inner, cb, data);
     }
 
-    pub fn setLabel(self: *const MenuItem, str: [*c]const u8) void {
+    pub fn setLabel(self: *MenuItem, str: [*c]const u8) void {
         c.Fl_Menu_Item_set_label(self.inner, str);
     }
 
-    pub fn color(self: *const MenuItem) enums.Color {
-        return enums.Color.fromRgbi(c.Fl_Menu_Item_color(self.inner));
-    }
-
-    pub fn labelColor(self: *const MenuItem) enums.Color {
+    pub fn labelColor(self: *MenuItem) enums.Color {
         return enums.Color.fromRgbi(c.Fl_Menu_Item_label_color(self.inner));
     }
 
-    pub fn setLabelColor(self: *const MenuItem, col: enums.Color) void {
+    pub fn setLabelColor(self: *MenuItem, col: enums.Color) void {
         c.Fl_Menu_Item_set_label_color(self.inner, @intCast(col.toRgbi()));
     }
 
-    pub fn labelFont(self: *const MenuItem) enums.Font {
+    pub fn labelFont(self: *MenuItem) enums.Font {
         return @enumFromInt(c.Fl_Menu_Item_label_font(self.inner));
     }
 
-    pub fn setLabelFont(self: *const MenuItem, font: enums.Font) void {
+    pub fn setLabelFont(self: *MenuItem, font: enums.Font) void {
         c.Fl_Menu_Item_set_label_font(self.inner, @intFromEnum(font));
     }
 
-    pub fn labelSize(self: *const MenuItem) i32 {
-        c.Fl_Menu_Item_label_size(self.inner);
+    pub fn labelSize(self: *MenuItem) i32 {
+        return c.Fl_Menu_Item_label_size(self.inner);
     }
 
-    pub fn setLabelSize(self: *const MenuItem, sz: i32) void {
+    pub fn setLabelSize(self: *MenuItem, sz: i32) void {
         c.Fl_Menu_Item_set_label_size(self.inner, sz);
     }
 
-    pub fn show(self: *const MenuItem) void {
+    pub fn show(self: *MenuItem) void {
         c.Fl_Menu_Item_show(self.inner);
     }
 
-    pub fn hide(self: *const MenuItem) void {
+    pub fn hide(self: *MenuItem) void {
         c.Fl_Menu_Item_hide(self.inner);
     }
 };
@@ -204,5 +200,5 @@ export fn zfltk_menu_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callco
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

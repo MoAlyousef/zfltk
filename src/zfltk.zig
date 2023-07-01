@@ -83,5 +83,5 @@ pub fn isWidget(comptime T: type) bool {
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

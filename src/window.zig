@@ -30,14 +30,6 @@ pub const Window = struct {
 
 pub fn methods(comptime Self: type) type {
     return struct {
-        pub fn handle(self: *Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-            c.Fl_Double_Window_handle(self.raw(), @ptrCast(cb), data);
-        }
-
-        pub fn draw(self: *Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Double_Window_handle(self.raw(), @ptrCast(cb), data);
-        }
-
         pub fn setSizeRange(self: *Self, min_w: u31, min_h: u31, max_w: u31, max_h: u31) void {
             return c.Fl_Double_Window_size_range(self.raw(), min_w, min_h, max_w, max_h);
         }
@@ -51,7 +43,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn setCursor(self: *Self, cursor: enums.Cursor) void {
-            return c.Fl_Double_Window_set_cursor(self.raw(), cursor);
+            return c.Fl_Double_Window_set_cursor(self.raw(), @intFromEnum(cursor));
         }
 
         pub fn makeModal(self: *Self, val: bool) void {
@@ -65,5 +57,5 @@ pub fn methods(comptime Self: type) type {
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

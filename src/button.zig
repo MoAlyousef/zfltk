@@ -107,7 +107,7 @@ pub fn methods(comptime Self: type) type {
             );
         }
 
-        pub fn draw(self: *Self, cb: fn (w: Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        pub fn draw(self: *Self, comptime cb: fn (w: Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
             c.Fl_Button_handle(self.button().raw(), @ptrCast(cb), data);
         }
 
@@ -168,5 +168,5 @@ export fn zfltk_button_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*a
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

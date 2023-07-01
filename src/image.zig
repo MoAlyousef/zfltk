@@ -152,11 +152,11 @@ pub const Image = struct {
         unreachable;
     }
 
-    pub inline fn scale(self: *const Image, width: u31, height: u31, proportional: bool, can_expand: bool) void {
+    pub inline fn scale(self: *Image, width: u31, height: u31, proportional: bool, can_expand: bool) void {
         c.Fl_Image_scale(@ptrCast(self.inner), width, height, @intFromBool(proportional), @intFromBool(can_expand));
     }
 
-    pub inline fn raw(self: *const Image) RawPtr {
+    pub inline fn raw(self: *Image) RawPtr {
         return self.inner;
     }
 
@@ -168,16 +168,16 @@ pub const Image = struct {
         return Image.fromRaw(@ptrCast(ptr));
     }
 
-    pub inline fn toVoidPtr(self: *const Image) ?*anyopaque {
+    pub inline fn toVoidPtr(self: *Image) ?*anyopaque {
         return @ptrCast(self.inner);
     }
 
-    pub inline fn deinit(self: *const Image) void {
+    pub inline fn deinit(self: *Image) void {
         c.Fl_Image_delete(@ptrCast(self.inner));
     }
 
     /// Returns a tiled version of the input image
-    pub inline fn tile(self: *const Image, _w: u31, _h: u31) Image {
+    pub inline fn tile(self: *Image, _w: u31, _h: u31) Image {
         if (c.Fl_Tiled_Image_new(self.inner, _w, _h)) |ptr| {
             return Image.fromRaw(@ptrCast(ptr));
         }
@@ -185,7 +185,7 @@ pub const Image = struct {
         unreachable;
     }
 
-    pub inline fn copy(self: *const Image) Image {
+    pub inline fn copy(self: *Image) Image {
         if (c.Fl_Image_copy(self.inner)) |ptr| {
             return Image.fromRaw(ptr);
         }
@@ -193,39 +193,39 @@ pub const Image = struct {
         unreachable;
     }
 
-    pub fn draw(self: *const Image, arg2: u31, arg3: u31, arg4: u31, arg5: u31) void {
+    pub fn draw(self: *Image, arg2: u31, arg3: u31, arg4: u31, arg5: u31) void {
         return c.Fl_Image_draw(self.inner, arg2, arg3, arg4, arg5);
     }
 
-    pub fn w(self: *const Image) u31 {
-        return c.Fl_Image_width(self.inner);
+    pub fn w(self: *Image) u31 {
+        return @intCast(c.Fl_Image_width(self.inner));
     }
 
-    pub fn h(self: *const Image) u31 {
-        return c.Fl_Image_height(self.inner);
+    pub fn h(self: *Image) u31 {
+        return @intCast(c.Fl_Image_height(self.inner));
     }
 
-    pub fn count(self: *const Image) u31 {
-        return c.Fl_Image_count(self.inner);
+    pub fn count(self: *Image) u31 {
+        return @intCast(c.Fl_Image_count(self.inner));
     }
 
-    pub fn dataW(self: *const Image) u31 {
-        return c.Fl_Image_data_w(self.inner);
+    pub fn dataW(self: *Image) u31 {
+        return @intCast(c.Fl_Image_data_w(self.inner));
     }
 
-    pub fn dataH(self: *const Image) u31 {
-        return c.Fl_Image_data_h(self.inner);
+    pub fn dataH(self: *Image) u31 {
+        return @intCast(c.Fl_Image_data_h(self.inner));
     }
 
-    pub fn depth(self: *const Image) u31 {
-        return c.Fl_Image_d(self.inner);
+    pub fn depth(self: *Image) u31 {
+        return @intCast(c.Fl_Image_d(self.inner));
     }
 
-    pub fn ld(self: *const Image) u31 {
-        return c.Fl_Image_ld(self.inner);
+    pub fn ld(self: *Image) u31 {
+        return @intCast(c.Fl_Image_ld(self.inner));
     }
 };
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

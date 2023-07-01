@@ -45,8 +45,8 @@ pub const TextBuffer = struct {
     }
 
     /// Returns the text of the buffer
-    pub fn text(self: *const TextBuffer) [*]const u8 {
-        return c.Fl_Text_Buffer_txt(self.raw());
+    pub fn text(self: *TextBuffer) [*]const u8 {
+        return c.Fl_Text_Buffer_text(self.raw());
     }
 
     /// Appends to the buffer
@@ -60,22 +60,22 @@ pub const TextBuffer = struct {
     }
 
     /// Removes from the buffer
-    pub fn remove(self: *const TextBuffer, start: u32, end: u32) void {
-        return c.Fl_Text_Buffer_remove(self.raw(), start, end);
+    pub fn remove(self: *TextBuffer, start: u32, end: u32) void {
+        return c.Fl_Text_Buffer_remove(self.raw(), @intCast(start), @intCast(end));
     }
     /// Returns the text within the range
-    pub fn textRange(self: *const TextBuffer, start: u32, end: u32) [*]const u8 {
-        return c.Fl_Text_Buffer_text_range(self.raw(), start, end);
+    pub fn textRange(self: *TextBuffer, start: u32, end: u32) [*]const u8 {
+        return c.Fl_Text_Buffer_text_range(self.raw(), @intCast(start), @intCast(end));
     }
 
     /// Inserts text into a position
-    pub fn insert(self: *const TextBuffer, pos: u32, str: [*]const u8) void {
-        c.Fl_Text_Buffer_insert(self.raw(), pos, str.as_ptr());
+    pub fn insert(self: *TextBuffer, pos: u32, str: [*]const u8) void {
+        c.Fl_Text_Buffer_insert(self.raw(), @intCast(pos), str);
     }
 
     /// Replaces text from position ```start``` to ```end```
-    pub fn replace(self: *const TextBuffer, start: u32, end: u32, txt: [*]const u8) void {
-        c.Fl_Text_Buffer_replace(self.raw(), start, end, txt);
+    pub fn replace(self: *TextBuffer, start: u32, end: u32, txt: [*]const u8) void {
+        c.Fl_Text_Buffer_replace(self.raw(), @intCast(start), @intCast(end), txt);
     }
 
     /// Copies text from a source buffer into the current buffer
@@ -83,7 +83,7 @@ pub const TextBuffer = struct {
         c.Fl_Text_Buffer_copy(
             self.raw(),
             source_buf.raw(),
-            start,
+            @intCast(start),
             end,
             to,
         );
@@ -97,17 +97,17 @@ pub const TextBuffer = struct {
     }
 
     /// Performs an undo operation on the buffer
-    pub fn undo(self: *const TextBuffer) void {
+    pub fn undo(self: *TextBuffer) void {
         _ = c.Fl_Text_Buffer_undo(self.raw(), null);
     }
 
     /// Sets whether the buffer can undo
-    pub fn canUndo(self: *const TextBuffer, flag: bool) void {
+    pub fn canUndo(self: *TextBuffer, flag: bool) void {
         c.Fl_Text_Buffer_canUndo(self.raw(), @intFromBool(flag));
     }
 
-    pub fn lineStart(self: *const TextBuffer, pos: u32) u32 {
-        return c.Fl_Text_Buffer_line_start(self.raw(), pos);
+    pub fn lineStart(self: *TextBuffer, pos: u32) u32 {
+        return @intCast(c.Fl_Text_Buffer_line_start(self.raw(), @intCast(pos)));
     }
     /// Loads a file into the buffer
     pub fn loadFile(self: *TextBuffer, path: [:0]const u8) !void {
@@ -122,27 +122,27 @@ pub const TextBuffer = struct {
     }
 
     /// Returns the tab distance for the buffer
-    pub fn tabDistance(self: *const TextBuffer) u32 {
-        c.Fl_Text_Buffer_tab_distance(self.raw());
+    pub fn tabDistance(self: *TextBuffer) u32 {
+        return @intCast(c.Fl_Text_Buffer_tab_distance(self.raw()));
     }
 
     /// Sets the tab distance
     pub fn setTabDistance(self: *TextBuffer, tab_dist: u32) void {
-        c.Fl_Text_Buffer_set_tab_distance(self.raw(), tab_dist);
+        c.Fl_Text_Buffer_set_tab_distance(self.raw(), @intCast(tab_dist));
     }
 
     /// Selects the text from start to end
     pub fn select(self: *TextBuffer, start: u32, end: u32) void {
-        c.Fl_Text_Buffer_select(self.raw(), start, end);
+        c.Fl_Text_Buffer_select(self.raw(), @intCast(start), @intCast(end));
     }
 
     /// Returns whether text is selected
-    pub fn selected(self: *const TextBuffer) bool {
+    pub fn selected(self: *TextBuffer) bool {
         return c.Fl_Text_Buffer_selected(self.raw()) != 0;
     }
 
     /// Unselects text
-    pub fn unselect(self: *const TextBuffer) void {
+    pub fn unselect(self: *TextBuffer) void {
         return c.Fl_Text_Buffer_unselect(self.raw());
     }
 };
@@ -206,12 +206,12 @@ pub fn TextDisplay(comptime kind: TextKind) type {
             app.allocator.destroy(self);
         }
 
-        pub fn handle(self: *Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+        pub fn handle(self: *Self, comptime cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
             c.Fl_Text_Display_handle(self.raw(), @ptrCast(cb), data);
         }
 
-        pub fn draw(self: *const TextDisplay, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Text_Display_handle(self.raw(), @ptrCast(cb), data);
+        pub fn draw(self: *TextDisplay, comptime cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Text_Display_draw(self.raw(), @ptrCast(cb), data);
         }
     };
 }
@@ -289,7 +289,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn countLines(self: *Self, start: u32, end: u32, is_line_start: bool) u32 {
-            return c.Fl_Text_Display_count_lines(self.textDisplay().raw(), start, end, @intFromBool(is_line_start));
+            return c.Fl_Text_Display_count_lines(self.textDisplay().raw(), @intCast(start), end, @intFromBool(is_line_start));
         }
 
         pub fn moveRight(self: *Self) void {
@@ -348,5 +348,5 @@ pub fn methods(comptime Self: type) type {
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

@@ -116,12 +116,12 @@ pub fn methods(comptime Self: type) type {
             unreachable;
         }
 
-        pub fn handle(self: *Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+        pub fn handle(self: *Self, comptime cb: fn (w: Self.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
             c.Fl_Group_handle(self.raw(), @ptrCast(cb), data);
         }
 
-        pub fn draw(self: *Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Group_handle(self.raw(), @ptrCast(cb), data);
+        pub fn draw(self: *Self, comptime cb: fn (w: Self.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Group_draw(self.raw(), @ptrCast(cb), data);
         }
 
         pub fn begin(self: *Self) void {
@@ -142,8 +142,8 @@ pub fn methods(comptime Self: type) type {
             endFn(ptr);
         }
 
-        pub fn find(self: *Self, wid: *const Widget) u32 {
-            return c.Fl_Group_find(self.group().raw(), wid.raw());
+        pub fn find(self: *Self, wid: *Widget) u32 {
+            return @intCast(c.Fl_Group_find(self.group().raw(), wid.raw()));
         }
 
         pub fn add(self: *Self, widgets: anytype) void {
@@ -197,10 +197,10 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn children(self: *Self) u31 {
-            c.Fl_Group_children(self.group().raw());
+            return @intCast(c.Fl_Group_children(self.group().raw()));
         }
 
-        pub fn child(self: *Self, idx: u31) !Widget {
+        pub fn child(self: *Self, idx: u31) ?*Widget {
             if (c.Fl_Group_child(self.group().raw(), idx)) |ptr| {
                 return Widget.fromRaw(ptr);
             }
@@ -264,5 +264,5 @@ pub fn methods(comptime Self: type) type {
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

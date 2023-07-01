@@ -166,16 +166,16 @@ pub const WidgetTracker = struct {
 
     pub const RawPointer = *c.Fl_Widget_Tracker;
 
-    pub fn init(w: Widget) WidgetTracker {
-        if (c.Fl_Widget_Tracker_new(w.inner)) |ptr| {
+    pub fn init(w: *Widget) WidgetTracker {
+        if (c.Fl_Widget_Tracker_new(w.raw())) |ptr| {
             return WidgetTracker{ .inner = ptr };
         }
 
         unreachable;
     }
 
-    pub fn deleted() bool {
-        return c.Fl_Widget_Tracker_deleted() != 0;
+    pub fn deleted(self: *WidgetTracker) bool {
+        return c.Fl_Widget_Tracker_deleted(self.inner) != 0;
     }
 
     pub fn delete(self: WidgetTracker) void {
@@ -249,5 +249,5 @@ pub fn setMenuLinespacing(h: i32) void {
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

@@ -141,5 +141,5 @@ pub fn password(x: i32, y: i32, txt: [*c]const u8, deflt: [*c]const u8) [*c]cons
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

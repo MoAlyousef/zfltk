@@ -425,5 +425,5 @@ pub const TextCursor = enum(u8) {
 };
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

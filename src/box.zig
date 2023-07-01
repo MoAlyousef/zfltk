@@ -73,7 +73,7 @@ pub const Box = struct {
     }
 
     // TODO: refactor this to match `setHandle` for memory safety
-    pub fn draw(self: *Self, cb: fn (w: *c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *Self, comptime cb: fn (w: *c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Box_handle(self.raw(), @ptrCast(cb), data);
     }
 };
@@ -104,5 +104,5 @@ export fn zfltk_box_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyo
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

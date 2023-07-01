@@ -68,15 +68,15 @@ pub fn Input(comptime kind: InputKind) type {
         }
 
         // TODO: refactor like `group.zig`
-        pub fn setHandle(self: *const Input, comptime f: fn (w: Widget, ev: Event) bool) void {
+        pub fn setHandle(self: *Input, comptime f: fn (w: Widget, ev: Event) bool) void {
             c.Fl_Input_handle(self.input().raw(), @ptrCast(&f), null);
         }
 
-        pub fn setHandleEx(self: *const Input, comptime f: fn (w: Widget, ev: Event, data: ?*anyopaque) i32, data: ?*anyopaque) void {
+        pub fn setHandleEx(self: *Input, comptime f: fn (w: Widget, ev: Event, data: ?*anyopaque) i32, data: ?*anyopaque) void {
             c.Fl_Input_handle(self.input().raw(), @ptrCast(&f), data);
         }
 
-        pub fn draw(self: *const Input, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        pub fn draw(self: *Input, comptime cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
             c.Fl_Input_handle(self.input().raw(), @ptrCast(cb), data);
         }
 
@@ -84,37 +84,37 @@ pub fn Input(comptime kind: InputKind) type {
             return std.mem.span(c.Fl_Input_value(self.input().raw()));
         }
 
-        pub fn insert(self: *const Input, val: [*c]const u8, idx: u16) !void {
+        pub fn insert(self: *Input, val: [*c]const u8, idx: u16) !void {
             _ = c.Fl_Input_insert(self.input().raw(), val, idx);
         }
 
         // TODO: handle errors
-        pub fn setValue(self: *const Input, val: [*c]const u8) !void {
+        pub fn setValue(self: *Input, val: [*c]const u8) !void {
             _ = c.Fl_Input_set_value(self.input().raw(), val);
         }
 
-        pub fn position(self: *const Input) u16 {
+        pub fn position(self: *Input) u16 {
             return @intCast(c.Fl_Input_position(self.input().raw()));
         }
 
-        pub fn setPosition(self: *const Input, sz: u16) !void {
+        pub fn setPosition(self: *Input, sz: u16) !void {
             _ = c.Fl_Input_set_position(self.input().raw(), sz);
         }
 
-        pub fn setTextFont(self: *const Input, font: Font) void {
+        pub fn setTextFont(self: *Input, font: Font) void {
             c.Fl_Input_set_text_font(self.input().raw(), @intFromEnum(font));
         }
 
-        pub fn setTextColor(self: *const Input, col: Color) void {
+        pub fn setTextColor(self: *Input, col: Color) void {
             c.Fl_Input_set_text_color(self.input().raw(), col.input().raw()());
         }
 
-        pub fn setTextSize(self: *const Input, sz: i32) void {
+        pub fn setTextSize(self: *Input, sz: i32) void {
             c.Fl_Input_set_text_size(self.input().raw(), sz);
         }
     };
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }

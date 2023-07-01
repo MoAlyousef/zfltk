@@ -86,12 +86,12 @@ pub fn Browser(comptime kind: BrowserKind) type {
             return Widget.fromRaw(@ptrCast(self.inner));
         }
 
-        pub fn handle(self: *Self, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-            c.Fl_Browser_handle(self.browser(), @ptrCast(cb), data);
+        pub fn handle(self: *Self, comptime cb: fn (w: widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+            c.Fl_Browser_handle(self.browser().raw(), @ptrCast(cb), data);
         }
 
-        pub fn draw(self: *Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Browser_handle(@ptrCast(self.inner), @ptrCast(cb), data);
+        pub fn draw(self: *Self, comptime cb: fn (w: widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+            c.Fl_Browser_draw(@ptrCast(self.inner), @ptrCast(cb), data);
         }
 
         pub fn remove(self: *Self, line: u32) void {
@@ -241,5 +241,5 @@ pub fn Browser(comptime kind: BrowserKind) type {
 }
 
 test "all" {
-    @import("std").testing.refAllDecls(@This());
+    @import("std").testing.refAllDeclsRecursive(@This());
 }
