@@ -129,7 +129,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             return @intCast(c.Fl_Widget_height(self.widget().raw()));
         }
 
-        pub inline fn label(self: *const Self) [:0]const u8 {
+        pub inline fn label(self: *Self) [:0]const u8 {
             return std.mem.span(c.Fl_Widget_label(self.widget().raw()));
         }
 
@@ -137,7 +137,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_label(self.widget().raw(), _label.ptr);
         }
 
-        pub inline fn kind(self: *const Self, comptime T: type) T {
+        pub inline fn kind(self: *Self, comptime T: type) T {
             return @enumFromInt(c.Fl_Widget_set_type(self.widget().raw()));
         }
 
@@ -161,7 +161,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_label_color(self.widget().raw(), col.toRgbi());
         }
 
-        pub inline fn labelFont(self: *const Self) enums.Font {
+        pub inline fn labelFont(self: *Self) enums.Font {
             return @enumFromInt(c.Fl_Widget_label_font(self.widget().raw()));
         }
 
@@ -169,7 +169,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_label_font(self.widget().raw(), @intFromEnum(font));
         }
 
-        pub inline fn labelSize(self: *const Self) u31 {
+        pub inline fn labelSize(self: *Self) u31 {
             return @intCast(c.Fl_Widget_label_size(self.widget().raw()));
         }
 
@@ -178,7 +178,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         // TODO: make alignment and trigger enums
-        pub inline fn labelAlign(self: *const Self) i32 {
+        pub inline fn labelAlign(self: *Self) i32 {
             return @intCast(c.Fl_Widget_align(self.widget().raw()));
         }
 
@@ -186,15 +186,15 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_align(self.widget().raw(), @intCast(alignment));
         }
 
-        pub inline fn trigger(self: *const Self) i32 {
+        pub inline fn trigger(self: *Self) i32 {
             return c.Fl_Widget_trigger(self.widget().raw());
         }
 
-        pub inline fn setTrigger(self: *const Self, cb_trigger: i32) void {
+        pub inline fn setTrigger(self: *Self, cb_trigger: i32) void {
             c.Fl_Widget_set_trigger(self.widget().raw(), @intCast(cb_trigger));
         }
 
-        pub inline fn box(self: *const Self) enums.BoxType {
+        pub inline fn box(self: *Self) enums.BoxType {
             return @enumFromInt(c.Fl_Widget_box(self.widget().raw()));
         }
 
@@ -223,15 +223,15 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             return Group(.normal).fromRaw(c.Fl_Widget_parent(self.widget().raw()).?);
         }
 
-        pub inline fn selectionColor(self: *const Self) enums.Color {
-            return c.Fl_Widget_selection_color(self.widget().raw());
+        pub inline fn selectionColor(self: *Self) enums.Color {
+            return enums.Color.fromRgbi(c.Fl_Widget_selection_color(self.widget().raw()));
         }
 
         pub inline fn setSelectionColor(self: *Self, col: enums.Color) void {
-            c.Fl_Widget_set_selection_color(self.widget().raw(), col.toRgbi());
+            c.Fl_Widget_set_selection_color(self.widget().raw(), @intCast(col.toRgbi()));
         }
 
-        pub inline fn doCallback(self: *const Self) void {
+        pub inline fn doCallback(self: *Self) void {
             c.Fl_Widget_do_callback(self.widget().raw());
         }
 
@@ -247,7 +247,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_label_type(self.widget().raw(), @intFromEnum(typ));
         }
 
-        pub inline fn tooltip(self: *const Self) [:0]const u8 {
+        pub inline fn tooltip(self: *Self) [:0]const u8 {
             return std.mem.span(c.Fl_Widget_tooltip(self.widget().raw()));
         }
 
@@ -255,7 +255,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_tooltip(self.widget().raw(), _label.ptr);
         }
 
-        pub inline fn takeFocus(self: *const Self) void {
+        pub inline fn takeFocus(self: *Self) void {
             c.Fl_set_focus(self.widget().raw());
         }
     };

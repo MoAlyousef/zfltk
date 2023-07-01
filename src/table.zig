@@ -57,11 +57,11 @@ pub fn methods(comptime Self: type) type {
             return @ptrCast(self);
         }
 
-        pub fn handle(self: *const Self, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+        pub fn handle(self: *Self, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
             c.Fl_Table_handle(self.table().raw(), @ptrCast(cb), data);
         }
 
-        pub fn draw(self: *const Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        pub fn draw(self: *Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
             c.Fl_Table_handle(self.table().raw(), @ptrCast(cb), data);
         }
     };

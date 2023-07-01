@@ -73,7 +73,7 @@ pub const Box = struct {
     }
 
     // TODO: refactor this to match `setHandle` for memory safety
-    pub fn draw(self: *const Self, cb: fn (w: *c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn draw(self: *Self, cb: fn (w: *c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
         c.Fl_Box_handle(self.raw(), @ptrCast(cb), data);
     }
 };

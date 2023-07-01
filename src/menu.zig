@@ -88,11 +88,11 @@ pub fn methods(comptime Self: type) type {
             return @ptrCast(self);
         }
 
-        pub fn handle(self: *const Self, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+        pub fn handle(self: *Self, cb: fn (w: widget.WidgetPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
             c.Fl_Menu_Bar_handle(self.menu().raw(), @ptrCast(cb), data);
         }
 
-        pub fn draw(self: *const Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        pub fn draw(self: *Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
             c.Fl_Menu_Bar_handle(self.menu().raw(), @ptrCast(cb), data);
         }
 
@@ -107,7 +107,7 @@ pub fn methods(comptime Self: type) type {
             _ = c.Fl_Menu_Bar_add(self.menu().raw(), name, shortcut, zfltk_menu_cb_handler_ex, @ptrCast(container.ptr), @intFromEnum(flag));
         }
 
-        pub fn insert(self: *const Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        pub fn insert(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
             _ = c.Fl_Menu_Bar_insert(self.menu().raw(), idx, name, shortcut, cb, data, @intFromEnum(flag));
         }
 
@@ -127,16 +127,16 @@ pub fn methods(comptime Self: type) type {
             return MenuItem{ .inner = c.Fl_Menu_Bar_get_item(self.menu().raw(), path) };
         }
 
-        pub fn clear(self: *const Self) void {
+        pub fn clear(self: *Self) void {
             c.Fl_Menu_Bar_clear(self.menu().raw());
         }
 
-        pub fn setTextFont(self: *const Self, font: enums.Font) void {
+        pub fn setTextFont(self: *Self, font: enums.Font) void {
             c.Fl_Menu_Bar_set_text_font(self.menu().raw(), @intFromEnum(font));
         }
 
-        pub fn setTextColor(self: *const Self, col: enums.Color) void {
-            c.Fl_Menu_Bar_set_text_color(self.menu().raw(), col.toRgbi());
+        pub fn setTextColor(self: *Self, col: enums.Color) void {
+            c.Fl_Menu_Bar_set_text_color(self.menu().raw(), @intCast(col.toRgbi()));
         }
 
         pub fn setTextSize(self: *Self, sz: i32) void {
@@ -164,7 +164,7 @@ pub const MenuItem = struct {
     }
 
     pub fn setLabelColor(self: *const MenuItem, col: enums.Color) void {
-        c.Fl_Menu_Item_set_label_color(self.inner, col.toRgbi());
+        c.Fl_Menu_Item_set_label_color(self.inner, @intCast(col.toRgbi()));
     }
 
     pub fn labelFont(self: *const MenuItem) enums.Font {

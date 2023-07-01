@@ -206,7 +206,7 @@ pub fn TextDisplay(comptime kind: TextKind) type {
             app.allocator.destroy(self);
         }
 
-        pub fn handle(self: *const Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+        pub fn handle(self: *Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
             c.Fl_Text_Display_handle(self.raw(), @ptrCast(cb), data);
         }
 
@@ -265,7 +265,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn setTextColor(self: *Self, col: enums.Color) void {
-            c.Fl_Text_Display_set_text_color(self.textDisplay().raw(), col.inner());
+            c.Fl_Text_Display_set_text_color(self.textDisplay().raw(), @intCast(col.toRgbi()));
         }
 
         pub fn setTextSize(self: *Self, sz: i32) void {
@@ -317,7 +317,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn setCursorColor(self: *Self, col: enums.Color) void {
-            c.Fl_Text_Display_set_cursor_color(self.textDisplay().raw(), col.inner());
+            c.Fl_Text_Display_set_cursor_color(self.textDisplay().raw(), @intCast(col.toRgbi()));
         }
 
         pub fn setScrollbarSize(self: *Self, size: u32) void {

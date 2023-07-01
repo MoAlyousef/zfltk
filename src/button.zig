@@ -107,11 +107,11 @@ pub fn methods(comptime Self: type) type {
             );
         }
 
-        pub fn draw(self: *const Self, cb: fn (w: Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        pub fn draw(self: *Self, cb: fn (w: Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
             c.Fl_Button_handle(self.button().raw(), @ptrCast(cb), data);
         }
 
-        pub fn shortcut(self: *const Self) i32 {
+        pub fn shortcut(self: *Self) i32 {
             return c.Fl_Button_shortcut(self.button().raw());
         }
 
@@ -119,11 +119,11 @@ pub fn methods(comptime Self: type) type {
             c.Fl_Button_set_shortcut(self.button().raw(), shrtct);
         }
 
-        pub fn clear(self: *const Self) void {
+        pub fn clear(self: *Self) void {
             c.Fl_Button_clear(self.button().raw());
         }
 
-        pub fn value(self: *const Self) bool {
+        pub fn value(self: *Self) bool {
             return c.Fl_Button_value(self.button().raw()) != 0;
         }
 
@@ -131,12 +131,12 @@ pub fn methods(comptime Self: type) type {
             c.Fl_Button_set_value(self.button().raw(), @intFromBool(flag));
         }
 
-        pub fn setDownBox(self: *const Self, f: enums.BoxType) void {
-            c.Fl_Button_set_down_box(self.button().raw(), f);
+        pub fn setDownBox(self: *Self, f: enums.BoxType) void {
+            c.Fl_Button_set_down_box(self.button().raw(), @intFromEnum(f));
         }
 
-        pub fn downBox(self: *const Self) enums.BoxType {
-            return c.Fl_Button_down_box(self.button().raw());
+        pub fn downBox(self: *Self) enums.BoxType {
+            return @enumFromInt(c.Fl_Button_down_box(self.button().raw()));
         }
     };
 }

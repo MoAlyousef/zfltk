@@ -142,7 +142,7 @@ pub fn methods(comptime Self: type) type {
             endFn(ptr);
         }
 
-        pub fn find(self: *const Self, wid: *const Widget) u32 {
+        pub fn find(self: *Self, wid: *const Widget) u32 {
             return c.Fl_Group_find(self.group().raw(), wid.raw());
         }
 
@@ -165,7 +165,7 @@ pub fn methods(comptime Self: type) type {
             }
         }
 
-        pub fn insert(self: *const Self, wid: anytype, index: u32) void {
+        pub fn insert(self: *Self, wid: anytype, index: u32) void {
             const T = @TypeOf(wid);
             if (!comptime zfltk.isWidget(T)) {
                 @compileError("expected FLTK widget, found " ++ @typeName(T));
@@ -174,7 +174,7 @@ pub fn methods(comptime Self: type) type {
             return c.Fl_Group_insert(self.group().raw(), wid.raw(), index);
         }
 
-        pub fn remove(self: *const Self, wid: anytype) void {
+        pub fn remove(self: *Self, wid: anytype) void {
             const T = @TypeOf(wid);
             if (!comptime zfltk.isWidget(T)) {
                 @compileError("expected FLTK widget, found " ++ @typeName(T));
@@ -192,15 +192,15 @@ pub fn methods(comptime Self: type) type {
             return c.Fl_Group_resizable(self.group().raw(), wid.raw());
         }
 
-        pub fn clear(self: *const Self) void {
+        pub fn clear(self: *Self) void {
             c.Fl_Group_clear(self.group().raw());
         }
 
-        pub fn children(self: *const Self) u31 {
+        pub fn children(self: *Self) u31 {
             c.Fl_Group_children(self.group().raw());
         }
 
-        pub fn child(self: *const Self, idx: u31) !Widget {
+        pub fn child(self: *Self, idx: u31) !Widget {
             if (c.Fl_Group_child(self.group().raw(), idx)) |ptr| {
                 return Widget.fromRaw(ptr);
             }
@@ -208,7 +208,7 @@ pub fn methods(comptime Self: type) type {
             return null;
         }
 
-        pub fn spacing(self: *const Self) u31 {
+        pub fn spacing(self: *Self) u31 {
             const spacingFn = switch (Self) {
                 Group(.flex) => c.Fl_Flex_pad,
                 Group(.pack) => c.Fl_Pack_spacing,

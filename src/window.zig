@@ -30,15 +30,15 @@ pub const Window = struct {
 
 pub fn methods(comptime Self: type) type {
     return struct {
-        pub fn handle(self: *const Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
+        pub fn handle(self: *Self, cb: fn (w: Widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
             c.Fl_Double_Window_handle(self.raw(), @ptrCast(cb), data);
         }
 
-        pub fn draw(self: *const Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+        pub fn draw(self: *Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
             c.Fl_Double_Window_handle(self.raw(), @ptrCast(cb), data);
         }
 
-        pub fn setSizeRange(self: *const Self, min_w: u31, min_h: u31, max_w: u31, max_h: u31) void {
+        pub fn setSizeRange(self: *Self, min_w: u31, min_h: u31, max_w: u31, max_h: u31) void {
             return c.Fl_Double_Window_size_range(self.raw(), min_w, min_h, max_w, max_h);
         }
 
