@@ -19,8 +19,6 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
     return struct {
         const Self = @This();
 
-        pub usingnamespace zfltk.widget.methods(Self, *c.Fl_Native_File_Chooser);
-
         pub const Options = struct {
             save_as_confirm: bool = false,
             new_folder: bool = false,
@@ -46,7 +44,7 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
                     self.setFilter(filter);
                 }
 
-                self.setOptions(kind);
+                self.setType(kind);
 
                 return Self.fromRaw(ptr);
             }
@@ -54,16 +52,20 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
             unreachable;
         }
 
-        pub inline fn dialog(self: *Self) *FileDialog(.file) {
-            return @as(*FileDialog(.file), self);
+        pub inline fn dialog(self: *Self) *Self {
+            return self;
         }
 
-        pub fn setOptions(self: *Self, opt: FileDialogKind) void {
-            c.Fl_Native_File_Chooser_set_option(self.raw(), @intFromEnum(opt));
+        pub fn setType(self: *Self, opt: FileDialogKind) void {
+            c.Fl_Native_File_Chooser_set_type(self.raw(), @intFromEnum(opt));
         }
 
         pub fn filename(self: *Self) [:0]const u8 {
-            return std.mem.span(c.Fl_Native_File_Chooser_filenames(self.raw(), 0));
+            if (self.count() > 0) {
+                return std.mem.span(c.Fl_Native_File_Chooser_filenames(self.raw(), 0));
+            } else {
+                return "";
+            }
         }
 
         pub fn filenameAt(self: *Self, idx: u32) [*c]const u8 {
@@ -71,7 +73,7 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
         }
 
         pub fn count(self: *Self) u32 {
-            return c.Fl_Native_File_Chooser_count(self.raw());
+            return @intCast(c.Fl_Native_File_Chooser_count(self.raw()));
         }
 
         pub fn setDirectory(self: *Self, dir: [:0]const u8) void {
@@ -95,6 +97,18 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
         /// Sets the preset filter for the dialog
         pub inline fn setPresetFile(self: *Self, f: [:0]const u8) void {
             c.Fl_Native_File_Chooser_set_preset_file(self.raw(), f.ptr);
+        }
+
+        pub inline fn show(self: *Self) void {
+            _ = c.Fl_Native_File_Chooser_show(self.raw());
+        }
+
+        pub inline fn fromRaw(ptr: *anyopaque) *Self {
+            return  @ptrCast(ptr);
+        }
+
+        pub inline fn raw(self: *Self) *c.Fl_Native_File_Chooser {
+            return @ptrCast(@alignCast(self));
         }
     };
 }

@@ -40,7 +40,7 @@ pub fn openCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
 
 pub fn saveCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
     var editor = TextDisplay(.editor).fromRaw(data.?);
-    var dlg = try FileDialog(.file).init(.{});
+    var dlg = try FileDialog(.save_file).init(.{.save_as_confirm = true});
     dlg.setFilter("*.{txt,zig}");
     dlg.show();
     var fname = dlg.filename();

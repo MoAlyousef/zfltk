@@ -50,7 +50,7 @@ pub const TextBuffer = struct {
     }
 
     /// Appends to the buffer
-    pub fn append(self: *const TextBuffer, str: [*]const u8) void {
+    pub fn append(self: *TextBuffer, str: [*]const u8) void {
         return c.Fl_Text_Buffer_append(self.raw(), str);
     }
 
@@ -231,10 +231,11 @@ pub fn methods(comptime Self: type) type {
             return null;
         }
 
-        pub inline fn styleBuffer(self: *Self) ?TextBuffer {
+        pub inline fn styleBuffer(self: *Self) ?*TextBuffer {
             if (c.Fl_Text_Display_get_style_buffer(self.textDisplay().raw())) |ptr| {
                 return TextBuffer.fromRaw(ptr);
             }
+            return null;
         }
 
         pub inline fn setBuffer(self: *Self, buf: *TextBuffer) void {
@@ -257,7 +258,7 @@ pub fn methods(comptime Self: type) type {
                 bgcolors[i] = 0;
                 i += 1;
             }
-            c.Fl_Text_Display_set_highlight_data(self.textDisplay().raw(), sbuf.*.inner, &colors, &fonts, &fontszs, &attrs, &bgcolors,  @intCast(sz));
+            c.Fl_Text_Display_set_highlight_data(self.textDisplay().raw(), sbuf.raw(), &colors, &fonts, &fontszs, &attrs, &bgcolors,  @intCast(sz));
         }
 
         pub fn setTextFont(self: *Self, font: enums.Font) void {

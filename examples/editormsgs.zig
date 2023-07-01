@@ -126,7 +126,7 @@ pub fn main() !void {
                 }
             },
             .Save => {
-                var dlg = try FileDialog(.file).init(.{});
+                var dlg = try FileDialog(.save_file).init(.{});
                 dlg.setFilter("*.{txt,zig}");
                 dlg.show();
                 var fname = dlg.filename();

@@ -140,7 +140,7 @@ pub fn methods(comptime Self: type) type {
             c.Fl_Menu_Bar_set_text_color(self.menu().raw(), col.toRgbi());
         }
 
-        pub fn setTextSize(self: *const Self, sz: i32) void {
+        pub fn setTextSize(self: *Self, sz: i32) void {
             c.Fl_Menu_Bar_set_text_size(self.menu().raw(), sz);
         }
     };
