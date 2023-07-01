@@ -88,12 +88,48 @@ pub fn methods(comptime Self: type) type {
             return @ptrCast(self);
         }
 
-        pub fn handle(self: *Self, comptime cb: fn (w: widget.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-            c.Fl_Menu_Bar_handle(self.menu().raw(), @ptrCast(cb), data);
+        pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, enums.Event) bool) void {
+            c.Fl_Menu_Bar_handle(
+                self.raw(),
+                &widget.zfltk_event_handler,
+                @ptrFromInt(@intFromPtr(&f)),
+            );
         }
 
-        pub fn draw(self: *Self, comptime cb: fn (w: widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Menu_Bar_draw(self.menu().raw(), @ptrCast(cb), data);
+        pub inline fn setEventHandlerEx(self: *Self, comptime f: fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
+            var allocator = @import("std").heap.c_allocator;
+            var container = allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
+
+            c.Fl_Menu_Bars_handle(
+                self.raw(),
+                &widget.zfltk_event_handler_ex,
+                @ptrCast(container.ptr),
+            );
+        }
+
+        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
+            c.Fl_Menu_Bar_draw(
+                self.raw(),
+                &widget.zfltk_draw_handler,
+                @ptrFromInt(@intFromPtr(&f)),
+            );
+        }
+
+        pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+            var allocator = std.heap.c_allocator;
+            var container = allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
+
+            c.Fl_Menu_Bar_draw(
+                self.raw(),
+                &widget.zfltk_event_handler_ex,
+                @ptrCast(container.ptr),
+            );
         }
 
         pub fn add(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {

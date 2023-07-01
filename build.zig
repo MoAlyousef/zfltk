@@ -220,6 +220,7 @@ const examples = &[_]Example{
     Example.init("browser", "examples/browser.zig", "Browser example"),
     Example.init("flex", "examples/flex.zig", "Flex example"),
     Example.init("threadawake", "examples/threadawake.zig", "Thread awake example"),
+    Example.init("handle", "examples/handle.zig", "Handle example"),
 };
 
 inline fn thisDir() []const u8 {

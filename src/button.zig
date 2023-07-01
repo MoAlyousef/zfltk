@@ -88,7 +88,7 @@ pub fn methods(comptime Self: type) type {
         pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, Event) bool) void {
             c.Fl_Button_handle(
                 self.button().raw(),
-                &zfltk_button_event_handler,
+                &widget.zfltk_event_handler,
                 @ptrFromInt(@intFromPtr(&f)),
             );
         }
@@ -102,13 +102,31 @@ pub fn methods(comptime Self: type) type {
 
             c.Fl_Button_handle(
                 self.button().raw(),
-                &zfltk_button_event_handler_ex,
+                &widget.zfltk_event_handler_ex,
                 @ptrCast(container.ptr),
             );
         }
 
-        pub fn draw(self: *Self, comptime cb: fn (w: Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Button_handle(self.button().raw(), @ptrCast(cb), data);
+        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
+            c.Fl_Button_draw(
+                self.button().raw(),
+                &widget.zfltk_draw_handler,
+                @ptrFromInt(@intFromPtr(&f)),
+            );
+        }
+
+        pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+            var allocator = std.heap.c_allocator;
+            var container = allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
+
+            c.Fl_Button_draw(
+                self.button().raw(),
+                &widget.zfltk_event_handler_ex,
+                @ptrCast(container.ptr),
+            );
         }
 
         pub fn shortcut(self: *Self) i32 {
@@ -139,32 +157,6 @@ pub fn methods(comptime Self: type) type {
             return @enumFromInt(c.Fl_Button_down_box(self.button().raw()));
         }
     };
-}
-
-// TODO: work these into `widget.methods`
-export fn zfltk_button_event_handler(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const cb: *const fn (*Widget, Event) bool = @ptrCast(
-        data,
-    );
-
-    return @intFromBool(cb(
-        Widget.fromRaw(wid.?),
-        @enumFromInt(ev),
-    ));
-}
-
-export fn zfltk_button_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const container: *[2]usize = @ptrCast(@alignCast(data));
-
-    const cb: *const fn (*Widget, Event, ?*anyopaque) bool = @ptrFromInt(
-        container[0],
-    );
-
-    return @intFromBool(cb(
-        Widget.fromRaw(wid.?),
-        @enumFromInt(ev),
-        @ptrFromInt(container[1]),
-    ));
 }
 
 test "all" {

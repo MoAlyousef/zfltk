@@ -7,6 +7,7 @@ const Color = enums.Color;
 const Font = enums.Font;
 const std = @import("std");
 const c = zfltk.c;
+const widget = zfltk.widget;
 
 pub const OutputKind = enum {
     normal,
@@ -55,17 +56,48 @@ pub fn Output(comptime kind: OutputKind) type {
             return @ptrCast(self);
         }
 
-        // TODO: refactor like `group.zig`
-        pub fn setHandle(self: *Output, comptime f: fn (w: Widget, ev: Event) bool) void {
-            c.Fl_Output_handle(self.input().raw(), @ptrCast(&f), null);
+        pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, enums.Event) bool) void {
+            c.Fl_Output_handle(
+                self.raw(),
+                &widget.zfltk_event_handler,
+                @ptrFromInt(@intFromPtr(&f)),
+            );
         }
 
-        pub fn setHandleEx(self: *Output, comptime f: fn (w: Widget, ev: Event, data: ?*anyopaque) i32, data: ?*anyopaque) void {
-            c.Fl_Output_handle(self.input().raw(), @ptrCast(&f), data);
+        pub inline fn setEventHandlerEx(self: *Self, comptime f: fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
+            var allocator = @import("std").heap.c_allocator;
+            var container = allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
+
+            c.Fl_Output_handle(
+                self.raw(),
+                &widget.zfltk_event_handler_ex,
+                @ptrCast(container.ptr),
+            );
         }
 
-        pub fn draw(self: *Output, comptime cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Output_handle(self.input().raw(), @ptrCast(cb), data);
+        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
+            c.Fl_Output_draw(
+                self.raw(),
+                &widget.zfltk_draw_handler,
+                @ptrFromInt(@intFromPtr(&f)),
+            );
+        }
+
+        pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+            var allocator = std.heap.c_allocator;
+            var container = allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
+
+            c.Fl_Output_draw(
+                self.raw(),
+                &widget.zfltk_event_handler_ex,
+                @ptrCast(container.ptr),
+            );
         }
 
         pub fn value(self: *Self) [:0]const u8 {

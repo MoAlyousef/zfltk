@@ -1,9 +1,11 @@
 const zfltk = @import("zfltk.zig");
 const app = zfltk.app;
 const Widget = zfltk.Widget;
+const widget = zfltk.widget;
 const c = zfltk.c;
 const std = @import("std");
 const widget_methods = zfltk.widget_methods;
+const enums = zfltk.enums;
 
 pub const GroupPtr = ?*c.Fl_Group;
 
@@ -116,12 +118,48 @@ pub fn methods(comptime Self: type) type {
             unreachable;
         }
 
-        pub fn handle(self: *Self, comptime cb: fn (w: Self.RawPtr, ev: i32, data: ?*anyopaque) callconv(.C) i32, data: ?*anyopaque) void {
-            c.Fl_Group_handle(self.raw(), @ptrCast(cb), data);
+        pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, enums.Event) bool) void {
+            c.Fl_Group_handle(
+                self.raw(),
+                &widget.zfltk_event_handler,
+                @ptrFromInt(@intFromPtr(&f)),
+            );
         }
 
-        pub fn draw(self: *Self, comptime cb: fn (w: Self.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Group_draw(self.raw(), @ptrCast(cb), data);
+        pub inline fn setEventHandlerEx(self: *Self, comptime f: fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
+            var allocator = @import("std").heap.c_allocator;
+            var container = allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
+
+            c.Fl_Group_handle(
+                self.raw(),
+                &widget.zfltk_event_handler_ex,
+                @ptrCast(container.ptr),
+            );
+        }
+
+        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
+            c.Fl_Group_draw(
+                self.raw(),
+                &widget.zfltk_draw_handler,
+                @ptrFromInt(@intFromPtr(&f)),
+            );
+        }
+
+        pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+            var allocator = std.heap.c_allocator;
+            var container = allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
+
+            c.Fl_Group_draw(
+                self.raw(),
+                &widget.zfltk_event_handler_ex,
+                @ptrCast(container.ptr),
+            );
         }
 
         pub fn begin(self: *Self) void {

@@ -263,7 +263,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
 // Small wrapper utilizing FLTK's `data` argument to use non-callconv(.C)
 // functions as callbacks safely
-export fn zfltk_cb_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
+pub fn zfltk_cb_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     // Fetch function pointer from the data. This is added to the data
     // pointer on `setCallback`.
     const cb: *const fn (*Widget) void = @ptrCast(data);
@@ -275,7 +275,7 @@ export fn zfltk_cb_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) v
     }
 }
 
-export fn zfltk_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
+pub fn zfltk_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     const container: *[2]usize = @ptrCast(@alignCast(data));
     const cb: *const fn (*Widget, ?*anyopaque) void = @ptrFromInt(container[0]);
 
@@ -284,6 +284,52 @@ export fn zfltk_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C
     } else {
         unreachable;
     }
+}
+
+pub fn zfltk_event_handler(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
+    const cb: *const fn (*Widget, enums.Event) bool = @ptrCast(
+        data,
+    );
+
+    return @intFromBool(cb(
+        Widget.fromRaw(wid.?),
+        @enumFromInt(ev),
+    ));
+}
+
+pub fn zfltk_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
+    const container: *[2]usize = @ptrCast(@alignCast(data));
+
+    const cb: *const fn (*Widget, enums.Event, ?*anyopaque) bool = @ptrFromInt(
+        container[0],
+    );
+
+    return @intFromBool(cb(
+        Widget.fromRaw(wid.?),
+        @enumFromInt(ev),
+        @ptrFromInt(container[1]),
+    ));
+}
+
+pub fn zfltk_draw_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
+    const cb: *const fn (*Widget) void = @ptrCast(
+        data,
+    );
+
+    cb(Widget.fromRaw(wid.?));
+}
+
+pub fn zfltk_draw_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
+    const container: *[2]usize = @ptrCast(@alignCast(data));
+
+    const cb: *const fn (*Widget, ?*anyopaque) void = @ptrFromInt(
+        container[0],
+    );
+
+    cb(
+        Widget.fromRaw(wid.?),
+        @ptrFromInt(container[1]),
+    );
 }
 
 test "all" {

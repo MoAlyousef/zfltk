@@ -3,6 +3,7 @@ const app = zfltk.app;
 const std = @import("std");
 const Widget = @import("widget.zig").Widget;
 const Event = @import("enums.zig").Event;
+const widget = zfltk.widget;
 const enums = zfltk.enums;
 const c = zfltk.c;
 
@@ -54,7 +55,7 @@ pub const Box = struct {
     pub inline fn setEventHandler(self: *Self, f: *const fn (*Self, Event) bool) void {
         c.Fl_Box_handle(
             self.raw(),
-            zfltk_box_event_handler,
+            widget.zfltk_event_handler,
             @ptrFromInt(@intFromPtr(&f)),
         );
     }
@@ -67,41 +68,33 @@ pub const Box = struct {
 
         c.Fl_Box_handle(
             self.raw(),
-            zfltk_box_event_handler_ex,
+            widget.zfltk_event_handler_ex,
             @ptrCast(container.ptr),
         );
     }
 
-    // TODO: refactor this to match `setHandle` for memory safety
-    pub fn draw(self: *Self, comptime cb: fn (w: *c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-        c.Fl_Box_handle(self.raw(), @ptrCast(cb), data);
+    pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
+        c.Fl_Box_draw(
+            self.raw(),
+            &widget.zfltk_draw_handler,
+            @ptrFromInt(@intFromPtr(&f)),
+        );
+    }
+
+    pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+        var allocator = std.heap.c_allocator;
+        var container = allocator.alloc(usize, 2) catch unreachable;
+
+        container[0] = @intFromPtr(&f);
+        container[1] = @intFromPtr(data);
+
+        c.Fl_Box_draw(
+            self.raw(),
+            &widget.zfltk_event_handler_ex,
+            @ptrCast(container.ptr),
+        );
     }
 };
-
-export fn zfltk_box_event_handler(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const cb: *const fn (*Widget, Event) bool = @ptrCast(
-        data,
-    );
-
-    return @intFromBool(cb(
-        Widget.fromRaw(wid.?),
-        @enumFromInt(ev),
-    ));
-}
-
-export fn zfltk_box_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const container: *[2]usize = @ptrCast(@alignCast(data));
-
-    const cb: *const fn (*Widget, Event, ?*anyopaque) bool = @ptrFromInt(
-        container[0],
-    );
-
-    return @intFromBool(cb(
-        Widget.fromRaw(wid.?),
-        @enumFromInt(ev),
-        @ptrFromInt(container[1]),
-    ));
-}
 
 test "all" {
     @import("std").testing.refAllDeclsRecursive(@This());
