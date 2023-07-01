@@ -114,7 +114,7 @@ pub const methods = packed struct {
     }
 
     pub fn fromRgbi(val: u32) Color {
-        var col: Color =  @bitCast(val);
+        var col: Color = @bitCast(val);
 
         // If the color is indexed, set find out what the R, G and B values
         // are and set the struct's fields
@@ -135,7 +135,7 @@ pub const methods = packed struct {
             return Color.fromName(.black);
         }
 
-        return  @bitCast(std.mem.nativeToLittle(u32, @as(u32, val) << 8));
+        return @bitCast(std.mem.nativeToLittle(u32, @as(u32, val) << 8));
     }
 
     // Seems really redundant and the FLTK docs don't even appear to document

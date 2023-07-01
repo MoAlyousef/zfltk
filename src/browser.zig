@@ -91,7 +91,7 @@ pub fn Browser(comptime kind: BrowserKind) type {
         }
 
         pub fn draw(self: *const Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Browser_handle(@ptrCast(self.inner),  @ptrCast(cb), data);
+            c.Fl_Browser_handle(@ptrCast(self.inner), @ptrCast(cb), data);
         }
 
         pub fn remove(self: *const Self, line: u32) void {

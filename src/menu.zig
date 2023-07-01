@@ -82,7 +82,6 @@ pub fn Menu(comptime kind: MenuKind) type {
     };
 }
 
-
 pub fn methods(comptime Self: type) type {
     return struct {
         pub inline fn menu(self: *Self) *Menu(.menu_bar) {
@@ -94,7 +93,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn draw(self: *const Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Menu_Bar_handle(self.menu().raw(),  @ptrCast(cb), data);
+            c.Fl_Menu_Bar_handle(self.menu().raw(), @ptrCast(cb), data);
         }
 
         pub fn add(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
@@ -169,7 +168,7 @@ pub const MenuItem = struct {
     }
 
     pub fn labelFont(self: *const MenuItem) enums.Font {
-        return  @enumFromInt(c.Fl_Menu_Item_label_font(self.inner));
+        return @enumFromInt(c.Fl_Menu_Item_label_font(self.inner));
     }
 
     pub fn setLabelFont(self: *const MenuItem, font: enums.Font) void {

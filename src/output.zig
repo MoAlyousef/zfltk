@@ -65,7 +65,7 @@ pub fn Output(comptime kind: OutputKind) type {
         }
 
         pub fn draw(self: *const Output, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Output_handle(self.input().raw(),  @ptrCast(cb), data);
+            c.Fl_Output_handle(self.input().raw(), @ptrCast(cb), data);
         }
 
         pub fn value(self: *Self) [:0]const u8 {
@@ -82,7 +82,7 @@ pub fn Output(comptime kind: OutputKind) type {
         }
 
         pub fn position(self: *const Output) u16 {
-            return  @intCast(c.Fl_Output_position(self.input().raw()));
+            return @intCast(c.Fl_Output_position(self.input().raw()));
         }
 
         pub fn setPosition(self: *const Output, sz: u16) !void {

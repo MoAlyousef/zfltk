@@ -47,11 +47,11 @@ pub const Widget = struct {
 pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     return struct {
         pub inline fn widget(self: *Self) *Widget {
-            return  @ptrCast(self);
+            return @ptrCast(self);
         }
 
         pub inline fn fromWidget(wid: *Widget) *Self {
-            return  @ptrCast(wid);
+            return @ptrCast(wid);
         }
 
         pub inline fn raw(self: *Self) RawPtr {
@@ -59,7 +59,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn fromRaw(ptr: *anyopaque) *Self {
-            return  @ptrCast(ptr);
+            return @ptrCast(ptr);
         }
 
         /// Sets a function to be called upon `activation` of a widget such as
@@ -68,7 +68,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_callback(
                 self.widget().raw(),
                 &zfltk_cb_handler,
-                 @ptrFromInt(@intFromPtr(f)),
+                @ptrFromInt(@intFromPtr(f)),
             );
         }
 
@@ -114,11 +114,11 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn x(self: *Self) i32 {
-            return  @intCast(c.Fl_Widget_x(self.widget().raw()));
+            return @intCast(c.Fl_Widget_x(self.widget().raw()));
         }
 
         pub inline fn y(self: *Self) i32 {
-            return  @intCast(c.Fl_Widget_y(self.widget().raw()));
+            return @intCast(c.Fl_Widget_y(self.widget().raw()));
         }
 
         pub inline fn w(self: *Self) u31 {
@@ -179,11 +179,11 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         // TODO: make alignment and trigger enums
         pub inline fn labelAlign(self: *const Self) i32 {
-            return  @intCast(c.Fl_Widget_align(self.widget().raw()));
+            return @intCast(c.Fl_Widget_align(self.widget().raw()));
         }
 
         pub inline fn setLabelAlign(self: *Self, alignment: i32) void {
-            c.Fl_Widget_set_align(self.widget().raw(),  @intCast(alignment));
+            c.Fl_Widget_set_align(self.widget().raw(), @intCast(alignment));
         }
 
         pub inline fn trigger(self: *const Self) i32 {
@@ -191,11 +191,11 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setTrigger(self: *const Self, cb_trigger: i32) void {
-            c.Fl_Widget_set_trigger(self.widget().raw(),  @intCast(cb_trigger));
+            c.Fl_Widget_set_trigger(self.widget().raw(), @intCast(cb_trigger));
         }
 
         pub inline fn box(self: *const Self) enums.BoxType {
-            return  @enumFromInt(c.Fl_Widget_box(self.widget().raw()));
+            return @enumFromInt(c.Fl_Widget_box(self.widget().raw()));
         }
 
         pub inline fn setBox(self: *Self, boxtype: enums.BoxType) void {

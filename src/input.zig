@@ -77,7 +77,7 @@ pub fn Input(comptime kind: InputKind) type {
         }
 
         pub fn draw(self: *const Input, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Input_handle(self.input().raw(),  @ptrCast(cb), data);
+            c.Fl_Input_handle(self.input().raw(), @ptrCast(cb), data);
         }
 
         pub fn value(self: *Self) [:0]const u8 {
@@ -94,7 +94,7 @@ pub fn Input(comptime kind: InputKind) type {
         }
 
         pub fn position(self: *const Input) u16 {
-            return  @intCast(c.Fl_Input_position(self.input().raw()));
+            return @intCast(c.Fl_Input_position(self.input().raw()));
         }
 
         pub fn setPosition(self: *const Input, sz: u16) !void {

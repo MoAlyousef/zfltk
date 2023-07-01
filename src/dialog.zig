@@ -30,10 +30,10 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
 
         pub inline fn init(opts: Options) !*Self {
             // Convert bools to OR'd int
-            const save_as_confirm =  @as(c_int, @intFromBool(opts.save_as_confirm));
-            const new_folder =  @as(c_int, @intFromBool(opts.new_folder)) << 1;
-            const preview =  @as(c_int, @intFromBool(opts.preview)) << 2;
-            const use_filter_extension =  @as(c_int, @intFromBool(opts.use_filter_extension)) << 3;
+            const save_as_confirm = @as(c_int, @intFromBool(opts.save_as_confirm));
+            const new_folder = @as(c_int, @intFromBool(opts.new_folder)) << 1;
+            const preview = @as(c_int, @intFromBool(opts.preview)) << 2;
+            const use_filter_extension = @as(c_int, @intFromBool(opts.use_filter_extension)) << 3;
 
             const flags = save_as_confirm | new_folder | preview | use_filter_extension;
 
@@ -104,7 +104,7 @@ pub fn FileDialog(comptime kind: FileDialogKind) type {
         }
 
         pub inline fn fromRaw(ptr: *anyopaque) *Self {
-            return  @ptrCast(ptr);
+            return @ptrCast(ptr);
         }
 
         pub inline fn raw(self: *Self) *c.Fl_Native_File_Chooser {

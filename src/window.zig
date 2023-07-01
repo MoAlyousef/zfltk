@@ -22,7 +22,7 @@ pub const Window = struct {
 
         unreachable;
     }
-    
+
     pub inline fn deinit(self: *Window) void {
         c.Fl_Double_Window_delete(self.raw());
     }
@@ -35,7 +35,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn draw(self: *const Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Double_Window_handle(self.raw(),  @ptrCast(cb), data);
+            c.Fl_Double_Window_handle(self.raw(), @ptrCast(cb), data);
         }
 
         pub fn setSizeRange(self: *const Self, min_w: u31, min_h: u31, max_w: u31, max_h: u31) void {

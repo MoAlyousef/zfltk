@@ -131,7 +131,7 @@ pub const Image = struct {
                 }
             },
             else => {
-                if (loadFn(data.ptr,  @intCast(data.len))) |ptr| {
+                if (loadFn(data.ptr, @intCast(data.len))) |ptr| {
                     try ImageErrorFromInt(failFn(ptr));
                     return Image.fromRaw(@ptrCast(ptr));
                 }
@@ -169,7 +169,7 @@ pub const Image = struct {
     }
 
     pub inline fn toVoidPtr(self: *const Image) ?*anyopaque {
-        return  @ptrCast(self.inner);
+        return @ptrCast(self.inner);
     }
 
     pub inline fn deinit(self: *const Image) void {

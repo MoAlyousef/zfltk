@@ -211,9 +211,8 @@ pub fn TextDisplay(comptime kind: TextKind) type {
         }
 
         pub fn draw(self: *const TextDisplay, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Text_Display_handle(self.raw(),  @ptrCast(cb), data);
+            c.Fl_Text_Display_handle(self.raw(), @ptrCast(cb), data);
         }
-
     };
 }
 
@@ -251,14 +250,14 @@ pub fn methods(comptime Self: type) type {
             var bgcolors: [28]c_uint = undefined;
             var i: usize = 0;
             for (entries) |e| {
-                colors[i] =  @bitCast(e.color);
+                colors[i] = @bitCast(e.color);
                 fonts[i] = @intFromEnum(e.font);
                 fontszs[i] = e.size;
                 attrs[i] = 0;
                 bgcolors[i] = 0;
                 i += 1;
             }
-            c.Fl_Text_Display_set_highlight_data(self.textDisplay().raw(), sbuf.raw(), &colors, &fonts, &fontszs, &attrs, &bgcolors,  @intCast(sz));
+            c.Fl_Text_Display_set_highlight_data(self.textDisplay().raw(), sbuf.raw(), &colors, &fonts, &fontszs, &attrs, &bgcolors, @intCast(sz));
         }
 
         pub fn setTextFont(self: *Self, font: enums.Font) void {

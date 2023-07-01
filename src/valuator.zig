@@ -157,7 +157,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn draw(self: *const Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Slider_handle(self.inner,  @ptrCast(cb), data);
+            c.Fl_Slider_handle(self.inner, @ptrCast(cb), data);
         }
 
         pub inline fn setBounds(self: *Self, a: f64, b: f64) void {

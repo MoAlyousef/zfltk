@@ -40,7 +40,6 @@ pub fn Tree() type {
     };
 }
 
-
 pub fn methods(comptime Self: type) type {
     return struct {
         pub inline fn tree(self: *Self) *Tree {
@@ -52,7 +51,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn draw(self: *const Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Tree_handle(self.tree().raw(),  @ptrCast(cb), data);
+            c.Fl_Tree_handle(self.tree().raw(), @ptrCast(cb), data);
         }
     };
 }
@@ -76,10 +75,9 @@ pub const TreeItem = struct {
     }
 
     pub fn toVoidPtr(self: *const TreeItem) ?*anyopaque {
-        return  @ptrCast(self.inner);
+        return @ptrCast(self.inner);
     }
 };
-
 
 test "all" {
     @import("std").testing.refAllDecls(@This());

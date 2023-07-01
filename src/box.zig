@@ -55,7 +55,7 @@ pub const Box = struct {
         c.Fl_Box_handle(
             self.raw(),
             zfltk_box_event_handler,
-             @ptrFromInt(@intFromPtr(&f)),
+            @ptrFromInt(@intFromPtr(&f)),
         );
     }
 

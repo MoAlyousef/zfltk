@@ -200,7 +200,7 @@ pub inline fn check() i32 {
 }
 
 pub inline fn send(comptime T: type, t: T) void {
-    c.Fl_awake_msg( @ptrFromInt(@intFromEnum(t)));
+    c.Fl_awake_msg(@ptrFromInt(@intFromEnum(t)));
 }
 
 pub fn recv(comptime T: type) ?T {
@@ -216,7 +216,7 @@ pub fn recv(comptime T: type) ?T {
 // Executes the callback function after `d` (duration in seconds) has passed
 // TODO: refactor these like `Widget.setCallback`
 pub fn addTimeout(d: f32, f: *const fn () void) void {
-    c.Fl_add_timeout(d, &zfltk_timeout_handler,  @ptrFromInt(@intFromPtr(f)));
+    c.Fl_add_timeout(d, &zfltk_timeout_handler, @ptrFromInt(@intFromPtr(f)));
 }
 
 fn zfltk_timeout_handler(data: ?*anyopaque) callconv(.C) void {

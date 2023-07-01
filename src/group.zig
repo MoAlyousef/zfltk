@@ -121,7 +121,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn draw(self: *Self, cb: fn (w: Widget.RawPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Group_handle(self.raw(),  @ptrCast(cb), data);
+            c.Fl_Group_handle(self.raw(), @ptrCast(cb), data);
         }
 
         pub fn begin(self: *Self) void {

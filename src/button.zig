@@ -89,7 +89,7 @@ pub fn methods(comptime Self: type) type {
             c.Fl_Button_handle(
                 self.button().raw(),
                 &zfltk_button_event_handler,
-                 @ptrFromInt(@intFromPtr(&f)),
+                @ptrFromInt(@intFromPtr(&f)),
             );
         }
 
@@ -108,7 +108,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn draw(self: *const Self, cb: fn (w: Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Button_handle(self.button().raw(),  @ptrCast(cb), data);
+            c.Fl_Button_handle(self.button().raw(), @ptrCast(cb), data);
         }
 
         pub fn shortcut(self: *const Self) i32 {

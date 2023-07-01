@@ -12,7 +12,6 @@ pub const TableKind = enum {
     table_row,
 };
 
-
 pub fn Table(comptime kind: TableKind) type {
     return struct {
         const Self = @This();
@@ -52,7 +51,6 @@ pub fn Table(comptime kind: TableKind) type {
     };
 }
 
-
 pub fn methods(comptime Self: type) type {
     return struct {
         pub inline fn table(self: *Self) *Table(.table) {
@@ -64,7 +62,7 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn draw(self: *const Self, cb: fn (w: widget.WidgetPtr, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            c.Fl_Table_handle(self.table().raw(),  @ptrCast(cb), data);
+            c.Fl_Table_handle(self.table().raw(), @ptrCast(cb), data);
         }
     };
 }
