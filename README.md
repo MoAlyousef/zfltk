@@ -23,8 +23,8 @@ If you're using the official package manager:
     .version = "0.0.1",
     .dependencies = .{
         .zfltk = .{
-            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.0.4.tar.gz",
-            .hash = "1220a9aacef458929b2f50eb025dbdadb7025715271f279a8395b40617382b6ced50",
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.0.5.tar.gz",
+            .hash = "1220a9aacef458929b2f50eb025dbdadb7025715271f279a8395b40617382b6ce230",
         },
     }
 }
@@ -72,14 +72,12 @@ You can either use git clone or git submodules:
 # via git submodule
 git submodule add https://github.com/moalyousef/zfltk
 cd zfltk
-git checkout v011
 cd ..
 ```
 ```
 # via git clone
 git clone https://github.com/moalyousef/zfltk
 cd zfltk
-git checkout v011
 cd ..
 ```
 then you will need a build.zig file as follows:
