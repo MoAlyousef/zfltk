@@ -24,7 +24,7 @@ If you're using the official package manager:
     .dependencies = .{
         .zfltk = .{
             .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.0.6.tar.gz",
-            .hash = "1220a9aacef458929b2f50eb025dbdadb7025715271f279a8395b40617382b6ce240",
+            .hash = "1220ca0756f0d49e4f5be5776776fb74d359c540251e5bb6cd73b3df9b7f90e30afe",
         },
     }
 }
