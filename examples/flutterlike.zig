@@ -25,7 +25,7 @@ fn btnCb(_: *button.Button(.normal), data: ?*anyopaque) void {
     count.setLabel(label);
 }
 
-fn barDrawHandler(b: *box.Box, _: ?*anyopaque) void {
+fn barDrawHandler(b: *box.Box) void {
     draw.setColor(Color.fromRgb(211, 211, 211));
     draw.rectFill(0, b.h(), b.w(), 3);
 }
@@ -51,7 +51,7 @@ pub fn main() !void {
     bar.setLabelSize(22);
     bar.setLabelColor(Color.fromName(.white));
     bar.setColor(BLUE);
-    bar.setDrawHandler(barDrawHandler, null);
+    bar.setDrawHandler(barDrawHandler);
 
     text.setLabelSize(18);
     text.setLabelFont(.times);

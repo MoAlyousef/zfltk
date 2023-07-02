@@ -339,7 +339,15 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_set_focus(self.widget().raw());
         }
 
-        pub inline fn setEventHandler(self: *Self, f: *const fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
+        pub inline fn setEventHandler(self: *Self, f: *const fn (*Self, enums.Event) bool) void {
+            handle_func(
+                self.raw(),
+                zfltk_event_handler,
+                @ptrFromInt(@intFromPtr(f)),
+            );
+        }
+
+        pub inline fn setEventHandlerEx(self: *Self, f: *const fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
             var container = app.allocator.alloc(usize, 2) catch unreachable;
 
             container[0] = @intFromPtr(f);
@@ -347,12 +355,21 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
             handle_func(
                 self.raw(),
-                zfltk_event_handler,
+                zfltk_event_handler_ex,
                 @ptrCast(container.ptr),
             );
         }
 
-        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+        
+        pub inline fn setDrawHandler(self: *Self, f: *const fn (*Self) void) void {
+            draw_func(
+                self.raw(),
+                zfltk_draw_handler,
+                @ptrFromInt(@intFromPtr(f)),
+            );
+        }
+
+        pub inline fn setDrawHandlerEx(self: *Self, f: *const fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
             var allocator = std.heap.c_allocator;
             var container = allocator.alloc(usize, 2) catch unreachable;
 
@@ -361,7 +378,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
             draw_func(
                 self.raw(),
-                zfltk_draw_handler,
+                zfltk_draw_handler_ex,
                 @ptrCast(container.ptr),
             );
         }
@@ -393,7 +410,19 @@ pub fn zfltk_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) v
     }
 }
 
-pub fn zfltk_event_handler(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
+pub fn zfltk_event_handler(wid: ?*c.Fl_Widget, event: c_int, data: ?*anyopaque) callconv(.C) c_int {
+    const cb: *const fn (*Widget, enums.Event, ?*anyopaque) bool = @ptrCast(
+        data,
+    );
+
+    return @intFromBool(cb(
+        Widget.fromRaw(wid.?),
+        @enumFromInt(event),
+        null,
+    ));
+}
+
+pub fn zfltk_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
     const container: *[2]usize = @ptrCast(@alignCast(data));
 
     const cb: *const fn (*Widget, enums.Event, ?*anyopaque) bool = @ptrFromInt(
@@ -408,6 +437,17 @@ pub fn zfltk_event_handler(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) cal
 }
 
 pub fn zfltk_draw_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
+    const cb: *const fn (*Widget, ?*anyopaque) void = @ptrCast(
+        data,
+    );
+
+    cb(
+        Widget.fromRaw(wid.?),
+        null,
+    );
+}
+
+pub fn zfltk_draw_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     const container: *[2]usize = @ptrCast(@alignCast(data));
 
     const cb: *const fn (*Widget, ?*anyopaque) void = @ptrFromInt(

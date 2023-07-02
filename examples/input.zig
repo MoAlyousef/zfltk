@@ -14,7 +14,7 @@ const ButtonMessage = enum(usize) {
     released,
 };
 
-pub fn butCb(_: *Button(.normal), ev: Event, _: ?*anyopaque) bool {
+pub fn butCb(_: *Button(.normal), ev: Event) bool {
     switch (ev) {
         Event.push => {
             app.send(ButtonMessage, .pushed);
@@ -69,7 +69,7 @@ pub fn main() !void {
 
     win.end();
     win.show();
-    but.setEventHandler(butCb, null);
+    but.setEventHandler(butCb);
     mybox.setLabelSize(24);
 
     while (app.wait()) {

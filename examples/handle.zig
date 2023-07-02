@@ -17,17 +17,17 @@ fn butCb(but: *Button(.normal), data: ?*anyopaque) void {
 }
 
 fn boxEventHandler(_: *Box, ev: Event, data: ?*anyopaque) bool {
-    const but = Button(.normal).fromRaw(data.?);
+    const btn = Button(.normal).fromRaw(data.?);
     switch (ev) {
         .push => {
-            std.debug.print("Click the button: {s}\n", .{but.label()});
+            std.debug.print("Click the button: {d}\n", .{btn.label()});
             return true;
         },
         else => return false,
     }
 }
 
-fn boxDrawHandler(box: *Box, _: ?*anyopaque) void {
+fn boxDrawHandler(box: *Box) void {
     draw.setLineStyle(.DashDot, 2);
     draw.rectWithColor(box.x() + 10, box.y() + 10, box.w() - 20, box.h() - 20, Color.fromName(.cyan));
 }
@@ -63,8 +63,8 @@ pub fn main() !void {
         .boxtype = .up,
     });
 
-    box.setEventHandler(boxEventHandler, but);
-    box.setDrawHandler(boxDrawHandler, null);
+    box.setEventHandlerEx(boxEventHandler, but);
+    box.setDrawHandler(boxDrawHandler);
 
     box.setLabelFont(.courier);
     box.setLabelSize(18);

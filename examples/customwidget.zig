@@ -154,9 +154,9 @@ const Switch = struct {
 
         self.label.setLabelAlign(Align.left | Align.inside);
 
-        self.box1.setEventHandler(clickEventHandle, self);
-        self.box2.setEventHandler(clickEventHandle, self);
-        self.label.setEventHandler(clickEventHandle, self);
+        self.box1.setEventHandlerEx(clickEventHandle, self);
+        self.box2.setEventHandlerEx(clickEventHandle, self);
+        self.label.setEventHandlerEx(clickEventHandle, self);
 
         return self;
     }
