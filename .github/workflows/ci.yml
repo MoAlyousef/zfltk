@@ -14,14 +14,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libpango1.0-dev libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libgl1-mesa-dev libglu1-mesa-dev
         shell: bash
       - uses: actions/checkout@v2
-      - uses: goto-bus-stop/setup-zig@v1
+      - uses: goto-bus-stop/setup-zig@v2
       - name: Build
         run: zig build
   build_macos:
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
-      - uses: goto-bus-stop/setup-zig@v1
+      - uses: goto-bus-stop/setup-zig@v2
       - name: Build
         run: zig build
   # build_windows-mingw:
