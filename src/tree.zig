@@ -7,38 +7,36 @@ const Event = enums.Event;
 const std = @import("std");
 const c = zfltk.c;
 
-pub fn Tree() type {
-    return struct {
-        const Self = @This();
+pub const Tree = struct {
+    const Self = @This();
 
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self);
+    pub usingnamespace zfltk.widget.methods(Self, RawPtr);
+    pub usingnamespace methods(Self);
 
-        pub const RawPtr = *c.Fl_Tree;
+    pub const RawPtr = *c.Fl_Tree;
 
-        pub const Options = struct {
-            x: i32 = 0,
-            y: i32 = 0,
-            w: u31 = 0,
-            h: u31 = 0,
+    pub const Options = struct {
+        x: i32 = 0,
+        y: i32 = 0,
+        w: u31 = 0,
+        h: u31 = 0,
 
-            label: ?[:0]const u8 = null,
-        };
-
-        pub inline fn init(opts: Options) !*Self {
-            const initFn = c.Fl_Tree_new;
-
-            const label = if (opts.label != null) opts.label.?.ptr else null;
-
-            if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
-                var self = Self.fromRaw(ptr);
-                return self;
-            }
-
-            unreachable;
-        }
+        label: ?[:0]const u8 = null,
     };
-}
+
+    pub inline fn init(opts: Options) !*Self {
+        const initFn = c.Fl_Tree_new;
+
+        const label = if (opts.label != null) opts.label.?.ptr else null;
+
+        if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
+            var self = Self.fromRaw(ptr);
+            return self;
+        }
+
+        unreachable;
+    }
+};
 
 pub fn methods(comptime Self: type) type {
     return struct {

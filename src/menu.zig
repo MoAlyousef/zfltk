@@ -13,26 +13,26 @@ fn shim(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
 }
 
 pub const MenuFlag = enum(i32) {
-    /// Normal item
-    Normal = 0,
-    /// Inactive item
-    Inactive = 1,
-    /// Item is a checkbox toggle (shows checkbox for on/off state)
-    Toggle = 2,
-    /// The on/off state for checkbox/radio buttons (if set, state is 'on')
-    Value = 4,
-    /// Item is a radio button
-    Radio = 8,
-    /// Invisible item
-    Invisible = 0x10,
-    /// Indicates user_data() is a pointer to another menu array (unused with Rust)
-    SubmenuPointer = 0x20,
-    /// Menu item is a submenu
-    Submenu = 0x40,
-    /// Menu divider
-    MenuDivider = 0x80,
-    /// Horizontal menu (actually reserved for future use)
-    MenuHorizontal = 0x100,
+    /// normal item
+    normal = 0,
+    /// inactive item
+    inactive = 1,
+    /// item is a checkbox toggle (shows checkbox for on/off state)
+    toggle = 2,
+    /// the on/off state for checkbox/radio buttons (if set, state is 'on')
+    value = 4,
+    /// item is a radio button
+    radio = 8,
+    /// invisible item
+    invisible = 0x10,
+    /// indicates user_data() is a pointer to another menu array (unused with rust)
+    submenu_pointer = 0x20,
+    /// menu item is a submenu
+    submenu = 0x40,
+    /// menu divider
+    menu_divider = 0x80,
+    /// horizontal menu (actually reserved for future use)
+    menu_horizontal = 0x100,
 };
 
 pub const MenuKind = enum {

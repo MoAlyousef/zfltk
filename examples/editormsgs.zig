@@ -56,56 +56,56 @@ pub fn main() !void {
     mymenu.addEmit(
         "&File/New...\t",
         enums.Shortcut.Ctrl | 'n',
-        .Normal,
+        .normal,
         Message,
         .New,
     );
     mymenu.addEmit(
         "&File/Open...\t",
         enums.Shortcut.Ctrl | 'o',
-        .Normal,
+        .normal,
         Message,
         .Open,
     );
     mymenu.addEmit(
         "&File/Save...\t",
         enums.Shortcut.Ctrl | 's',
-        .MenuDivider,
+        .menu_divider,
         Message,
         .Save,
     );
     mymenu.addEmit(
         "&File/Quit...\t",
         enums.Shortcut.Ctrl | 'q',
-        .Normal,
+        .normal,
         Message,
         .Quit,
     );
     mymenu.addEmit(
         "&Edit/Cut...\t",
         enums.Shortcut.Ctrl | 'x',
-        .Normal,
+        .normal,
         Message,
         .Cut,
     );
     mymenu.addEmit(
         "&Edit/Copy...\t",
         enums.Shortcut.Ctrl | 'c',
-        .Normal,
+        .normal,
         Message,
         .Copy,
     );
     mymenu.addEmit(
         "&Edit/Paste...\t",
         enums.Shortcut.Ctrl | 'v',
-        .Normal,
+        .normal,
         Message,
         .Paste,
     );
     mymenu.addEmit(
         "&Help/About...\t",
         enums.Shortcut.Ctrl | 'q',
-        .Normal,
+        .normal,
         Message,
         .About,
     );

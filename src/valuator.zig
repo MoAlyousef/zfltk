@@ -15,49 +15,49 @@ pub const ValuatorKind = enum {
 };
 
 pub const SliderType = enum(i32) {
-    /// Vertical slider
-    Vertical = 0,
-    /// Horizontal slider
-    Horizontal = 1,
-    /// Vertical fill slider
-    VerticalFill = 2,
-    /// Horizontal fill slider
-    HorizontalFill = 3,
-    /// Vertical nice slider
-    VerticalNice = 4,
-    /// Horizontal nice slider
-    HorizontalNice = 5,
+    /// vertical slider
+    vertical = 0,
+    /// horizontal slider
+    horizontal = 1,
+    /// vertical fill slider
+    vertical_fill = 2,
+    /// horizontal fill slider
+    horizontal_fill = 3,
+    /// vertical nice slider
+    vertical_nice = 4,
+    /// horizontal nice slider
+    horizontal_nice = 5,
 };
 
 pub const ScrollbarType = enum(i32) {
-    /// Vertical scrollbar
-    Vertical = 0,
-    /// Horizontal scrollbar
-    Horizontal = 1,
-    /// Vertical fill scrollbar
-    VerticalFill = 2,
-    /// Horizontal fill scrollbar
-    HorizontalFill = 3,
-    /// Vertical nice scrollbar
-    VerticalNice = 4,
-    /// Horizontal nice scrollbar
-    HorizontalNice = 5,
+    /// vertical scrollbar
+    vertical = 0,
+    /// horizontal scrollbar
+    horizontal = 1,
+    /// vertical fill scrollbar
+    vertical_fill = 2,
+    /// horizontal fill scrollbar
+    horizontal_fill = 3,
+    /// vertical nice scrollbar
+    vertical_nice = 4,
+    /// horizontal nice scrollbar
+    horizontal_nice = 5,
 };
 
 pub const DialType = enum(i32) {
-    /// Normal dial
-    Normal = 0,
-    /// Line dial
-    Line = 1,
-    /// Filled dial
-    Fill = 2,
+    /// normal dial
+    normal = 0,
+    /// line dial
+    line = 1,
+    /// filled dial
+    fill = 2,
 };
 
 pub const CounterType = enum(i32) {
-    /// Normal counter
-    Normal = 0,
-    /// Simple counter
-    Simple = 1,
+    /// normal counter
+    normal = 0,
+    /// simple counter
+    simple = 1,
 };
 
 pub fn Valuator(comptime kind: ValuatorKind) type {

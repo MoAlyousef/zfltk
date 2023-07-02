@@ -35,8 +35,8 @@ pub fn Table(comptime kind: TableKind) type {
 
         pub inline fn init(opts: Options) !*Self {
             const initFn = switch (kind) {
-                .table => c.Fl_Table,
-                .table_row => c.Fl_Table_Row,
+                .table => c.Fl_Table_new,
+                .table_row => c.Fl_Table_Row_new,
             };
 
             const label = if (opts.label != null) opts.label.?.ptr else null;

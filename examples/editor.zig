@@ -108,56 +108,56 @@ pub fn main() !void {
     mymenu.addEx(
         "&File/New...\t",
         enums.Shortcut.Ctrl | 'n',
-        .Normal,
+        .normal,
         newCb,
         editor,
     );
     mymenu.addEx(
         "&File/Open...\t",
         enums.Shortcut.Ctrl | 'o',
-        .Normal,
+        .normal,
         openCb,
         editor,
     );
     mymenu.addEx(
         "&File/Save...\t",
         enums.Shortcut.Ctrl | 's',
-        .MenuDivider,
+        .menu_divider,
         saveCb,
         editor,
     );
     mymenu.addEx(
         "&File/Quit...\t",
         enums.Shortcut.Ctrl | 'q',
-        .Normal,
+        .normal,
         quitCb,
         win,
     );
     mymenu.addEx(
         "&Edit/Cut...\t",
         enums.Shortcut.Ctrl | 'x',
-        .Normal,
+        .normal,
         cutCb,
         editor,
     );
     mymenu.addEx(
         "&Edit/Copy...\t",
         enums.Shortcut.Ctrl | 'c',
-        .Normal,
+        .normal,
         copyCb,
         editor,
     );
     mymenu.addEx(
         "&Edit/Paste...\t",
         enums.Shortcut.Ctrl | 'v',
-        .Normal,
+        .normal,
         pasteCb,
         editor,
     );
     mymenu.add(
         "&Help/About...\t",
         enums.Shortcut.Ctrl | 'q',
-        .Normal,
+        .normal,
         helpCb,
     );
 
