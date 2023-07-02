@@ -7,10 +7,6 @@ const Group = zfltk.Group;
 const Image = zfltk.Image;
 const c = zfltk.c;
 
-fn shim(_: *Widget, data: ?*anyopaque) void {
-    c.Fl_awake_msg(data);
-}
-
 pub const Widget = struct {
     pub usingnamespace methods(Widget, *c.Fl_Widget);
 
@@ -160,17 +156,25 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         /// Like `setCallback` but allows passing data
         pub fn setCallbackEx(self: *Self, f: *const fn (*Self, data: ?*anyopaque) void, data: ?*anyopaque) void {
-            // TODO: Make this an ArrayList or something more efficient
-            var container = app.allocator.alloc(usize, 2) catch unreachable;
+            if (data) |d| {
+                // TODO: Make this an ArrayList or something more efficient
+                var container = app.allocator.alloc(usize, 2) catch unreachable;
 
-            container[0] = @intFromPtr(f);
-            container[1] = @intFromPtr(data);
+                container[0] = @intFromPtr(f);
+                container[1] = @intFromPtr(d);
 
-            c.Fl_Widget_set_callback(
-                self.widget().raw(),
-                zfltk_cb_handler_ex,
-                @ptrCast(container.ptr),
-            );
+                c.Fl_Widget_set_callback(
+                    self.widget().raw(),
+                    zfltk_cb_handler_ex,
+                    @ptrCast(container.ptr),
+                );
+            } else {
+                c.Fl_Widget_set_callback(
+                    self.widget().raw(),
+                    zfltk_cb_handler,
+                    @ptrFromInt(@intFromPtr(f)),
+                );
+            }
         }
 
         pub inline fn emit(self: *Self, comptime T: type, msg: T) void {
@@ -399,6 +403,10 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             }
         }
     };
+}
+
+fn shim(_: *Widget, data: ?*anyopaque) void {
+    c.Fl_awake_msg(data);
 }
 
 // Small wrapper utilizing FLTK's `data` argument to use non-callconv(.C)
