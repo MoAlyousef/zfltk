@@ -40,12 +40,12 @@ jobs:
   #         unzip -qq zig-windows-x86_64-0.11.0-dev.3905+309aacfc8.zip
   #         git submodule update --init --recursive
   #         zig-windows-x86_64-0.11.0-dev.3905+309aacfc8/zig build --search-prefix $MINGW_PREFIX
-  # build_windows:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: goto-bus-stop/setup-zig@v1
-  #     - uses: seanmiddleditch/gha-setup-ninja@master
-  #     - name: build
-  #       shell: bash
-  #       run: zig build
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goto-bus-stop/setup-zig@v1
+      - uses: seanmiddleditch/gha-setup-ninja@master
+      - name: build
+        shell: bash
+        run: zig build
