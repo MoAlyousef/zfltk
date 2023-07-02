@@ -88,50 +88,6 @@ pub fn methods(comptime Self: type) type {
             return @ptrCast(self);
         }
 
-        pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, enums.Event) bool) void {
-            c.Fl_Menu_Bar_handle(
-                self.raw(),
-                &widget.zfltk_event_handler,
-                @ptrFromInt(@intFromPtr(&f)),
-            );
-        }
-
-        pub inline fn setEventHandlerEx(self: *Self, comptime f: fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
-            var allocator = @import("std").heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
-
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
-
-            c.Fl_Menu_Bars_handle(
-                self.raw(),
-                &widget.zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
-        }
-
-        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
-            c.Fl_Menu_Bar_draw(
-                self.raw(),
-                &widget.zfltk_draw_handler,
-                @ptrFromInt(@intFromPtr(&f)),
-            );
-        }
-
-        pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
-            var allocator = std.heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
-
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
-
-            c.Fl_Menu_Bar_draw(
-                self.raw(),
-                &widget.zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
-        }
-
         pub fn add(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
             _ = c.Fl_Menu_Bar_add(self.menu().raw(), name, shortcut, @ptrCast(f), null, @intFromEnum(flag));
         }

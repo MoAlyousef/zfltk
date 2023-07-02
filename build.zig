@@ -28,14 +28,7 @@ pub fn init(b: *Build) !*Sdk {
         var cmake_src_path = try std.fmt.bufPrint(src_buf[0..], "{s}/cfltk", .{sdk_path});
         var cmake_inst_path = try std.fmt.bufPrint(inst_buf[0..], "-DCMAKE_INSTALL_PREFIX={s}/cfltk/lib", .{sdk_path});
         var zfltk_config: *std.Build.Step.Run = undefined;
-        const cfltk_fetch = b.addSystemCommand(&[_][]const u8{
-            "git",
-            "clone",
-            "https://github.com/MoAlyousef/cfltk",
-            cmake_src_path,
-            "--depth=1",
-            "--recurse-submodules"
-        });
+        const cfltk_fetch = b.addSystemCommand(&[_][]const u8{ "git", "clone", "https://github.com/MoAlyousef/cfltk", cmake_src_path, "--depth=1", "--recurse-submodules" });
         if (target.os.tag == .windows) {
             zfltk_config = b.addSystemCommand(&[_][]const u8{
                 "cmake",
@@ -221,6 +214,7 @@ const examples = &[_]Example{
     Example.init("flex", "examples/flex.zig", "Flex example"),
     Example.init("threadawake", "examples/threadawake.zig", "Thread awake example"),
     Example.init("handle", "examples/handle.zig", "Handle example"),
+    Example.init("flutterlike", "examples/flutterlike.zig", "Flutter-like example"),
 };
 
 inline fn thisDir() []const u8 {
@@ -245,7 +239,7 @@ pub fn build(b: *Build) !void {
     for (examples) |example| {
         const exe = b.addExecutable(.{
             .name = example.output,
-            .root_source_file = .{.path = example.input },
+            .root_source_file = .{ .path = example.input },
             .optimize = mode,
             .target = target,
         });

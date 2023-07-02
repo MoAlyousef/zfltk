@@ -118,50 +118,6 @@ pub fn methods(comptime Self: type) type {
             unreachable;
         }
 
-        pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, enums.Event) bool) void {
-            c.Fl_Group_handle(
-                self.raw(),
-                &widget.zfltk_event_handler,
-                @ptrFromInt(@intFromPtr(&f)),
-            );
-        }
-
-        pub inline fn setEventHandlerEx(self: *Self, comptime f: fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
-            var allocator = @import("std").heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
-
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
-
-            c.Fl_Group_handle(
-                self.raw(),
-                &widget.zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
-        }
-
-        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
-            c.Fl_Group_draw(
-                self.raw(),
-                &widget.zfltk_draw_handler,
-                @ptrFromInt(@intFromPtr(&f)),
-            );
-        }
-
-        pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
-            var allocator = std.heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
-
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
-
-            c.Fl_Group_draw(
-                self.raw(),
-                &widget.zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
-        }
-
         pub fn begin(self: *Self) void {
             c.Fl_Group_begin(self.group().raw());
         }
@@ -227,7 +183,7 @@ pub fn methods(comptime Self: type) type {
                 @compileError("expected FLTK widget, found " ++ @typeName(T));
             }
 
-            return c.Fl_Group_resizable(self.group().raw(), wid.raw());
+            return c.Fl_Group_resizable(self.group().raw(), wid.widget().raw());
         }
 
         pub fn clear(self: *Self) void {

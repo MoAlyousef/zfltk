@@ -85,50 +85,6 @@ pub fn methods(comptime Self: type) type {
             return @ptrCast(self);
         }
 
-        pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, Event) bool) void {
-            c.Fl_Button_handle(
-                self.button().raw(),
-                &widget.zfltk_event_handler,
-                @ptrFromInt(@intFromPtr(&f)),
-            );
-        }
-
-        pub inline fn setEventHandlerEx(self: *Self, comptime f: fn (*Self, Event, ?*anyopaque) bool, data: ?*anyopaque) void {
-            var allocator = std.heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
-
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
-
-            c.Fl_Button_handle(
-                self.button().raw(),
-                &widget.zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
-        }
-
-        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
-            c.Fl_Button_draw(
-                self.button().raw(),
-                &widget.zfltk_draw_handler,
-                @ptrFromInt(@intFromPtr(&f)),
-            );
-        }
-
-        pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
-            var allocator = std.heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
-
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
-
-            c.Fl_Button_draw(
-                self.button().raw(),
-                &widget.zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
-        }
-
         pub fn shortcut(self: *Self) i32 {
             return c.Fl_Button_shortcut(self.button().raw());
         }

@@ -27,7 +27,7 @@ fn boxEventHandler(_: *Box, ev: Event, data: ?*anyopaque) bool {
     }
 }
 
-fn boxDrawHandler(box: *Box) void {
+fn boxDrawHandler(box: *Box, _: ?*anyopaque) void {
     draw.setLineStyle(.DashDot, 2);
     draw.rectWithColor(box.x() + 10, box.y() + 10, box.w() - 20, box.h() - 20, Color.fromName(.cyan));
 }
@@ -59,12 +59,12 @@ pub fn main() !void {
         .y = 10,
         .w = 380,
         .h = 180,
-
+        .label = "Hello",
         .boxtype = .up,
     });
 
-    box.setEventHandlerEx(boxEventHandler, but);
-    box.setDrawHandler(boxDrawHandler);
+    box.setEventHandler(boxEventHandler, but);
+    box.setDrawHandler(boxDrawHandler, null);
 
     box.setLabelFont(.courier);
     box.setLabelSize(18);

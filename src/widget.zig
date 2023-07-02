@@ -46,6 +46,92 @@ pub const Widget = struct {
 /// Methods to be used in everything derived from `Widget`
 pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     return struct {
+        const handle_func = switch (RawPtr) {
+            *c.Fl_Box => c.Fl_Box_handle,
+            *c.Fl_Button => c.Fl_Button_handle,
+            *c.Fl_Radio_Button => c.Fl_Radio_Button_handle,
+            *c.Fl_Check_Button => c.Fl_Check_Button_handle,
+            *c.Fl_Light_Button => c.Fl_Light_Button_handle,
+            *c.Fl_Return_Button => c.Fl_Return_Button_handle,
+            *c.Fl_Repeat_Button => c.Fl_Repeat_Button_handle,
+            *c.Fl_Browser => c.Fl_Browser_handle,
+            *c.Fl_Select_Browser => c.Fl_Select_Browser_handle,
+            *c.Fl_Hold_Browser => c.Fl_Hold_Browser_handle,
+            *c.Fl_Multi_Browser => c.Fl_Multi_Browser_handle,
+            *c.Fl_Menu_Bar => c.Fl_Menu_Bar_handle,
+            *c.Fl_Choice => c.Fl_Choice_handle,
+            *c.Fl_Sys_Menu_Bar => c.Fl_Sys_Menu_Bar_handle,
+            *c.Fl_Group => c.Fl_Group_handle,
+            *c.Fl_Scroll => c.Fl_Scroll,
+            *c.Fl_Flex => c.Fl_Flex_handle,
+            *c.Fl_Tabs => c.Fl_Tabs_handle,
+            *c.Fl_Pack => c.Fl_Pack_handle,
+            *c.Fl_Input => c.Fl_Input_handle,
+            *c.Fl_Secret_Input => c.Fl_Secret_Input_handle,
+            *c.Fl_Int_Input => c.Fl_Int_Input_handle,
+            *c.Fl_Float_Input => c.Fl_Float_Input_handle,
+            *c.Fl_Multiline_Input => c.Fl_Multiline_Input_handle,
+            *c.Fl_Output => c.Fl_Output_handle,
+            *c.Fl_Multiline_Output => c.Fl_Multiline_Output_handle,
+            *c.Fl_Table => c.Fl_Table_handle,
+            *c.Fl_Table_Row => c.Fl_Table_Row_handle,
+            *c.Fl_Tree => c.Fl_Tree_handle,
+            *c.Fl_Text_Display => c.Fl_Text_Display_handle,
+            *c.Fl_Text_Editor => c.Fl_Text_Editor_handle,
+            *c.Fl_Window => c.Fl_Window_handle,
+            *c.Fl_Double_Window => c.Fl_Double_Window_handle,
+            *c.Fl_Slider => c.Fl_Slider_handle,
+            *c.Fl_Dial => c.Fl_Dial_handle,
+            *c.Fl_Counter => c.Fl_Counter_handle,
+            *c.Fl_Scrollbar => c.Fl_Scrollbar_handle,
+            *c.Fl_Adjuster => c.Fl_Adjuster_handle,
+            *c.Fl_Roller => c.Fl_Roller_handle,
+            else => c.Fl_Box_handle,
+        };
+
+        const draw_func = switch (RawPtr) {
+            *c.Fl_Box => c.Fl_Box_draw,
+            *c.Fl_Button => c.Fl_Button_draw,
+            *c.Fl_Radio_Button => c.Fl_Radio_Button_draw,
+            *c.Fl_Check_Button => c.Fl_Check_Button_draw,
+            *c.Fl_Light_Button => c.Fl_Light_Button_draw,
+            *c.Fl_Return_Button => c.Fl_Return_Button_draw,
+            *c.Fl_Repeat_Button => c.Fl_Repeat_Button_draw,
+            *c.Fl_Browser => c.Fl_Browser_draw,
+            *c.Fl_Select_Browser => c.Fl_Select_Browser_draw,
+            *c.Fl_Hold_Browser => c.Fl_Hold_Browser_draw,
+            *c.Fl_Multi_Browser => c.Fl_Multi_Browser_draw,
+            *c.Fl_Menu_Bar => c.Fl_Menu_Bar_draw,
+            *c.Fl_Choice => c.Fl_Choice_draw,
+            *c.Fl_Sys_Menu_Bar => c.Fl_Sys_Menu_Bar_draw,
+            *c.Fl_Group => c.Fl_Group_draw,
+            *c.Fl_Scroll => c.Fl_Scroll,
+            *c.Fl_Flex => c.Fl_Flex_draw,
+            *c.Fl_Tabs => c.Fl_Tabs_draw,
+            *c.Fl_Pack => c.Fl_Pack_draw,
+            *c.Fl_Input => c.Fl_Input_draw,
+            *c.Fl_Secret_Input => c.Fl_Secret_Input_draw,
+            *c.Fl_Int_Input => c.Fl_Int_Input_draw,
+            *c.Fl_Float_Input => c.Fl_Float_Input_draw,
+            *c.Fl_Multiline_Input => c.Fl_Multiline_Input_draw,
+            *c.Fl_Output => c.Fl_Output_draw,
+            *c.Fl_Multiline_Output => c.Fl_Multiline_Output_draw,
+            *c.Fl_Table => c.Fl_Table_draw,
+            *c.Fl_Table_Row => c.Fl_Table_Row_draw,
+            *c.Fl_Tree => c.Fl_Tree_draw,
+            *c.Fl_Text_Display => c.Fl_Text_Display_draw,
+            *c.Fl_Text_Editor => c.Fl_Text_Editor_draw,
+            *c.Fl_Window => c.Fl_Window_draw,
+            *c.Fl_Double_Window => c.Fl_Double_Window_draw,
+            *c.Fl_Slider => c.Fl_Slider_draw,
+            *c.Fl_Dial => c.Fl_Dial_draw,
+            *c.Fl_Counter => c.Fl_Counter_draw,
+            *c.Fl_Scrollbar => c.Fl_Scrollbar_draw,
+            *c.Fl_Adjuster => c.Fl_Adjuster_draw,
+            *c.Fl_Roller => c.Fl_Roller_draw,
+            else => c.Fl_Box_draw,
+        };
+
         pub inline fn widget(self: *Self) *Widget {
             return @ptrCast(self);
         }
@@ -258,6 +344,33 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         pub inline fn takeFocus(self: *Self) void {
             c.Fl_set_focus(self.widget().raw());
         }
+
+        pub inline fn setEventHandler(self: *Self, f: *const fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
+            var container = app.allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(f);
+            container[1] = @intFromPtr(data);
+
+            handle_func(
+                self.raw(),
+                zfltk_event_handler,
+                @ptrCast(container.ptr),
+            );
+        }
+
+        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+            var allocator = std.heap.c_allocator;
+            var container = allocator.alloc(usize, 2) catch unreachable;
+
+            container[0] = @intFromPtr(&f);
+            container[1] = @intFromPtr(data);
+
+            draw_func(
+                self.raw(),
+                zfltk_draw_handler,
+                @ptrCast(container.ptr),
+            );
+        }
     };
 }
 
@@ -287,17 +400,6 @@ pub fn zfltk_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) v
 }
 
 pub fn zfltk_event_handler(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
-    const cb: *const fn (*Widget, enums.Event) bool = @ptrCast(
-        data,
-    );
-
-    return @intFromBool(cb(
-        Widget.fromRaw(wid.?),
-        @enumFromInt(ev),
-    ));
-}
-
-pub fn zfltk_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) callconv(.C) c_int {
     const container: *[2]usize = @ptrCast(@alignCast(data));
 
     const cb: *const fn (*Widget, enums.Event, ?*anyopaque) bool = @ptrFromInt(
@@ -312,14 +414,6 @@ pub fn zfltk_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) 
 }
 
 pub fn zfltk_draw_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
-    const cb: *const fn (*Widget) void = @ptrCast(
-        data,
-    );
-
-    cb(Widget.fromRaw(wid.?));
-}
-
-pub fn zfltk_draw_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     const container: *[2]usize = @ptrCast(@alignCast(data));
 
     const cb: *const fn (*Widget, ?*anyopaque) void = @ptrFromInt(

@@ -51,49 +51,6 @@ pub const Box = struct {
             return null;
         }
     }
-
-    pub inline fn setEventHandler(self: *Self, f: *const fn (*Self, Event) bool) void {
-        c.Fl_Box_handle(
-            self.raw(),
-            widget.zfltk_event_handler,
-            @ptrFromInt(@intFromPtr(&f)),
-        );
-    }
-
-    pub inline fn setEventHandlerEx(self: *Self, f: *const fn (*Self, Event, ?*anyopaque) bool, data: ?*anyopaque) void {
-        var container = app.allocator.alloc(usize, 2) catch unreachable;
-
-        container[0] = @intFromPtr(f);
-        container[1] = @intFromPtr(data);
-
-        c.Fl_Box_handle(
-            self.raw(),
-            widget.zfltk_event_handler_ex,
-            @ptrCast(container.ptr),
-        );
-    }
-
-    pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
-        c.Fl_Box_draw(
-            self.raw(),
-            &widget.zfltk_draw_handler,
-            @ptrFromInt(@intFromPtr(&f)),
-        );
-    }
-
-    pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
-        var allocator = std.heap.c_allocator;
-        var container = allocator.alloc(usize, 2) catch unreachable;
-
-        container[0] = @intFromPtr(&f);
-        container[1] = @intFromPtr(data);
-
-        c.Fl_Box_draw(
-            self.raw(),
-            &widget.zfltk_event_handler_ex,
-            @ptrCast(container.ptr),
-        );
-    }
 };
 
 test "all" {

@@ -30,6 +30,8 @@ pub fn Browser(comptime kind: BrowserKind) type {
 
         inner: RawPtr,
 
+        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
+
         pub inline fn init(opts: Widget.Options) !*Self {
             const init_func = switch (kind) {
                 .normal => c.Fl_Browser_new,
@@ -81,54 +83,6 @@ pub fn Browser(comptime kind: BrowserKind) type {
 
         pub inline fn toVoidPtr(self: *Self) *anyopaque {
             return @ptrCast(self.inner);
-        }
-
-        pub inline fn widget(self: *Self) Widget {
-            return Widget.fromRaw(@ptrCast(self.inner));
-        }
-
-        pub inline fn setEventHandler(self: *Self, comptime f: fn (*Self, enums.Event) bool) void {
-            c.Fl_Browser_handle(
-                self.raw(),
-                &widget.zfltk_event_handler,
-                @ptrFromInt(@intFromPtr(&f)),
-            );
-        }
-
-        pub inline fn setEventHandlerEx(self: *Self, comptime f: fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
-            var allocator = @import("std").heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
-
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
-
-            c.Fl_Browser_handle(
-                self.raw(),
-                &widget.zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
-        }
-
-        pub inline fn setDrawHandler(self: *Self, comptime f: fn (*Self) void) void {
-            c.Fl_Browser_draw(
-                self.raw(),
-                &widget.zfltk_draw_handler,
-                @ptrFromInt(@intFromPtr(&f)),
-            );
-        }
-
-        pub inline fn setDrawHandlerEx(self: *Self, comptime f: fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
-            var allocator = std.heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
-
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
-
-            c.Fl_Browser_draw(
-                self.raw(),
-                &widget.zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
         }
 
         pub fn remove(self: *Self, line: u32) void {
