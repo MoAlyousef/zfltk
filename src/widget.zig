@@ -178,12 +178,6 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn show(self: *Self) void {
-            // `Widget_show` cannot be called on native dialogs
-            if (Self == zfltk.FileDialog(.file)) {
-                _ = c.Fl_Native_File_Chooser_show(self.raw());
-                return;
-            }
-
             c.Fl_Widget_show(self.widget().raw());
         }
 
