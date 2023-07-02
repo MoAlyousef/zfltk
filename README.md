@@ -17,6 +17,9 @@ zig build run-mixed
 Until an official Zig package manager is published, the easiest way to use the library is to add it as a subdirectory to your project, either via git submodules or git clone:
 ```
 git submodule add https://github.com/moalyousef/zfltk
+cd zfltk
+git checkout pre_zpm
+cd ..
 git submodule update --init --recursive
 ```
 then you will need a build.zig file as follows:
