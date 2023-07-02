@@ -20,7 +20,7 @@ fn boxEventHandler(_: *Box, ev: Event, data: ?*anyopaque) bool {
     const btn = Button(.normal).fromRaw(data.?);
     switch (ev) {
         .push => {
-            std.debug.print("Click the button: {d}\n", .{btn.label()});
+            std.debug.print("Click the button: {s}\n", .{btn.label()});
             return true;
         },
         else => return false,

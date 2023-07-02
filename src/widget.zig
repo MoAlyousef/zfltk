@@ -348,16 +348,24 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setEventHandlerEx(self: *Self, f: *const fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
-            var container = app.allocator.alloc(usize, 2) catch unreachable;
+            if (data) |d| {
+                var container = app.allocator.alloc(usize, 2) catch unreachable;
 
-            container[0] = @intFromPtr(f);
-            container[1] = @intFromPtr(data);
+                container[0] = @intFromPtr(f);
+                container[1] = @intFromPtr(d);
 
-            handle_func(
-                self.raw(),
-                zfltk_event_handler_ex,
-                @ptrCast(container.ptr),
-            );
+                handle_func(
+                    self.raw(),
+                    zfltk_event_handler_ex,
+                    @ptrCast(container.ptr),
+                );
+            } else {
+                handle_func(
+                    self.raw(),
+                    zfltk_event_handler,
+                    @ptrFromInt(@intFromPtr(f)),
+                );
+            }
         }
 
         
@@ -370,17 +378,25 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setDrawHandlerEx(self: *Self, f: *const fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
-            var allocator = std.heap.c_allocator;
-            var container = allocator.alloc(usize, 2) catch unreachable;
+            if (data) |d| {
+                var allocator = std.heap.c_allocator;
+                var container = allocator.alloc(usize, 2) catch unreachable;
 
-            container[0] = @intFromPtr(&f);
-            container[1] = @intFromPtr(data);
+                container[0] = @intFromPtr(&f);
+                container[1] = @intFromPtr(d);
 
-            draw_func(
-                self.raw(),
-                zfltk_draw_handler_ex,
-                @ptrCast(container.ptr),
-            );
+                draw_func(
+                    self.raw(),
+                    zfltk_draw_handler_ex,
+                    @ptrCast(container.ptr),
+                );
+            } else {
+                draw_func(
+                    self.raw(),
+                    zfltk_draw_handler,
+                    @ptrFromInt(@intFromPtr(f)),
+                );
+            }
         }
     };
 }
