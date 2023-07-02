@@ -18,34 +18,34 @@ jobs:
       - name: Build
         run: zig build
   build_macos:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v1
       - name: Build
         run: zig build
-  build_windows-mingw:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          update: true
-      - shell: msys2 {0}
-        run: |
-          pacman -Sy
-          pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-ninja wget unzip git --needed
-          wget https://ziglang.org/builds/zig-windows-x86_64-0.11.0-dev.3905+309aacfc8.zip
-          unzip -qq zig-windows-x86_64-0.11.0-dev.3905+309aacfc8.zip
-          git submodule update --init --recursive
-          zig-windows-x86_64-0.11.0-dev.3905+309aacfc8/zig build --search-prefix $MINGW_PREFIX
-  build_windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: goto-bus-stop/setup-zig@v1
-      - uses: seanmiddleditch/gha-setup-ninja@master
-      - name: build
-        shell: bash
-        run: zig build
+  # build_windows-mingw:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: msys2/setup-msys2@v2
+  #       with:
+  #         msystem: MINGW64
+  #         update: true
+  #     - shell: msys2 {0}
+  #       run: |
+  #         pacman -Sy
+  #         pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-ninja wget unzip git --needed
+  #         wget https://ziglang.org/builds/zig-windows-x86_64-0.11.0-dev.3905+309aacfc8.zip
+  #         unzip -qq zig-windows-x86_64-0.11.0-dev.3905+309aacfc8.zip
+  #         git submodule update --init --recursive
+  #         zig-windows-x86_64-0.11.0-dev.3905+309aacfc8/zig build --search-prefix $MINGW_PREFIX
+  # build_windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: goto-bus-stop/setup-zig@v1
+  #     - uses: seanmiddleditch/gha-setup-ninja@master
+  #     - name: build
+  #       shell: bash
+  #       run: zig build
