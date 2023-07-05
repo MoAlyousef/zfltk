@@ -307,3 +307,5 @@ You can also mix and match for any missing functionalities in the Zig wrapper (s
 ![alt_test](screenshots/image.jpg)
 ![alt_test](screenshots/editor.jpg)
 
+[video tutorial](https://youtu.be/D2ijlrDStdM)
+
