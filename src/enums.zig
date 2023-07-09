@@ -424,6 +424,35 @@ pub const TextCursor = enum(u8) {
     simple,
 };
 
+pub const Mode = struct {
+    /// Rgb color (not indexed)
+    pub const rgb = 0;
+    /// Single buffered
+    pub const single = 0;
+    /// Indexed mode
+    pub const index = 1;
+    /// Double buffered
+    pub const double = 2;
+    /// Accumulation buffer
+    pub const accum = 4;
+    /// Alpha channel in color
+    pub const alpha = 8;
+    /// Depth buffer
+    pub const depth = 16;
+    /// Stencil buffer
+    pub const stencil = 32;
+    /// Rgb8 color with at least 8 bits of each color
+    pub const rgb8 = 64;
+    /// MultiSample anti-aliasing
+    pub const multi_sample = 128;
+    /// Stereoscopic rendering
+    pub const stereo = 256;
+    /// Fake single buffered windows using double-buffer
+    pub const fake_single = 512;
+    /// Use OpenGL version 3.0 or more
+    pub const opengl3 = 1024;
+};
+
 test "all" {
     @import("std").testing.refAllDeclsRecursive(@This());
 }
