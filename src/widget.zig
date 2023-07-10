@@ -42,138 +42,12 @@ pub const Widget = struct {
 /// Methods to be used in everything derived from `Widget`
 pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     return struct {
-        // const dyn_from_func = RawPtr ++ "_from_dyn_ptr";
-        const handle_func = switch (RawPtr) {
-            *c.Fl_Box => c.Fl_Box_handle,
-            *c.Fl_Button => c.Fl_Button_handle,
-            *c.Fl_Radio_Button => c.Fl_Radio_Button_handle,
-            *c.Fl_Check_Button => c.Fl_Check_Button_handle,
-            *c.Fl_Light_Button => c.Fl_Light_Button_handle,
-            *c.Fl_Return_Button => c.Fl_Return_Button_handle,
-            *c.Fl_Repeat_Button => c.Fl_Repeat_Button_handle,
-            *c.Fl_Browser => c.Fl_Browser_handle,
-            *c.Fl_Select_Browser => c.Fl_Select_Browser_handle,
-            *c.Fl_Hold_Browser => c.Fl_Hold_Browser_handle,
-            *c.Fl_Multi_Browser => c.Fl_Multi_Browser_handle,
-            *c.Fl_Menu_Bar => c.Fl_Menu_Bar_handle,
-            *c.Fl_Choice => c.Fl_Choice_handle,
-            *c.Fl_Sys_Menu_Bar => c.Fl_Sys_Menu_Bar_handle,
-            *c.Fl_Group => c.Fl_Group_handle,
-            *c.Fl_Scroll => c.Fl_Scroll,
-            *c.Fl_Flex => c.Fl_Flex_handle,
-            *c.Fl_Tabs => c.Fl_Tabs_handle,
-            *c.Fl_Pack => c.Fl_Pack_handle,
-            *c.Fl_Input => c.Fl_Input_handle,
-            *c.Fl_Secret_Input => c.Fl_Secret_Input_handle,
-            *c.Fl_Int_Input => c.Fl_Int_Input_handle,
-            *c.Fl_Float_Input => c.Fl_Float_Input_handle,
-            *c.Fl_Multiline_Input => c.Fl_Multiline_Input_handle,
-            *c.Fl_Output => c.Fl_Output_handle,
-            *c.Fl_Multiline_Output => c.Fl_Multiline_Output_handle,
-            *c.Fl_Table => c.Fl_Table_handle,
-            *c.Fl_Table_Row => c.Fl_Table_Row_handle,
-            *c.Fl_Tree => c.Fl_Tree_handle,
-            *c.Fl_Text_Display => c.Fl_Text_Display_handle,
-            *c.Fl_Text_Editor => c.Fl_Text_Editor_handle,
-            *c.Fl_Window => c.Fl_Window_handle,
-            *c.Fl_Double_Window => c.Fl_Double_Window_handle,
-            *c.Fl_Glut_Window => c.Fl_Glut_Window_handle,
-            *c.Fl_Slider => c.Fl_Slider_handle,
-            *c.Fl_Dial => c.Fl_Dial_handle,
-            *c.Fl_Counter => c.Fl_Counter_handle,
-            *c.Fl_Scrollbar => c.Fl_Scrollbar_handle,
-            *c.Fl_Adjuster => c.Fl_Adjuster_handle,
-            *c.Fl_Roller => c.Fl_Roller_handle,
-            else => c.Fl_Box_handle,
-        };
-
-        const draw_func = switch (RawPtr) {
-            *c.Fl_Box => c.Fl_Box_draw,
-            *c.Fl_Button => c.Fl_Button_draw,
-            *c.Fl_Radio_Button => c.Fl_Radio_Button_draw,
-            *c.Fl_Check_Button => c.Fl_Check_Button_draw,
-            *c.Fl_Light_Button => c.Fl_Light_Button_draw,
-            *c.Fl_Return_Button => c.Fl_Return_Button_draw,
-            *c.Fl_Repeat_Button => c.Fl_Repeat_Button_draw,
-            *c.Fl_Browser => c.Fl_Browser_draw,
-            *c.Fl_Select_Browser => c.Fl_Select_Browser_draw,
-            *c.Fl_Hold_Browser => c.Fl_Hold_Browser_draw,
-            *c.Fl_Multi_Browser => c.Fl_Multi_Browser_draw,
-            *c.Fl_Menu_Bar => c.Fl_Menu_Bar_draw,
-            *c.Fl_Choice => c.Fl_Choice_draw,
-            *c.Fl_Sys_Menu_Bar => c.Fl_Sys_Menu_Bar_draw,
-            *c.Fl_Group => c.Fl_Group_draw,
-            *c.Fl_Scroll => c.Fl_Scroll,
-            *c.Fl_Flex => c.Fl_Flex_draw,
-            *c.Fl_Tabs => c.Fl_Tabs_draw,
-            *c.Fl_Pack => c.Fl_Pack_draw,
-            *c.Fl_Input => c.Fl_Input_draw,
-            *c.Fl_Secret_Input => c.Fl_Secret_Input_draw,
-            *c.Fl_Int_Input => c.Fl_Int_Input_draw,
-            *c.Fl_Float_Input => c.Fl_Float_Input_draw,
-            *c.Fl_Multiline_Input => c.Fl_Multiline_Input_draw,
-            *c.Fl_Output => c.Fl_Output_draw,
-            *c.Fl_Multiline_Output => c.Fl_Multiline_Output_draw,
-            *c.Fl_Table => c.Fl_Table_draw,
-            *c.Fl_Table_Row => c.Fl_Table_Row_draw,
-            *c.Fl_Tree => c.Fl_Tree_draw,
-            *c.Fl_Text_Display => c.Fl_Text_Display_draw,
-            *c.Fl_Text_Editor => c.Fl_Text_Editor_draw,
-            *c.Fl_Window => c.Fl_Window_draw,
-            *c.Fl_Double_Window => c.Fl_Double_Window_draw,
-            *c.Fl_Glut_Window => c.Fl_Glut_Window_draw,
-            *c.Fl_Slider => c.Fl_Slider_draw,
-            *c.Fl_Dial => c.Fl_Dial_draw,
-            *c.Fl_Counter => c.Fl_Counter_draw,
-            *c.Fl_Scrollbar => c.Fl_Scrollbar_draw,
-            *c.Fl_Adjuster => c.Fl_Adjuster_draw,
-            *c.Fl_Roller => c.Fl_Roller_draw,
-            else => c.Fl_Box_draw,
-        };
-
-        const dyn_ptr_func = switch (RawPtr) {
-            *c.Fl_Box => c.Fl_Box_from_dyn_ptr,
-            *c.Fl_Button => c.Fl_Button_from_dyn_ptr,
-            *c.Fl_Radio_Button => c.Fl_Radio_Button_from_dyn_ptr,
-            *c.Fl_Check_Button => c.Fl_Check_Button_from_dyn_ptr,
-            *c.Fl_Light_Button => c.Fl_Light_Button_from_dyn_ptr,
-            *c.Fl_Return_Button => c.Fl_Return_Button_from_dyn_ptr,
-            *c.Fl_Repeat_Button => c.Fl_Repeat_Button_from_dyn_ptr,
-            *c.Fl_Browser => c.Fl_Browser_from_dyn_ptr,
-            *c.Fl_Select_Browser => c.Fl_Select_Browser_from_dyn_ptr,
-            *c.Fl_Hold_Browser => c.Fl_Hold_Browser_from_dyn_ptr,
-            *c.Fl_Multi_Browser => c.Fl_Multi_Browser_from_dyn_ptr,
-            *c.Fl_Menu_Bar => c.Fl_Menu_Bar_from_dyn_ptr,
-            *c.Fl_Choice => c.Fl_Choice_from_dyn_ptr,
-            *c.Fl_Sys_Menu_Bar => c.Fl_Sys_Menu_Bar_from_dyn_ptr,
-            *c.Fl_Group => c.Fl_Group_from_dyn_ptr,
-            *c.Fl_Scroll => c.Fl_Scroll,
-            *c.Fl_Flex => c.Fl_Flex_from_dyn_ptr,
-            *c.Fl_Tabs => c.Fl_Tabs_from_dyn_ptr,
-            *c.Fl_Pack => c.Fl_Pack_from_dyn_ptr,
-            *c.Fl_Input => c.Fl_Input_from_dyn_ptr,
-            *c.Fl_Secret_Input => c.Fl_Secret_Input_from_dyn_ptr,
-            *c.Fl_Int_Input => c.Fl_Int_Input_from_dyn_ptr,
-            *c.Fl_Float_Input => c.Fl_Float_Input_from_dyn_ptr,
-            *c.Fl_Multiline_Input => c.Fl_Multiline_Input_from_dyn_ptr,
-            *c.Fl_Output => c.Fl_Output_from_dyn_ptr,
-            *c.Fl_Multiline_Output => c.Fl_Multiline_Output_from_dyn_ptr,
-            *c.Fl_Table => c.Fl_Table_from_dyn_ptr,
-            *c.Fl_Table_Row => c.Fl_Table_Row_from_dyn_ptr,
-            *c.Fl_Tree => c.Fl_Tree_from_dyn_ptr,
-            *c.Fl_Text_Display => c.Fl_Text_Display_from_dyn_ptr,
-            *c.Fl_Text_Editor => c.Fl_Text_Editor_from_dyn_ptr,
-            *c.Fl_Window => c.Fl_Window_from_dyn_ptr,
-            *c.Fl_Double_Window => c.Fl_Double_Window_from_dyn_ptr,
-            *c.Fl_Glut_Window => c.Fl_Glut_Window_from_dyn_ptr,
-            *c.Fl_Slider => c.Fl_Slider_from_dyn_ptr,
-            *c.Fl_Dial => c.Fl_Dial_from_dyn_ptr,
-            *c.Fl_Counter => c.Fl_Counter_from_dyn_ptr,
-            *c.Fl_Scrollbar => c.Fl_Scrollbar_from_dyn_ptr,
-            *c.Fl_Adjuster => c.Fl_Adjuster_from_dyn_ptr,
-            *c.Fl_Roller => c.Fl_Roller_from_dyn_ptr,
-            else => c.Fl_Box_from_dyn_ptr,
-        };
+        const type_name = @typeName(RawPtr);
+        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
+        const draw_func = @field(c, ptr_name ++ "_draw");
+        const handle_func = @field(c, ptr_name ++ "_handle");
+        const dyn_ptr_func = @field(c, ptr_name ++ "_from_dyn_ptr");
+        const set_label_func = @field(c, ptr_name ++ "_set_label");
 
         pub inline fn widget(self: *Self) *Widget {
             return @ptrCast(self);
@@ -273,7 +147,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setLabel(self: *Self, _label: [:0]const u8) void {
-            c.Fl_Widget_set_label(self.widget().raw(), _label.ptr);
+            set_label_func(self.raw(), _label.ptr);
         }
 
         pub inline fn kind(self: *Self, comptime T: type) T {
