@@ -68,14 +68,6 @@ pub fn Button(comptime kind: ButtonKind) type {
             deinit_func(self.raw());
             app.allocator.destroy(self);
         }
-
-        pub inline fn fromDynWidgetPtr(w: *c.Fl_Widget) ?Self {
-            if (c.Fl_Button_from_dyn_ptr(@ptrCast(w))) |v| {
-                return .{ .inner = v };
-            }
-
-            return null;
-        }
     };
 }
 

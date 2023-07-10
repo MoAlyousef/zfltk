@@ -42,6 +42,7 @@ pub const Widget = struct {
 /// Methods to be used in everything derived from `Widget`
 pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     return struct {
+        // const dyn_from_func = RawPtr ++ "_from_dyn_ptr";
         const handle_func = switch (RawPtr) {
             *c.Fl_Box => c.Fl_Box_handle,
             *c.Fl_Button => c.Fl_Button_handle,
@@ -130,6 +131,50 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             else => c.Fl_Box_draw,
         };
 
+        const dyn_ptr_func = switch (RawPtr) {
+            *c.Fl_Box => c.Fl_Box_from_dyn_ptr,
+            *c.Fl_Button => c.Fl_Button_from_dyn_ptr,
+            *c.Fl_Radio_Button => c.Fl_Radio_Button_from_dyn_ptr,
+            *c.Fl_Check_Button => c.Fl_Check_Button_from_dyn_ptr,
+            *c.Fl_Light_Button => c.Fl_Light_Button_from_dyn_ptr,
+            *c.Fl_Return_Button => c.Fl_Return_Button_from_dyn_ptr,
+            *c.Fl_Repeat_Button => c.Fl_Repeat_Button_from_dyn_ptr,
+            *c.Fl_Browser => c.Fl_Browser_from_dyn_ptr,
+            *c.Fl_Select_Browser => c.Fl_Select_Browser_from_dyn_ptr,
+            *c.Fl_Hold_Browser => c.Fl_Hold_Browser_from_dyn_ptr,
+            *c.Fl_Multi_Browser => c.Fl_Multi_Browser_from_dyn_ptr,
+            *c.Fl_Menu_Bar => c.Fl_Menu_Bar_from_dyn_ptr,
+            *c.Fl_Choice => c.Fl_Choice_from_dyn_ptr,
+            *c.Fl_Sys_Menu_Bar => c.Fl_Sys_Menu_Bar_from_dyn_ptr,
+            *c.Fl_Group => c.Fl_Group_from_dyn_ptr,
+            *c.Fl_Scroll => c.Fl_Scroll,
+            *c.Fl_Flex => c.Fl_Flex_from_dyn_ptr,
+            *c.Fl_Tabs => c.Fl_Tabs_from_dyn_ptr,
+            *c.Fl_Pack => c.Fl_Pack_from_dyn_ptr,
+            *c.Fl_Input => c.Fl_Input_from_dyn_ptr,
+            *c.Fl_Secret_Input => c.Fl_Secret_Input_from_dyn_ptr,
+            *c.Fl_Int_Input => c.Fl_Int_Input_from_dyn_ptr,
+            *c.Fl_Float_Input => c.Fl_Float_Input_from_dyn_ptr,
+            *c.Fl_Multiline_Input => c.Fl_Multiline_Input_from_dyn_ptr,
+            *c.Fl_Output => c.Fl_Output_from_dyn_ptr,
+            *c.Fl_Multiline_Output => c.Fl_Multiline_Output_from_dyn_ptr,
+            *c.Fl_Table => c.Fl_Table_from_dyn_ptr,
+            *c.Fl_Table_Row => c.Fl_Table_Row_from_dyn_ptr,
+            *c.Fl_Tree => c.Fl_Tree_from_dyn_ptr,
+            *c.Fl_Text_Display => c.Fl_Text_Display_from_dyn_ptr,
+            *c.Fl_Text_Editor => c.Fl_Text_Editor_from_dyn_ptr,
+            *c.Fl_Window => c.Fl_Window_from_dyn_ptr,
+            *c.Fl_Double_Window => c.Fl_Double_Window_from_dyn_ptr,
+            *c.Fl_Glut_Window => c.Fl_Glut_Window_from_dyn_ptr,
+            *c.Fl_Slider => c.Fl_Slider_from_dyn_ptr,
+            *c.Fl_Dial => c.Fl_Dial_from_dyn_ptr,
+            *c.Fl_Counter => c.Fl_Counter_from_dyn_ptr,
+            *c.Fl_Scrollbar => c.Fl_Scrollbar_from_dyn_ptr,
+            *c.Fl_Adjuster => c.Fl_Adjuster_from_dyn_ptr,
+            *c.Fl_Roller => c.Fl_Roller_from_dyn_ptr,
+            else => c.Fl_Box_from_dyn_ptr,
+        };
+
         pub inline fn widget(self: *Self) *Widget {
             return @ptrCast(self);
         }
@@ -144,6 +189,14 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         pub inline fn fromRaw(ptr: *anyopaque) *Self {
             return @ptrCast(ptr);
+        }
+
+        pub inline fn fromDynWidget(other: anytype) ?*Self {
+            if (dyn_ptr_func(@ptrCast(@alignCast(other)))) |o| {
+                return Self.fromRaw(o);
+            }
+
+            return null;
         }
 
         /// Sets a function to be called upon `activation` of a widget such as
@@ -374,7 +427,6 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             }
         }
 
-        
         pub inline fn setDrawHandler(self: *Self, f: *const fn (*Self) void) void {
             draw_func(
                 self.raw(),

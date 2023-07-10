@@ -4,6 +4,7 @@ const c = zfltk.c;
 const widget = zfltk.widget;
 const enums = zfltk.enums;
 const std = @import("std");
+const app = zfltk.app;
 
 pub const ValuatorKind = enum {
     slider,
@@ -145,6 +146,20 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
             }
 
             unreachable;
+        }
+
+        pub inline fn deinit(self: *Self) void {
+            const deinitFn = switch (kind) {
+                .slider => c.Fl_Slider_delete,
+                .dial => c.Fl_Dial_delete,
+                .counter => c.Fl_Counter_delete,
+                .scrollbar => c.Fl_Scrollbar_delete,
+                .adjuster => c.Fl_Adjuster_delete,
+                .roller => c.Fl_Roller_delete,
+            };
+
+            deinitFn(self.raw());
+            app.allocator.destroy(self);
         }
     };
 }

@@ -48,6 +48,16 @@ pub fn Table(comptime kind: TableKind) type {
 
             unreachable;
         }
+
+        pub inline fn deinit(self: *Self) void {
+            const deinitFn = switch (kind) {
+                .table => c.Fl_Table_delete,
+                .table_row => c.Fl_Table_Row_delete,
+            };
+
+            deinitFn(self.raw());
+            app.allocator.destroy(self);
+        }
     };
 }
 

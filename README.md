@@ -23,12 +23,13 @@ If you're using the official package manager:
     .version = "0.0.1",
     .dependencies = .{
         .zfltk = .{
-            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.0.6.tar.gz",
-            .hash = "1220ca0756f0d49e4f5be5776776fb74d359c540251e5bb6cd73b3df9b7f90e30afe",
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.0.7.tar.gz",
         },
     }
 }
 ```
+(This is missing the hash, zig build will give you the correct hash, which you should add after the url)
+
 In your build.zig:
 ```zig
 const std = @import("std");

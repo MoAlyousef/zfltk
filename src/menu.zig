@@ -79,6 +79,17 @@ pub fn Menu(comptime kind: MenuKind) type {
 
             unreachable;
         }
+
+        pub inline fn deinit(self: *Self) void {
+            const deinitFn = switch (kind) {
+                .menu_bar => c.Fl_Menu_Bar_delete,
+                .choice => c.Fl_Choice_delete,
+                .sys_menu_bar => c.Fl_Sys_Menu_Bar_delete,
+            };
+
+            deinitFn(self.raw());
+            app.allocator.destroy(self);
+        }
     };
 }
 

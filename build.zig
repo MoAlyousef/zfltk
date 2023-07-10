@@ -9,13 +9,24 @@ install_prefix: []const u8,
 finalize_cfltk: *std.Build.Step,
 use_wayland: bool,
 
-pub const SdkOpts = struct {
-    use_wayland: bool = false,
-};
-
 pub fn init(b: *Build) !*Sdk {
     return init_with_opts(b, .{});
 }
+
+inline fn thisDir() []const u8 {
+    return comptime std.fs.path.dirname(@src().file) orelse @panic("error");
+}
+
+pub fn getZfltkModule(sdk: *Sdk, b: *Build) *Build.Module {
+    _ = sdk;
+    return b.createModule(.{
+        .source_file = .{ .path = thisDir() ++ "/src/zfltk.zig" },
+    });
+}
+
+pub const SdkOpts = struct {
+    use_wayland: bool = false,
+};
 
 pub fn init_with_opts(b: *Build, opts: SdkOpts) !*Sdk {
     const install_prefix = b.install_prefix;
@@ -261,18 +272,8 @@ const examples = &[_]Example{
     Example.init("threadawake", "examples/threadawake.zig", "Thread awake example"),
     Example.init("handle", "examples/handle.zig", "Handle example"),
     Example.init("flutterlike", "examples/flutterlike.zig", "Flutter-like example"),
+    Example.init("glwin", "examples/glwin.zig", "OpenGL window example"),
 };
-
-inline fn thisDir() []const u8 {
-    return comptime std.fs.path.dirname(@src().file) orelse @panic("error");
-}
-
-pub fn getZfltkModule(sdk: *Sdk, b: *Build) *Build.Module {
-    _ = sdk;
-    return b.createModule(.{
-        .source_file = .{ .path = thisDir() ++ "/src/zfltk.zig" },
-    });
-}
 
 pub fn build(b: *Build) !void {
     const target = b.standardTargetOptions(.{});

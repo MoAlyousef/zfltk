@@ -105,7 +105,7 @@ pub const GlutWindow = struct {
 
     /// Mark the OpeGL context as still valid
     pub fn setValid(self: *GlutWindow, v: bool) void {
-        return c.Fl_Glut_Window_set_valid(self.raw(), v);
+        return c.Fl_Glut_Window_set_valid(self.raw(), @intFromBool(v));
     }
 
     /// Returns whether the context is valid upon creation
@@ -115,7 +115,7 @@ pub const GlutWindow = struct {
 
     /// Mark the context as valid upon creation
     pub fn setContextValid(self: *GlutWindow, v: bool) void {
-        c.Fl_Glut_Window_set_context_valid(self.raw(), v);
+        c.Fl_Glut_Window_set_context_valid(self.raw(), @intFromBool(v));
     }
 
     /// Returns the GlContext
@@ -125,30 +125,30 @@ pub const GlutWindow = struct {
 
     /// Sets the GlContext
     pub fn setContext(self: *GlutWindow, ctx: ?*anyopaque, destroy_flag: bool) void {
-        c.Fl_Glut_Window_set_context(self.raw(), ctx, destroy_flag);
+        c.Fl_Glut_Window_set_context(self.raw(), ctx, @intFromBool(destroy_flag));
     }
 };
 
 pub fn methods(comptime Self: type) type {
     return struct {
         pub fn setSizeRange(self: *Self, min_w: u31, min_h: u31, max_w: u31, max_h: u31) void {
-            return c.Fl_Window_size_range(self.raw(), min_w, min_h, max_w, max_h);
+            return c.Fl_Window_size_range(@ptrCast(self.raw()), min_w, min_h, max_w, max_h);
         }
 
         pub fn iconize(self: *Self) void {
-            c.Fl_Window_iconize(self.raw());
+            c.Fl_Window_iconize(@ptrCast(self.raw()));
         }
 
         pub fn setCursor(self: *Self, cursor: enums.Cursor) void {
-            return c.Fl_Window_set_cursor(self.raw(), @intFromEnum(cursor));
+            return c.Fl_Window_set_cursor(@ptrCast(self.raw()), @intFromEnum(cursor));
         }
 
         pub fn makeModal(self: *Self, val: bool) void {
-            return c.Fl_Window_make_modal(self.raw(), @intFromBool(val));
+            return c.Fl_Window_make_modal(@ptrCast(self.raw()), @intFromBool(val));
         }
 
         pub fn setFullscreen(self: *Window, val: bool) void {
-            return c.Fl_Window_fullscreen(self.raw(), @intFromBool(val));
+            return c.Fl_Window_fullscreen(@ptrCast(self.raw()), @intFromBool(val));
         }
     };
 }

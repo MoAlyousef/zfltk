@@ -36,6 +36,11 @@ pub const Tree = struct {
 
         unreachable;
     }
+
+    pub inline fn deinit(self: *Self) void {
+        c.Fl_Tree_delete(self.RawPtr);
+        app.allocator.destroy(self);
+    }
 };
 
 pub fn methods(comptime Self: type) type {

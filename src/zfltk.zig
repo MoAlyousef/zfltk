@@ -32,7 +32,6 @@ pub const Table = table.Table;
 pub const Input = input.Input;
 pub const Output = output.Output;
 pub const TextDisplay = text.TextDisplay;
-pub const TextEditor = text.TextEditor;
 pub const TextBuffer = text.TextBuffer;
 pub const FileDialog = dialog.FileDialog;
 pub const Valuator = valuator.Valuator;
@@ -59,9 +58,7 @@ pub const c = @cImport({
 });
 
 pub fn widgetCast(comptime T: type, wid: anytype) T {
-    return T{
-        .inner = @ptrCast(wid.inner),
-    };
+    return @ptrCast(@alignCast(wid));
 }
 
 // TODO: improve helper function

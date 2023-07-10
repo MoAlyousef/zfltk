@@ -9,7 +9,7 @@ const c = zfltk.c;
 
 pub const Box = struct {
     const Self = @This();
-
+    pub const RawPtr = *c.Fl_Box;
     pub usingnamespace zfltk.widget.methods(Self, *c.Fl_Box);
 
     pub const Options = struct {
@@ -38,18 +38,8 @@ pub const Box = struct {
     }
 
     pub inline fn deinit(self: *Self) void {
-        c.Fl_Box_delete(self.inner);
+        c.Fl_Box_delete(self.raw());
         app.allocator.destroy(self);
-    }
-
-    pub inline fn fromDynWidgetPtr(w: *c.Fl_Widget) ?Self {
-        if (c.Fl_Box_from_dyn_ptr(@ptrCast(w))) |v| {
-            return .{
-                .inner = v,
-            };
-        } else {
-            return null;
-        }
     }
 };
 
