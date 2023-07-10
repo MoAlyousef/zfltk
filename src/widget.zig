@@ -44,10 +44,6 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     return struct {
         const type_name = @typeName(RawPtr);
         const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
-        const draw_func = @field(c, ptr_name ++ "_draw");
-        const handle_func = @field(c, ptr_name ++ "_handle");
-        const dyn_ptr_func = @field(c, ptr_name ++ "_from_dyn_ptr");
-        const set_label_func = @field(c, ptr_name ++ "_set_label");
 
         pub inline fn widget(self: *Self) *Widget {
             return @ptrCast(self);
@@ -66,7 +62,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn fromDynWidget(other: anytype) ?*Self {
-            if (dyn_ptr_func(@ptrCast(@alignCast(other)))) |o| {
+            if (@field(c, ptr_name ++ "_from_dyn_ptr")(@ptrCast(@alignCast(other)))) |o| {
                 return Self.fromRaw(o);
             }
 
@@ -147,7 +143,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setLabel(self: *Self, _label: [:0]const u8) void {
-            set_label_func(self.raw(), _label.ptr);
+            @field(c, ptr_name ++ "_set_label")(self.raw(), _label.ptr);
         }
 
         pub inline fn kind(self: *Self, comptime T: type) T {
@@ -273,7 +269,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setEventHandler(self: *Self, f: *const fn (*Self, enums.Event) bool) void {
-            handle_func(
+            @field(c, ptr_name ++ "_handle")(
                 self.raw(),
                 zfltk_event_handler,
                 @ptrFromInt(@intFromPtr(f)),
@@ -287,13 +283,13 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                 container[0] = @intFromPtr(f);
                 container[1] = @intFromPtr(d);
 
-                handle_func(
+                @field(c, ptr_name ++ "_handle")(
                     self.raw(),
                     zfltk_event_handler_ex,
                     @ptrCast(container.ptr),
                 );
             } else {
-                handle_func(
+                @field(c, ptr_name ++ "_handle")(
                     self.raw(),
                     zfltk_event_handler,
                     @ptrFromInt(@intFromPtr(f)),
@@ -302,7 +298,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setDrawHandler(self: *Self, f: *const fn (*Self) void) void {
-            draw_func(
+            @field(c, ptr_name ++ "_draw")(
                 self.raw(),
                 zfltk_draw_handler,
                 @ptrFromInt(@intFromPtr(f)),
@@ -317,13 +313,13 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                 container[0] = @intFromPtr(&f);
                 container[1] = @intFromPtr(d);
 
-                draw_func(
+                @field(c, ptr_name ++ "_draw")(
                     self.raw(),
                     zfltk_draw_handler_ex,
                     @ptrCast(container.ptr),
                 );
             } else {
-                draw_func(
+                @field(c, ptr_name ++ "_draw")(
                     self.raw(),
                     zfltk_draw_handler,
                     @ptrFromInt(@intFromPtr(f)),
