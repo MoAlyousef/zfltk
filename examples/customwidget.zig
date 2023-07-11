@@ -208,7 +208,7 @@ const Switch = struct {
                             // One frame at 60fps (what FLTK uses)
                             std.time.sleep(16_666_666);
                             self.box1.resize(x1, y, w, h);
-                            self.box1.parent().redraw();
+                            self.box1.parent().?.redraw();
 
                             _ = app.check();
 
@@ -221,13 +221,13 @@ const Switch = struct {
 
                             std.time.sleep(16_666_666);
                             self.box1.resize(x1, y, w, h);
-                            self.box1.parent().redraw();
+                            self.box1.parent().?.redraw();
                             _ = app.check();
                         }
                     }
                 } else {
                     self.box1.resize(new_x, y, w, h);
-                    self.box1.parent().redraw();
+                    self.box1.parent().?.redraw();
                     _ = app.check();
                 }
 
@@ -271,7 +271,7 @@ const Switch = struct {
 
         self.on = val;
         self.box1.resize(new_x, y, w, h);
-        self.box1.parent().redraw();
+        self.box1.parent().?.redraw();
 
         _ = app.check();
     }
