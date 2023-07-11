@@ -102,7 +102,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub fn insert(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
-            _ = @field(c, ptr_name ++ "_insert")(self.raw(), idx, name, shortcut, &widget.zfltk_cb_handler, @ptrFromInt(@intFromPtr(f)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_insert")(self.raw(), @intCast(idx), name, shortcut, &widget.zfltk_cb_handler, @ptrFromInt(@intFromPtr(f)), @intFromEnum(flag));
         }
 
         pub fn addEmit(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
@@ -110,11 +110,11 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub fn insertEmit(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
-            _ = @field(c, ptr_name ++ "_insert")(self.raw(), idx, name, shortcut, widget.shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_insert")(self.raw(), @intCast(idx), name, shortcut, widget.shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
         }
 
-        pub fn remove(self: *Self, idx: u32) void {
-            _ = @field(c, ptr_name ++ "_remove")(self.raw(), idx);
+        pub fn remove(self: *Self, idx: i32) void {
+            _ = @field(c, ptr_name ++ "_remove")(self.raw(), @intCast(idx));
         }
 
         pub fn findItem(self: *Self, path: [*c]const u8) MenuItem {
@@ -134,7 +134,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub fn setTextSize(self: *Self, sz: i32) void {
-            @field(c, ptr_name ++ "_set_text_size")(self.raw(), sz);
+            @field(c, ptr_name ++ "_set_text_size")(self.raw(), @intCast(sz));
         }
     };
 }
@@ -170,7 +170,7 @@ pub const MenuItem = struct {
     }
 
     pub fn setLabelSize(self: *MenuItem, sz: i32) void {
-        c.Fl_Menu_Item_set_label_size(self.inner, sz);
+        c.Fl_Menu_Item_set_label_size(self.inner, @intCast(sz));
     }
 
     pub fn show(self: *MenuItem) void {
