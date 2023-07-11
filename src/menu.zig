@@ -7,11 +7,6 @@ const Event = enums.Event;
 const std = @import("std");
 const c = zfltk.c;
 
-fn shim(w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
-    _ = w;
-    c.Fl_awake_msg(data);
-}
-
 pub const MenuFlag = enum(i32) {
     /// normal item
     normal = 0,
@@ -54,7 +49,7 @@ pub fn Menu(comptime kind: MenuKind) type {
             .sys_menu_bar => *c.Fl_Sys_Menu_Bar,
         };
         const type_name = @typeName(RawPtr);
-        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
+        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
 
         pub const Options = struct {
             x: i32 = 0,
@@ -89,14 +84,14 @@ pub fn Menu(comptime kind: MenuKind) type {
 
 pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     const type_name = @typeName(RawPtr);
-    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
+    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
     return struct {
         pub inline fn menu(self: *Self) *Menu(.menu_bar) {
             return @ptrCast(self);
         }
 
         pub fn add(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
-            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, @ptrCast(f), null, @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, &widget.zfltk_cb_handler, @ptrFromInt(@intFromPtr(f)), @intFromEnum(flag));
         }
 
         pub fn addEx(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self, data: ?*anyopaque) void, data: ?*anyopaque) void {
@@ -106,16 +101,16 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, widget.zfltk_cb_handler_ex, @ptrCast(container.ptr), @intFromEnum(flag));
         }
 
-        pub fn insert(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            _ = @field(c, ptr_name ++ "_insert")(self.raw(), idx, name, shortcut, cb, data, @intFromEnum(flag));
+        pub fn insert(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
+            _ = @field(c, ptr_name ++ "_insert")(self.raw(), idx, name, shortcut, &widget.zfltk_cb_handler, @ptrFromInt(@intFromPtr(f)), @intFromEnum(flag));
         }
 
         pub fn addEmit(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
-            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, shim, @ptrFromInt(@intFromEnum(msg)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, widget.shim, @ptrFromInt(@intFromEnum(msg)), @intFromEnum(flag));
         }
 
         pub fn insertEmit(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
-            _ = @field(c, ptr_name ++ "_insert")(self.raw(), idx, name, shortcut, shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_insert")(self.raw(), idx, name, shortcut, widget.shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
         }
 
         pub fn remove(self: *Self, idx: u32) void {

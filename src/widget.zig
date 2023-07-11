@@ -103,7 +103,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn emit(self: *Self, comptime T: type, msg: T) void {
-            self.widget().setCallbackEx(shim, @ptrFromInt(@intFromEnum(msg)));
+            c.Fl_Widget_set_callback(self.widget().raw(), shim, @ptrFromInt(@intFromEnum(msg)));
         }
 
         pub inline fn show(self: *Self) void {
@@ -228,8 +228,13 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         // TODO: fix, this causes pointer issues
-        pub inline fn parent(self: *Self) *Group(.normal) {
-            return Group(.normal).fromRaw(c.Fl_Widget_parent(self.widget().raw()).?);
+        pub inline fn parent(self: *Self) ?*Group(.normal) {
+            const ptr = c.Fl_Widget_parent(self.widget().raw());
+            if (ptr) |p| {
+                return Group(.normal).fromRaw(p);
+            } else {
+                return null;
+            }
         }
 
         pub inline fn selectionColor(self: *Self) enums.Color {
@@ -329,7 +334,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     };
 }
 
-fn shim(_: *Widget, data: ?*anyopaque) void {
+pub fn shim(_: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     c.Fl_awake_msg(data);
 }
 
