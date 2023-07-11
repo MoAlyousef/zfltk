@@ -42,7 +42,7 @@ pub fn Group(comptime kind: GroupKind) type {
 
         // Expose methods from `inherited` structs
         pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self);
+        pub usingnamespace methods(Self, RawPtr);
 
         const GroupRawPtr = *c.Fl_Group;
 
@@ -53,6 +53,8 @@ pub fn Group(comptime kind: GroupKind) type {
             .scroll => *c.Fl_Scroll,
             .flex => *c.Fl_Flex,
         };
+        const type_name = @typeName(RawPtr);
+        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
 
         pub const Options = struct {
             x: u31 = 0,
@@ -72,13 +74,7 @@ pub fn Group(comptime kind: GroupKind) type {
         };
 
         pub inline fn init(opts: Options) !*Self {
-            const initFn = switch (kind) {
-                .normal => c.Fl_Group_new,
-                .pack => c.Fl_Pack_new,
-                .tabs => c.Fl_Tabs_new,
-                .scroll => c.Fl_Scroll_new,
-                .flex => c.Fl_Flex_new,
-            };
+            const initFn = @field(c, ptr_name ++ "_new");
 
             const label = if (opts.label != null) opts.label.?.ptr else null;
 
@@ -104,7 +100,9 @@ pub fn Group(comptime kind: GroupKind) type {
     };
 }
 
-pub fn methods(comptime Self: type) type {
+pub fn methods(comptime Self: type, comptime RawPtr: type) type {
+    const type_name = @typeName(RawPtr);
+    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
     return struct {
         pub inline fn group(self: *Self) *Group(.normal) {
             return @ptrCast(self);
@@ -119,25 +117,15 @@ pub fn methods(comptime Self: type) type {
         }
 
         pub fn begin(self: *Self) void {
-            c.Fl_Group_begin(self.group().raw());
+            @field(c, ptr_name ++ "_begin")(self.raw());
         }
 
         pub fn end(self: *Self) void {
-            const endFn = switch (Self) {
-                Group(.flex) => c.Fl_Flex_end,
-                else => c.Fl_Group_end,
-            };
-
-            const ptr = switch (Self) {
-                Group(.flex) => self.raw(),
-                else => self.group().raw(),
-            };
-
-            endFn(ptr);
+            @field(c, ptr_name ++ "_end")(self.raw());
         }
 
         pub fn find(self: *Self, wid: *Widget) u32 {
-            return @intCast(c.Fl_Group_find(self.group().raw(), wid.raw()));
+            return @intCast(@field(c, ptr_name ++ "_find")(self.raw(), wid.raw()));
         }
 
         pub fn add(self: *Self, widgets: anytype) void {
@@ -155,7 +143,7 @@ pub fn methods(comptime Self: type) type {
                     @compileError("expected FLTK widget, found " ++ @typeName(w.type));
                 }
 
-                c.Fl_Group_add(self.group().raw(), wid.widget().raw());
+                @field(c, ptr_name ++ "_add")(self.raw(), wid.widget().raw());
             }
         }
 
@@ -165,7 +153,7 @@ pub fn methods(comptime Self: type) type {
                 @compileError("expected FLTK widget, found " ++ @typeName(T));
             }
 
-            return c.Fl_Group_insert(self.group().raw(), wid.raw(), index);
+            return @field(c, ptr_name ++ "_insert")(self.raw(), wid.raw(), index);
         }
 
         pub fn remove(self: *Self, wid: anytype) void {
@@ -174,7 +162,7 @@ pub fn methods(comptime Self: type) type {
                 @compileError("expected FLTK widget, found " ++ @typeName(T));
             }
 
-            return c.Fl_Group_remove(self.group().raw(), wid.raw());
+            return @field(c, ptr_name ++ "_remove")(self.raw(), wid.raw());
         }
 
         pub fn resizable(self: *Self, wid: anytype) void {
@@ -183,19 +171,19 @@ pub fn methods(comptime Self: type) type {
                 @compileError("expected FLTK widget, found " ++ @typeName(T));
             }
 
-            return c.Fl_Group_resizable(self.group().raw(), wid.widget().raw());
+            return @field(c, ptr_name ++ "_resizable")(self.raw(), wid.widget().raw());
         }
 
         pub fn clear(self: *Self) void {
-            c.Fl_Group_clear(self.group().raw());
+            @field(c, ptr_name ++ "_clear")(self.raw());
         }
 
         pub fn children(self: *Self) u31 {
-            return @intCast(c.Fl_Group_children(self.group().raw()));
+            return @intCast(@field(c, ptr_name ++ "_children")(self.raw()));
         }
 
         pub fn child(self: *Self, idx: u31) ?*Widget {
-            if (c.Fl_Group_child(self.group().raw(), idx)) |ptr| {
+            if (@field(c, ptr_name ++ "_child")(self.raw(), idx)) |ptr| {
                 return Widget.fromRaw(ptr);
             }
 

@@ -107,15 +107,15 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn show(self: *Self) void {
-            c.Fl_Widget_show(self.widget().raw());
+            @field(c, ptr_name ++ "_show")(self.raw());
         }
 
         pub inline fn hide(self: *Self) void {
-            c.Fl_Widget_hide(self.widget().raw());
+            @field(c, ptr_name ++ "_hide")(self.raw());
         }
 
         pub inline fn resize(self: *Self, _x: i32, _y: i32, _w: u31, _h: u31) void {
-            c.Fl_Widget_resize(self.widget().raw(), _x, _y, _w, _h);
+            @field(c, ptr_name ++ "_resize")(self.raw(), _x, _y, _w, _h);
         }
 
         pub inline fn redraw(self: *Self) void {

@@ -1,3 +1,4 @@
+const std = @import("std");
 const zfltk = @import("zfltk.zig");
 const app = zfltk.app;
 const c = zfltk.c;
@@ -8,10 +9,12 @@ const enums = zfltk.enums;
 pub const Window = struct {
     // Expose methods from `inherited` structs
     pub usingnamespace zfltk.widget.methods(Window, RawPtr);
-    pub usingnamespace zfltk.group.methods(Window);
+    pub usingnamespace zfltk.group.methods(Window, RawPtr);
     pub usingnamespace methods(Window);
 
     pub const RawPtr = *c.Fl_Double_Window;
+    const type_name = @typeName(RawPtr);
+    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
 
     pub inline fn init(opts: Widget.Options) !*Window {
         const label = if (opts.label != null) opts.label.?.ptr else null;
@@ -28,7 +31,7 @@ pub const Window = struct {
     }
 
     pub fn freePosition(self: *Window) void {
-        c.Fl_Double_Window_free_position(self.raw());
+        @field(c, ptr_name ++ "_free_position")(self.raw());
     }
 
     pub fn flush(self: *Window) void {
@@ -39,7 +42,7 @@ pub const Window = struct {
 pub const GlutWindow = struct {
     // Expose methods from `inherited` structs
     pub usingnamespace zfltk.widget.methods(GlutWindow, RawPtr);
-    pub usingnamespace zfltk.group.methods(GlutWindow);
+    pub usingnamespace zfltk.group.methods(GlutWindow, RawPtr);
     pub usingnamespace methods(GlutWindow);
     pub const RawPtr = *c.Fl_Glut_Window;
 

@@ -66,8 +66,7 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
         const Self = @This();
 
         pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self);
-
+        pub usingnamespace methods(Self, RawPtr);
         pub const RawPtr = switch (kind) {
             .slider => *c.Fl_Slider,
             .dial => *c.Fl_Dial,
@@ -76,6 +75,8 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
             .adjuster => *c.Fl_Adjuster,
             .roller => *c.Fl_Roller,
         };
+        const type_name = @typeName(RawPtr);
+        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
 
         pub const Options = struct {
             x: i32 = 0,
@@ -123,15 +124,7 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
         };
 
         pub inline fn init(opts: Options) !*Self {
-            const initFn = switch (kind) {
-                .slider => c.Fl_Slider_new,
-                .dial => c.Fl_Dial_new,
-                .counter => c.Fl_Counter_new,
-                .scrollbar => c.Fl_Scrollbar_new,
-                .adjuster => c.Fl_Adjuster_new,
-                .roller => c.Fl_Roller_new,
-            };
-
+            const initFn = @field(c, ptr_name ++ "_new");
             const label = if (opts.label != null) opts.label.?.ptr else null;
 
             if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
@@ -149,14 +142,7 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
         }
 
         pub inline fn deinit(self: *Self) void {
-            const deinitFn = switch (kind) {
-                .slider => c.Fl_Slider_delete,
-                .dial => c.Fl_Dial_delete,
-                .counter => c.Fl_Counter_delete,
-                .scrollbar => c.Fl_Scrollbar_delete,
-                .adjuster => c.Fl_Adjuster_delete,
-                .roller => c.Fl_Roller_delete,
-            };
+            const deinitFn = @field(c, ptr_name ++ "_delete");
 
             deinitFn(self.raw());
             app.allocator.destroy(self);
@@ -164,70 +150,72 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
     };
 }
 
-pub fn methods(comptime Self: type) type {
+pub fn methods(comptime Self: type, comptime RawPtr: type) type {
+    const type_name = @typeName(RawPtr);
+    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
     return struct {
         pub inline fn valuator(self: *Self) *Valuator(.slider) {
             return @ptrCast(self);
         }
 
         pub inline fn setBounds(self: *Self, a: f64, b: f64) void {
-            return c.Fl_Slider_set_bounds(self.valuator().raw(), a, b);
+            return @field(c, ptr_name ++ "_set_bounds")(self.raw(), a, b);
         }
 
         pub inline fn minimum(self: *Self) f64 {
-            return c.Fl_Slider_minimum(self.valuator().raw());
+            return @field(c, ptr_name ++ "_minimum")(self.raw());
         }
 
         pub inline fn setMinimum(self: *Self, a: f64) void {
-            c.Fl_Slider_set_minimum(self.valuator().raw(), a);
+            @field(c, ptr_name ++ "_set_minimum")(self.raw(), a);
         }
 
         pub inline fn maximum(self: *Self) f64 {
-            return c.Fl_Slider_maximum(self.valuator().raw());
+            return @field(c, ptr_name ++ "_maximum")(self.raw());
         }
 
         pub inline fn setMaximum(self: *Self, a: f64) void {
-            c.Fl_Slider_set_maximum(self.valuator().raw(), a);
+            @field(c, ptr_name ++ "_set_maximum")(self.raw(), a);
         }
 
         pub inline fn setRange(self: *Self, a: f64, b: f64) void {
-            return c.Fl_Slider_set_range(self.valuator().raw(), a, b);
+            return @field(c, ptr_name ++ "_set_range")(self.raw(), a, b);
         }
 
         pub inline fn setStep(self: *Self, a: f64, b: i32) void {
-            return c.Fl_Slider_set_step(self.valuator().raw(), a, b);
+            return @field(c, ptr_name ++ "_set_step")(self.raw(), a, b);
         }
 
         pub inline fn step(self: *Self) f64 {
-            return c.Fl_Slider_step(self.valuator().raw());
+            return @field(c, ptr_name ++ "_step")(self.raw());
         }
 
         pub inline fn setPrecision(self: *Self, digits: i32) void {
-            return c.Fl_Slider_set_precision(self.valuator().raw(), digits);
+            return @field(c, ptr_name ++ "_set_precision")(self.raw(), digits);
         }
 
         pub inline fn value(self: *Self) f64 {
-            return c.Fl_Slider_value(self.valuator().raw());
+            return @field(c, ptr_name ++ "_value")(self.raw());
         }
 
         pub inline fn setValue(self: *Self, arg2: f64) void {
-            return c.Fl_Slider_set_value(self.valuator().raw(), arg2);
+            return @field(c, ptr_name ++ "_set_value")(self.raw(), arg2);
         }
 
         pub inline fn format(self: *Self, arg2: [*c]const u8) void {
-            return c.Fl_Slider_format(self.valuator().raw(), arg2);
+            return @field(c, ptr_name ++ "_format")(self.raw(), arg2);
         }
 
         pub inline fn round(self: *Self, arg2: f64) f64 {
-            return c.Fl_Slider_round(self.valuator().raw(), arg2);
+            return @field(c, ptr_name ++ "_round")(self.raw(), arg2);
         }
 
         pub inline fn clamp(self: *Self, arg2: f64) f64 {
-            return c.Fl_Slider_clamp(self.valuator().raw(), arg2);
+            return @field(c, ptr_name ++ "_clamp")(self.raw(), arg2);
         }
 
         pub inline fn increment(self: *Self, arg2: f64, arg3: i32) f64 {
-            return c.Fl_Slider_increment(self.valuator().raw(), arg2, arg3);
+            return @field(c, ptr_name ++ "_increment")(self.raw(), arg2, arg3);
         }
     };
 }

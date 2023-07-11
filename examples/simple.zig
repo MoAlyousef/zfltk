@@ -23,6 +23,7 @@ pub fn main() !void {
 
         .label = "Hello",
     });
+    win.freePosition();
 
     var but = try Button(.normal).init(.{
         .x = 160,

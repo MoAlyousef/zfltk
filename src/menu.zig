@@ -46,13 +46,15 @@ pub fn Menu(comptime kind: MenuKind) type {
         const Self = @This();
 
         pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self);
+        pub usingnamespace methods(Self, RawPtr);
 
         pub const RawPtr = switch (kind) {
             .menu_bar => *c.Fl_Menu_Bar,
             .choice => *c.Fl_Choice,
             .sys_menu_bar => *c.Fl_Sys_Menu_Bar,
         };
+        const type_name = @typeName(RawPtr);
+        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
 
         pub const Options = struct {
             x: i32 = 0,
@@ -64,11 +66,7 @@ pub fn Menu(comptime kind: MenuKind) type {
         };
 
         pub inline fn init(opts: Options) !*Self {
-            const initFn = switch (kind) {
-                .menu_bar => c.Fl_Menu_Bar_new,
-                .choice => c.Fl_Choice_new,
-                .sys_menu_bar => c.Fl_Sys_Menu_Bar_new,
-            };
+            const initFn = @field(c, ptr_name ++ "_new");
 
             const label = if (opts.label != null) opts.label.?.ptr else null;
 
@@ -81,11 +79,7 @@ pub fn Menu(comptime kind: MenuKind) type {
         }
 
         pub inline fn deinit(self: *Self) void {
-            const deinitFn = switch (kind) {
-                .menu_bar => c.Fl_Menu_Bar_delete,
-                .choice => c.Fl_Choice_delete,
-                .sys_menu_bar => c.Fl_Sys_Menu_Bar_delete,
-            };
+            const deinitFn = @field(c, ptr_name ++ "_delete");
 
             deinitFn(self.raw());
             app.allocator.destroy(self);
@@ -93,57 +87,59 @@ pub fn Menu(comptime kind: MenuKind) type {
     };
 }
 
-pub fn methods(comptime Self: type) type {
+pub fn methods(comptime Self: type, comptime RawPtr: type) type {
+    const type_name = @typeName(RawPtr);
+    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
     return struct {
         pub inline fn menu(self: *Self) *Menu(.menu_bar) {
             return @ptrCast(self);
         }
 
         pub fn add(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
-            _ = c.Fl_Menu_Bar_add(self.menu().raw(), name, shortcut, @ptrCast(f), null, @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, @ptrCast(f), null, @intFromEnum(flag));
         }
 
         pub fn addEx(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self, data: ?*anyopaque) void, data: ?*anyopaque) void {
             var container = app.allocator.alloc(usize, 2) catch unreachable;
             container[0] = @intFromPtr(f);
             container[1] = @intFromPtr(data);
-            _ = c.Fl_Menu_Bar_add(self.menu().raw(), name, shortcut, zfltk_menu_cb_handler_ex, @ptrCast(container.ptr), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, widget.zfltk_cb_handler_ex, @ptrCast(container.ptr), @intFromEnum(flag));
         }
 
         pub fn insert(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
-            _ = c.Fl_Menu_Bar_insert(self.menu().raw(), idx, name, shortcut, cb, data, @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_insert")(self.raw(), idx, name, shortcut, cb, data, @intFromEnum(flag));
         }
 
         pub fn addEmit(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
-            _ = c.Fl_Menu_Bar_add(self.menu().raw(), name, shortcut, shim, @ptrFromInt(@intFromEnum(msg)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, shim, @ptrFromInt(@intFromEnum(msg)), @intFromEnum(flag));
         }
 
         pub fn insertEmit(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
-            _ = c.Fl_Menu_Bar_insert(self.menu().raw(), idx, name, shortcut, shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_insert")(self.raw(), idx, name, shortcut, shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
         }
 
         pub fn remove(self: *Self, idx: u32) void {
-            _ = c.Fl_Menu_Bar_remove(self.menu().raw(), idx);
+            _ = @field(c, ptr_name ++ "_remove")(self.raw(), idx);
         }
 
         pub fn findItem(self: *Self, path: [*c]const u8) MenuItem {
-            return MenuItem{ .inner = c.Fl_Menu_Bar_get_item(self.menu().raw(), path) };
+            return MenuItem{ .inner = @field(c, ptr_name ++ "_get_item")(self.raw(), path) };
         }
 
         pub fn clear(self: *Self) void {
-            c.Fl_Menu_Bar_clear(self.menu().raw());
+            @field(c, ptr_name ++ "_clear")(self.raw());
         }
 
         pub fn setTextFont(self: *Self, font: enums.Font) void {
-            c.Fl_Menu_Bar_set_text_font(self.menu().raw(), @intFromEnum(font));
+            @field(c, ptr_name ++ "_set_text_font")(self.raw(), @intFromEnum(font));
         }
 
         pub fn setTextColor(self: *Self, col: enums.Color) void {
-            c.Fl_Menu_Bar_set_text_color(self.menu().raw(), @intCast(col.toRgbi()));
+            @field(c, ptr_name ++ "_set_text_color")(self.raw(), @intCast(col.toRgbi()));
         }
 
         pub fn setTextSize(self: *Self, sz: i32) void {
-            c.Fl_Menu_Bar_set_text_size(self.menu().raw(), sz);
+            @field(c, ptr_name ++ "_set_text_size")(self.raw(), sz);
         }
     };
 }
@@ -190,17 +186,6 @@ pub const MenuItem = struct {
         c.Fl_Menu_Item_hide(self.inner);
     }
 };
-
-export fn zfltk_menu_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
-    const container: *[2]usize = @ptrCast(@alignCast(data));
-    const cb: *const fn (*Widget, ?*anyopaque) void = @ptrFromInt(container[0]);
-
-    if (wid) |ptr| {
-        cb(Widget.fromRaw(ptr), @ptrFromInt(container[1]));
-    } else {
-        unreachable;
-    }
-}
 
 test "all" {
     @import("std").testing.refAllDeclsRecursive(@This());
