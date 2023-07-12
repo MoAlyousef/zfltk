@@ -3,11 +3,11 @@ const Build = std.Build;
 const CompileStep = std.build.CompileStep;
 
 pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_prefix: []const u8, use_wayland: bool) !void {
-    const zig_exe = b.zig_exe;
-    var zig_cc_buf: [250]u8 = undefined;
-    var zig_cpp_buf: [250]u8 = undefined;
-    const zig_cc = try std.fmt.bufPrint(zig_cc_buf[0..], "-DCMAKE_C_COMPILER={s};cc", .{zig_exe});
-    const zig_cpp = try std.fmt.bufPrint(zig_cpp_buf[0..], "-DCMAKE_CXX_COMPILER={s};c++", .{zig_exe});
+    // const zig_exe = b.zig_exe;
+    // var zig_cc_buf: [250]u8 = undefined;
+    // var zig_cpp_buf: [250]u8 = undefined;
+    // const zig_cc = try std.fmt.bufPrint(zig_cc_buf[0..], "-DCMAKE_C_COMPILER={s};cc", .{zig_exe});
+    // const zig_cpp = try std.fmt.bufPrint(zig_cpp_buf[0..], "-DCMAKE_CXX_COMPILER={s};c++", .{zig_exe});
     const target = b.host.target;
     var buf: [1024]u8 = undefined;
     var sdk_lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib", .{install_prefix});
@@ -49,8 +49,8 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
                 "-S",
                 cmake_src_path,
                 "-DCMAKE_BUILD_TYPE=Release",
-                zig_cc,
-                zig_cpp,
+                // zig_cc,
+                // zig_cpp,
                 cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
@@ -70,8 +70,8 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
                     "-S",
                     cmake_src_path,
                     "-DCMAKE_BUILD_TYPE=Release",
-                    zig_cc,
-                    zig_cpp,
+                    // zig_cc,
+                    // zig_cpp,
                     cmake_inst_path,
                     "-DFLTK_BUILD_TEST=OFF",
                     "-DOPTION_USE_SYSTEM_LIBPNG=OFF",
@@ -92,8 +92,8 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
                     "-S",
                     cmake_src_path,
                     "-DCMAKE_BUILD_TYPE=Release",
-                    zig_cc,
-                    zig_cpp,
+                    // zig_cc,
+                    // zig_cpp,
                     cmake_inst_path,
                     "-DFLTK_BUILD_TEST=OFF",
                     "-DOPTION_USE_SYSTEM_LIBPNG=OFF",

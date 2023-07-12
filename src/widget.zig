@@ -43,7 +43,7 @@ pub const Widget = struct {
 pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     return struct {
         const type_name = @typeName(RawPtr);
-        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
+        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
 
         pub inline fn widget(self: *Self) *Widget {
             return @ptrCast(self);
@@ -330,6 +330,10 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                     @ptrFromInt(@intFromPtr(f)),
                 );
             }
+        }
+
+        pub inline fn call(self: *Self, comptime method: []const u8, args: anytype) @TypeOf(@call(.auto, @field(c, ptr_name ++ "_" ++ method), .{self.raw()} ++ args)) {
+            return @call(.auto, @field(c, ptr_name ++ "_" ++ method), .{self.raw()} ++ args);
         }
     };
 }

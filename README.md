@@ -303,7 +303,18 @@ pub fn main() void {
     _ = c.Fl_run();
 }
 ```
-You can also mix and match for any missing functionalities in the Zig wrapper (see examples/mixed.zig)
+You can also mix and match for any missing functionalities in the Zig wrapper (see examples/mixed.zig).
+
+Widgets also provide a `call` method which allows to call any method that wasn't wrapped yet in the bindings:
+```zig
+    var flex = try Group(.flex).init(.{
+        .w = 400,
+        .h = 300,
+        .orientation = .vertical,
+    });
+
+    flex.call("set_margins", .{10, 20, 10, 20});
+```
 
 ![alt_test](screenshots/image.jpg)
 ![alt_test](screenshots/editor.jpg)

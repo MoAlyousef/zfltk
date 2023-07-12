@@ -14,7 +14,7 @@ pub const Window = struct {
 
     pub const RawPtr = *c.Fl_Double_Window;
     const type_name = @typeName(RawPtr);
-    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
+    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
 
     pub inline fn init(opts: Widget.Options) !*Window {
         const label = if (opts.label != null) opts.label.?.ptr else null;

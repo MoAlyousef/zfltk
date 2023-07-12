@@ -54,7 +54,7 @@ pub fn Group(comptime kind: GroupKind) type {
             .flex => *c.Fl_Flex,
         };
         const type_name = @typeName(RawPtr);
-        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
+        const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
 
         pub const Options = struct {
             x: u31 = 0,
@@ -102,7 +102,7 @@ pub fn Group(comptime kind: GroupKind) type {
 
 pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     const type_name = @typeName(RawPtr);
-    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7..type_name.len];
+    const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
     return struct {
         pub inline fn group(self: *Self) *Group(.normal) {
             return @ptrCast(self);
@@ -232,7 +232,17 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                 else => @compileError("method `setMargin` only usable with flex groups"),
             };
 
-            marginFn(self.raw(), sz);
+            marginFn(self.raw(), @intCast(sz));
+        }
+
+        pub fn setMargins(self: *Self, left: u31, top: u31, right: u31, bottom: u31) void {
+            const marginsFn = switch (Self) {
+                Group(.flex) => c.Fl_Flex_set_margins,
+
+                else => @compileError("method `setMargin` only usable with flex groups"),
+            };
+
+            marginsFn(self.raw(), @intCast(left), @intCast(top), @intCast(right), @intCast(bottom));
         }
 
         pub inline fn setScrollBar(self: *Self, scrollbar: ScrollType) void {
@@ -240,7 +250,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                 @compileError("method `setScrollBar` only usable with scroll groups");
             }
 
-            self.widget().setKind(ScrollType, scrollbar);
+            self.setKind(ScrollType, scrollbar);
         }
     };
 }
