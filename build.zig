@@ -252,6 +252,7 @@ fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_prefi
         };
         const cpu_count = try std.Thread.getCpuCount();
         const jobs = try std.fmt.allocPrint(b.allocator, "{d}", .{cpu_count});
+        defer b.allocator.free(jobs);
         const zfltk_build = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--build",
