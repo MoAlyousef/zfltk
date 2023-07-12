@@ -16,14 +16,14 @@ jobs:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v2
       - name: Build
-        run: zig build -Dzfltk-use-zigcc
+        run: zig build -Dzfltk-use-zigcc=true
   build_macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v2
       - name: Build
-        run: zig build -Dzfltk-use-zigcc
+        run: zig build -Dzfltk-use-zigcc=true
   # build_windows-mingw:
   #   runs-on: windows-latest
   #   steps:
