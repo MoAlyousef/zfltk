@@ -335,6 +335,164 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         pub inline fn call(self: *Self, comptime method: []const u8, args: anytype) @TypeOf(@call(.auto, @field(c, ptr_name ++ "_" ++ method), .{self.raw()} ++ args)) {
             return @call(.auto, @field(c, ptr_name ++ "_" ++ method), .{self.raw()} ++ args);
         }
+
+        pub fn asWindow(self: *Self) ?*zfltk.window.Window {
+            const ptr = @field(c, ptr_name ++ "_as_window")(self.raw());
+            if (ptr) |p| {
+                return zfltk.window.Window.fromRaw(p);
+            } else {
+                return null;
+            }
+        }
+
+        pub fn centerOf(self: *Self, wid: anytype) void {
+            if (!comptime zfltk.isWidget(@TypeOf(wid))) {
+                return;
+            }
+            std.debug.assert(wid.w() != 0 and wid.h() != 0);
+            const sw: f64 = @floatFromInt(self.w());
+            const sh: f64 = @floatFromInt(self.h());
+            const ww: f64 = @floatFromInt(wid.w());
+            const wh: f64 = @floatFromInt(wid.h());
+            const sx = (ww - sw) / 2.0;
+            const sy = (wh - sh) / 2.0;
+            var wx: i32 = 0;
+            var wy: i32 = 0;
+            if (wid.asWindow()) |win| {
+                _ = win;
+                wx = 0;
+                wy = 0;
+            } else {
+                wx = wid.x();
+                wy = wid.y();
+            }
+            self.resize(@as(i32, @intFromFloat(sx)) + wx, @as(i32, @intFromFloat(sy)) + wy, @as(u31, @intFromFloat(sw)), @as(u31, @intFromFloat(sh)));
+            self.redraw();
+        }
+
+        pub fn centerOfParent(self: *Self) void {
+            var par = self.parent();
+            if (par) |p| {
+                self.centerOf(p);
+            }
+        }
+
+        pub fn centerY(self: *Self, wid: anytype) void {
+            if (!comptime zfltk.isWidget(@TypeOf(wid))) {
+                return;
+            }
+            std.debug.assert(wid.w() != 0 and wid.h() != 0);
+            const sw: f64 = @floatFromInt(self.w());
+            const sh: f64 = @floatFromInt(self.h());
+            const wh: f64 = @floatFromInt(wid.h());
+            const sx = self.x();
+            const sy = (wh - sh) / 2.0;
+            var wx: i32 = 0;
+            var wy: i32 = 0;
+            if (wid.asWindow()) |win| {
+                _ = win;
+                wx = 0;
+                wy = 0;
+            } else {
+                wx = wid.x();
+                wy = wid.y();
+            }
+            self.resize(@as(i32, @intFromFloat(sx)) + wx, sy, @as(u31, @intFromFloat(sw)), @as(u31, @intFromFloat(sh)));
+            self.redraw();
+        }
+
+        pub fn centerX(self: *Self, wid: anytype) void {
+            if (!comptime zfltk.isWidget(@TypeOf(wid))) {
+                return;
+            }
+            std.debug.assert(wid.w() != 0 and wid.h() != 0);
+            const sw: f64 = @floatFromInt(self.w());
+            const sh: f64 = @floatFromInt(self.h());
+            const ww: f64 = @floatFromInt(wid.w());
+            const sx = (ww - sw) / 2.0;
+            const sy = self.y();
+            var wx: i32 = 0;
+            var wy: i32 = 0;
+            if (wid.asWindow()) |win| {
+                _ = win;
+                wx = 0;
+                wy = 0;
+            } else {
+                wx = wid.x();
+                wy = wid.y();
+            }
+            self.resize(sx, @as(i32, @intFromFloat(sy)) + wy, @as(u31, @intFromFloat(sw)), @as(u31, @intFromFloat(sh)));
+            self.redraw();
+        }
+
+        pub fn sizeOf(self: *Self, wid: anytype) void {
+            if (!comptime zfltk.isWidget(@TypeOf(wid))) {
+                return;
+            }
+            std.debug.assert(wid.w() != 0 and wid.h() != 0);
+            self.resize(self.x(), self.y(), wid.w(), wid.h());
+        }
+
+        pub fn sizeOfParent(self: *Self) void {
+            var par = self.parent();
+            if (par) |p| self.sizeOf(p);
+        }
+
+        pub fn belowOf(
+            self: *Self,
+            wid: anytype,
+            padding: i32,
+        ) void {
+            if (!comptime zfltk.isWidget(@TypeOf(wid))) {
+                return;
+            }
+            std.debug.assert(
+                self.w() != 0 and self.h() != 0,
+            );
+            self.resize(wid.x(), wid.y() + wid.h() + padding, self.w(), self.h());
+        }
+
+        pub fn aboveOf(
+            self: *Self,
+            wid: anytype,
+            padding: i32,
+        ) void {
+            if (!comptime zfltk.isWidget(@TypeOf(wid))) {
+                return;
+            }
+            std.debug.assert(
+                self.w() != 0 and self.h() != 0,
+            );
+            self.resize(wid.x(), wid.y() - wid.h() - padding, self.w(), self.h());
+        }
+
+        pub fn rightOf(
+            self: *Self,
+            wid: anytype,
+            padding: i32,
+        ) void {
+            if (!comptime zfltk.isWidget(@TypeOf(wid))) {
+                return;
+            }
+            std.debug.assert(
+                self.w() != 0 and self.h() != 0,
+            );
+            self.resize(wid.x() + wid.w() + padding, wid.y(), self.w(), self.h());
+        }
+
+        pub fn leftOf(
+            self: *Self,
+            wid: anytype,
+            padding: i32,
+        ) void {
+            if (!comptime zfltk.isWidget(@TypeOf(wid))) {
+                return;
+            }
+            std.debug.assert(
+                self.w() != 0 and self.h() != 0,
+            );
+            self.resize(wid.x() - self.w() - padding, wid.y(), self.w(), self.h());
+        }
     };
 }
 
