@@ -250,6 +250,8 @@ fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_prefi
             const cfltk_fetch = b.addSystemCommand(&[_][]const u8{ "git", "clone", "https://github.com/MoAlyousef/cfltk", cmake_src_path, "--depth=1", "--recurse-submodules" });
             zfltk_config.step.dependOn(&cfltk_fetch.step);
         };
+        const cpu_count = try std.Thread.getCpuCount();
+        const jobs = try std.fmt.allocPrint(b.allocator, "{d}", .{cpu_count});
         const zfltk_build = b.addSystemCommand(&[_][]const u8{
             "cmake",
             "--build",
@@ -257,6 +259,7 @@ fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_prefi
             "--config",
             "Release",
             "--parallel",
+            jobs,
         });
         zfltk_build.step.dependOn(&zfltk_config.step);
 
