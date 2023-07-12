@@ -26,7 +26,7 @@ pub fn init_with_opts(b: *Build, opts: SdkOpts) !*Sdk {
     final_opts.system_jpeg = b.option(bool, "zfltk-system-libjpeg", "link system libjpeg") orelse opts.system_jpeg;
     final_opts.system_png = b.option(bool, "zfltk-system-libpng", "link system libpng") orelse opts.system_png;
     final_opts.system_zlib = b.option(bool, "zfltk-system-zlib", "link system zlib") orelse opts.system_zlib;
-    final_opts.use_zig_cc = b.option(bool, "zfltk-use_zigcc", "use zig cc and zig c++ to build FLTK and cfltk") orelse opts.use_zig_cc;
+    final_opts.use_zig_cc = b.option(bool, "zfltk-use-zigcc", "use zig cc and zig c++ to build FLTK and cfltk") orelse opts.use_zig_cc;
     const install_prefix = b.install_prefix;
     const finalize_cfltk = b.step("finalize cfltk install", "Installs cfltk");
     try cfltk_build_from_source(b, finalize_cfltk, install_prefix, final_opts);
