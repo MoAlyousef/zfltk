@@ -315,7 +315,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                 var allocator = std.heap.c_allocator;
                 var container = allocator.alloc(usize, 2) catch unreachable;
 
-                container[0] = @intFromPtr(&f);
+                container[0] = @intFromPtr(f);
                 container[1] = @intFromPtr(d);
 
                 @field(c, ptr_name ++ "_draw")(
