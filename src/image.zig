@@ -48,7 +48,6 @@ pub const Image = struct {
     };
 
     pub const Kind = enum {
-        normal,
         shared,
         svg,
         jpeg,
@@ -82,7 +81,7 @@ pub const Image = struct {
             else => unreachable,
         };
 
-        _ = switch (kind) {
+        switch (kind) {
             .shared => {
                 if (loadFn(path.ptr, 0, 0)) |ptr| {
                     try ImageErrorFromInt(failFn(ptr));
@@ -95,7 +94,7 @@ pub const Image = struct {
                     return Image.fromRaw(@ptrCast(ptr));
                 }
             },
-        };
+        }
 
         unreachable;
     }

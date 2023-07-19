@@ -13,8 +13,8 @@ pub const Widget = struct {
     pub fn OptionsImpl(comptime ctx: type) type {
         _ = ctx;
         return struct {
-            x: u31 = 0,
-            y: u31 = 0,
+            x: i32 = 0,
+            y: i32 = 0,
             w: u31 = 0,
             h: u31 = 0,
 

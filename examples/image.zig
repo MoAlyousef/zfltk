@@ -23,7 +23,7 @@ pub fn main() !void {
         .h = 140,
     });
 
-    scroll.setScrollBar(.vertical);
+    scroll.setScrollbar(.vertical);
 
     var mybox = try Box.init(.{
         .w = 400,
