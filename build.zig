@@ -29,10 +29,10 @@ finalize_cfltk: *std.Build.Step,
 opts: SdkOpts,
 
 pub fn init(b: *Build) !*Sdk {
-    return initWitOpts(b, .{});
+    return initwithOpts(b, .{});
 }
 
-pub fn initWitOpts(b: *Build, opts: SdkOpts) !*Sdk {
+pub fn initwithOpts(b: *Build, opts: SdkOpts) !*Sdk {
     var final_opts = opts;
     final_opts.use_wayland = b.option(bool, "zfltk-use-wayland", "build zfltk for wayland") orelse opts.use_wayland;
     final_opts.system_jpeg = b.option(bool, "zfltk-system-libjpeg", "link system libjpeg") orelse opts.system_jpeg;
