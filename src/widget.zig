@@ -13,8 +13,8 @@ pub const Widget = struct {
     pub fn OptionsImpl(comptime ctx: type) type {
         _ = ctx;
         return struct {
-            x: u31 = 0,
-            y: u31 = 0,
+            x: i32 = 0,
+            y: i32 = 0,
             w: u31 = 0,
             h: u31 = 0,
 
@@ -315,7 +315,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                 var allocator = std.heap.c_allocator;
                 var container = allocator.alloc(usize, 2) catch unreachable;
 
-                container[0] = @intFromPtr(f);
+                container[0] = @intFromPtr(&f);
                 container[1] = @intFromPtr(d);
 
                 @field(c, ptr_name ++ "_draw")(

@@ -15,6 +15,7 @@ pub const GroupKind = enum {
     tabs,
     scroll,
     flex,
+    tile,
 };
 
 pub const ScrollType = enum(c_int) {
@@ -52,13 +53,14 @@ pub fn Group(comptime kind: GroupKind) type {
             .tabs => *c.Fl_Tabs,
             .scroll => *c.Fl_Scroll,
             .flex => *c.Fl_Flex,
+            .tile => *c.Fl_Tile,
         };
         const type_name = @typeName(RawPtr);
         const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
 
         pub const Options = struct {
-            x: u31 = 0,
-            y: u31 = 0,
+            x: i32 = 0,
+            y: i32 = 0,
             w: u31 = 0,
             h: u31 = 0,
 
@@ -85,7 +87,7 @@ pub fn Group(comptime kind: GroupKind) type {
                     .pack, .flex => {
                         self.setSpacing(opts.spacing);
 
-                        if (opts.orientation != .vertical) {
+                        if (opts.orientation == .horizontal) {
                             c.Fl_Widget_set_type(self.widget().raw(), 1);
                         }
                     },
@@ -245,12 +247,20 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             marginsFn(self.raw(), @intCast(left), @intCast(top), @intCast(right), @intCast(bottom));
         }
 
-        pub inline fn setScrollBar(self: *Self, scrollbar: ScrollType) void {
+        pub inline fn setScrollbar(self: *Self, scrollbar: ScrollType) void {
             if (Self != Group(.scroll)) {
-                @compileError("method `setScrollBar` only usable with scroll groups");
+                @compileError("method `setScrollbar` only usable with scroll groups");
             }
 
             self.setKind(ScrollType, scrollbar);
+        }
+
+        pub inline fn setScrollbarSize(self: *Self, size: u31) void {
+            if (Self != Group(.scroll)) {
+                @compileError("method `setScrollbarSize` only usable with scroll groups");
+            }
+
+            c.Fl_Scroll_set_scrollbar_size(self.raw(), size);
         }
     };
 }

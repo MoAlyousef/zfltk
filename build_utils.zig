@@ -47,6 +47,7 @@ pub const examples = &[_]Example{
     Example.init("handle", "examples/handle.zig", "Handle example"),
     Example.init("flutterlike", "examples/flutterlike.zig", "Flutter-like example"),
     Example.init("glwin", "examples/glwin.zig", "OpenGL window example"),
+    Example.init("tile", "examples/tile.zig", "Tile group example"),
 };
 
 pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_prefix: []const u8, opts: FinalOpts) !void {
@@ -303,7 +304,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
     });
     const proc = try std.ChildProcess.exec(.{
         .allocator = b.allocator,
-        .argv = &[_][]const u8{"fltk-config", "--use-images", "--use-gl", "--cflags"},
+        .argv = &[_][]const u8{ "fltk-config", "--use-images", "--use-gl", "--cflags" },
     });
     const out = proc.stdout;
     var cflags = std.ArrayList([]const u8).init(b.allocator);
@@ -343,7 +344,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
     }
     const proc2 = try std.ChildProcess.exec(.{
         .allocator = b.allocator,
-        .argv = &[_][]const u8{"fltk-config", "--use-images", "--use-gl", "--ldflags"},
+        .argv = &[_][]const u8{ "fltk-config", "--use-images", "--use-gl", "--ldflags" },
     });
     const out2 = proc2.stdout;
     var lflags = std.ArrayList([]const u8).init(b.allocator);

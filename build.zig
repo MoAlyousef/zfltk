@@ -11,7 +11,7 @@ pub const SdkOpts = struct {
     use_zig_cc: bool = false,
     use_fltk_config: bool = false,
     fn finalOpts(self: SdkOpts) utils.FinalOpts {
-        return utils.FinalOpts {
+        return utils.FinalOpts{
             .use_wayland = self.use_wayland,
             .system_jpeg = self.system_jpeg,
             .system_png = self.system_png,
