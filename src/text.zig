@@ -15,10 +15,13 @@ pub const StyleTableEntry = struct {
     size: i32,
 };
 
-pub const TextKind = enum {
+const TextKind = enum {
     normal,
     editor,
 };
+
+pub const TextDisplay = TextDisplayType(.normal);
+pub const TextEditor = TextDisplayType(.editor);
 
 pub const TextBuffer = struct {
     const Self = @This();
@@ -149,7 +152,7 @@ pub const TextBuffer = struct {
     }
 };
 
-pub fn TextDisplay(comptime kind: TextKind) type {
+fn TextDisplayType(comptime kind: TextKind) type {
     return struct {
         const Self = @This();
 
@@ -210,9 +213,9 @@ pub fn TextDisplay(comptime kind: TextKind) type {
     };
 }
 
-pub fn methods(comptime Self: type) type {
+fn methods(comptime Self: type) type {
     return struct {
-        pub inline fn textDisplay(self: *Self) *TextDisplay(.normal) {
+        pub inline fn textDisplay(self: *Self) *TextDisplayType(.normal) {
             return @ptrCast(self);
         }
 
@@ -327,15 +330,15 @@ pub fn methods(comptime Self: type) type {
         }
 
         // Text editor only methods
-        pub fn cut(self: *TextDisplay(.editor)) void {
+        pub fn cut(self: *TextDisplayType(.editor)) void {
             _ = c.Fl_Text_Editor_kf_cut(self.raw());
         }
 
-        pub fn paste(self: *TextDisplay(.editor)) void {
+        pub fn paste(self: *TextDisplayType(.editor)) void {
             _ = c.Fl_Text_Editor_kf_paste(self.raw());
         }
 
-        pub fn copy(self: *TextDisplay(.editor)) void {
+        pub fn copy(self: *TextDisplayType(.editor)) void {
             _ = c.Fl_Text_Editor_kf_copy(self.raw());
         }
     };

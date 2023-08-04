@@ -4,14 +4,13 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
 const widget = zfltk.widget;
-const Widget = widget.Widget;
-const Window = zfltk.Window;
-const Menu = zfltk.Menu;
+const Window = zfltk.window.Window;
+const MenuBar = zfltk.menu.MenuBar;
 const enums = zfltk.enums;
 const Color = enums.Color;
-const TextDisplay = zfltk.TextDisplay;
+const TextEditor = zfltk.text.TextEditor;
 const dialog = zfltk.dialog;
-const FileDialog = zfltk.FileDialog;
+const FileDialog = zfltk.dialog.FileDialog;
 const std = @import("std");
 
 // To avoid exiting when hitting escape.
@@ -22,13 +21,13 @@ pub fn winCb(w: *Window) void {
     }
 }
 
-fn newCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
-    var editor = TextDisplay(.editor).fromRaw(data.?);
+fn newCb(_: *MenuBar, data: ?*anyopaque) void {
+    var editor = TextEditor.fromRaw(data.?);
     editor.buffer().?.setText("");
 }
 
-pub fn openCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
-    var editor = TextDisplay(.editor).fromRaw(data.?);
+pub fn openCb(_: *MenuBar, data: ?*anyopaque) void {
+    var editor = TextEditor.fromRaw(data.?);
     var dlg = try FileDialog(.file).init(.{});
     dlg.setFilter("*.{txt,zig}");
     dlg.show();
@@ -38,8 +37,8 @@ pub fn openCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
     }
 }
 
-pub fn saveCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
-    var editor = TextDisplay(.editor).fromRaw(data.?);
+pub fn saveCb(_: *MenuBar, data: ?*anyopaque) void {
+    var editor = TextEditor.fromRaw(data.?);
     var dlg = try FileDialog(.save_file).init(.{ .save_as_confirm = true });
     dlg.setFilter("*.{txt,zig}");
     dlg.show();
@@ -49,27 +48,27 @@ pub fn saveCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
     }
 }
 
-pub fn quitCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
+pub fn quitCb(_: *MenuBar, data: ?*anyopaque) void {
     var win = widget.Widget.fromRaw(data.?);
     win.hide();
 }
 
-pub fn cutCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
-    const editor = TextDisplay(.editor).fromRaw(data.?);
+pub fn cutCb(_: *MenuBar, data: ?*anyopaque) void {
+    const editor = TextEditor.fromRaw(data.?);
     editor.cut();
 }
 
-pub fn copyCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
-    const editor = TextDisplay(.editor).fromRaw(data.?);
+pub fn copyCb(_: *MenuBar, data: ?*anyopaque) void {
+    const editor = TextEditor.fromRaw(data.?);
     _ = editor.copy();
 }
 
-pub fn pasteCb(_: *Menu(.menu_bar), data: ?*anyopaque) void {
-    const editor = TextDisplay(.editor).fromRaw(data.?);
+pub fn pasteCb(_: *MenuBar, data: ?*anyopaque) void {
+    const editor = TextEditor.fromRaw(data.?);
     editor.paste();
 }
 
-pub fn helpCb(_: *Menu(.menu_bar)) void {
+pub fn helpCb(_: *MenuBar) void {
     dialog.message(300, 200, "This editor was built using fltk and zig!");
 }
 
@@ -86,9 +85,9 @@ pub fn main() !void {
     });
 
     win.freePosition();
-    var mymenu = try Menu(.menu_bar).init(.{ .w = 800, .h = 35 });
+    var mymenu = try MenuBar.init(.{ .w = 800, .h = 35 });
 
-    var editor = try TextDisplay(.editor).init(.{
+    var editor = try TextEditor.init(.{
         .x = 2,
         .y = 37,
         .w = 800 - 2,

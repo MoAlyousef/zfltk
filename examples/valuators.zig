@@ -1,11 +1,9 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Widget = zfltk.Widget;
-const Window = zfltk.Window;
+const Window = zfltk.window.Window;
 const valuator = zfltk.valuator;
-const Group = zfltk.Group;
+const Pack = zfltk.group.Pack;
 const enums = zfltk.enums;
-const Valuator = zfltk.Valuator;
 
 pub fn main() !void {
     try app.init();
@@ -18,7 +16,7 @@ pub fn main() !void {
         .label = "Valuators",
     });
 
-    var pack = try Group(.pack).init(.{
+    var pack = try Pack.init(.{
         .w = 400,
         .h = 300,
 
@@ -26,27 +24,27 @@ pub fn main() !void {
     });
 
     pack.add(.{
-        try Valuator(.slider).init(.{
+        try valuator.Slider.init(.{
             .h = 40,
             .style = .nice,
             .orientation = .horizontal,
             .label = "Slider",
         }),
 
-        try Valuator(.scrollbar).init(.{
+        try valuator.Scrollbar.init(.{
             .h = 40,
             .style = .nice,
             .orientation = .horizontal,
             .label = "Scrollbar",
         }),
 
-        try Valuator(.counter).init(.{
+        try valuator.Counter.init(.{
             .h = 40,
             .w = win.w(),
             .label = "Counter",
         }),
 
-        try Valuator(.adjuster).init(.{
+        try valuator.Adjuster.init(.{
             .h = 40,
             .label = "Adjuster",
         }),

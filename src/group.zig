@@ -9,7 +9,14 @@ const enums = zfltk.enums;
 
 pub const GroupPtr = ?*c.Fl_Group;
 
-pub const GroupKind = enum {
+pub const Group = GroupType(.normal);
+pub const Pack = GroupType(.pack);
+pub const Tabs = GroupType(.tabs);
+pub const Scroll = GroupType(.scroll);
+pub const Flex = GroupType(.flex);
+pub const Tile = GroupType(.tile);
+
+const GroupKind = enum {
     normal,
     pack,
     tabs,
@@ -37,7 +44,7 @@ pub const ScrollType = enum(c_int) {
     both_always = 7,
 };
 
-pub fn Group(comptime kind: GroupKind) type {
+fn GroupType(comptime kind: GroupKind) type {
     return struct {
         const Self = @This();
 
@@ -106,7 +113,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
     const type_name = @typeName(RawPtr);
     const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
     return struct {
-        pub inline fn group(self: *Self) *Group(.normal) {
+        pub inline fn group(self: *Self) *GroupType(.normal) {
             return @ptrCast(self);
         }
 
@@ -194,8 +201,8 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         pub fn spacing(self: *Self) u31 {
             const spacingFn = switch (Self) {
-                Group(.flex) => c.Fl_Flex_pad,
-                Group(.pack) => c.Fl_Pack_spacing,
+                GroupType(.flex) => c.Fl_Flex_pad,
+                GroupType(.pack) => c.Fl_Pack_spacing,
 
                 else => @compileError("method `spacing` only usable with flex and pack groups"),
             };
@@ -205,8 +212,8 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         pub fn setSpacing(self: *Self, sz: u31) void {
             const spacingFn = switch (Self) {
-                Group(.flex) => c.Fl_Flex_set_pad,
-                Group(.pack) => c.Fl_Pack_set_spacing,
+                GroupType(.flex) => c.Fl_Flex_set_pad,
+                GroupType(.pack) => c.Fl_Pack_set_spacing,
 
                 else => @compileError("method `setSpacing` only usable with flex and pack groups"),
             };
@@ -215,7 +222,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn fixed(self: *Self, wid: anytype, sz: i32) void {
-            if (Self != Group(.flex)) {
+            if (Self != GroupType(.flex)) {
                 @compileError("method `fixed` only usable with flex groups");
             }
 
@@ -229,7 +236,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         pub fn setMargin(self: *Self, sz: u31) void {
             const marginFn = switch (Self) {
-                Group(.flex) => c.Fl_Flex_set_margin,
+                GroupType(.flex) => c.Fl_Flex_set_margin,
 
                 else => @compileError("method `setMargin` only usable with flex groups"),
             };
@@ -239,7 +246,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         pub fn setMargins(self: *Self, left: u31, top: u31, right: u31, bottom: u31) void {
             const marginsFn = switch (Self) {
-                Group(.flex) => c.Fl_Flex_set_margins,
+                GroupType(.flex) => c.Fl_Flex_set_margins,
 
                 else => @compileError("method `setMargin` only usable with flex groups"),
             };
@@ -248,7 +255,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setScrollbar(self: *Self, scrollbar: ScrollType) void {
-            if (Self != Group(.scroll)) {
+            if (Self != GroupType(.scroll)) {
                 @compileError("method `setScrollbar` only usable with scroll groups");
             }
 
@@ -256,7 +263,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setScrollbarSize(self: *Self, size: u31) void {
-            if (Self != Group(.scroll)) {
+            if (Self != GroupType(.scroll)) {
                 @compileError("method `setScrollbarSize` only usable with scroll groups");
             }
 

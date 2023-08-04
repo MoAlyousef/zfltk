@@ -1,7 +1,7 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Window = zfltk.Window;
-const Browser = zfltk.Browser;
+const Window = zfltk.window.Window;
+const MultiBrowser = zfltk.browser.MultiBrowser;
 
 pub fn main() !void {
     try app.init();
@@ -12,7 +12,7 @@ pub fn main() !void {
     });
 
     // Available browsers are: normal, select, hold, multi and file
-    var browser = try Browser(.multi).init(.{
+    var browser = try MultiBrowser.init(.{
         .x = 10,
         .y = 10,
         .w = 900 - 20,

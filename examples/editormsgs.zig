@@ -1,14 +1,13 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
 const widget = zfltk.widget;
-const Widget = widget.Widget;
 const window = zfltk.window;
 const menu = zfltk.menu;
 const enums = zfltk.enums;
 const Color = enums.Color;
 const text = zfltk.text;
 const dialog = zfltk.dialog;
-const FileDialog = zfltk.FileDialog;
+const FileDialog = zfltk.dialog.FileDialog;
 const std = @import("std");
 
 pub const Message = enum(usize) {
@@ -38,10 +37,10 @@ pub fn main() !void {
     app.setBackground(Color.fromRgb(211, 211, 211));
     var win = try window.Window.init(.{ .w = 800, .h = 600, .label = "Editor" });
     win.freePosition();
-    var mymenu = try menu.Menu(.menu_bar).init(.{ .w = 800, .h = 35 });
+    var mymenu = try menu.MenuBar.init(.{ .w = 800, .h = 35 });
     var buf = try text.TextBuffer.init();
     defer buf.deinit();
-    var editor = try text.TextDisplay(.editor).init(.{
+    var editor = try text.TextEditor.init(.{
         .x = 2,
         .y = 37,
         .w = 800 - 2,

@@ -6,7 +6,13 @@ const enums = @import("enums.zig");
 const c = zfltk.c;
 const std = @import("std");
 
-pub const BrowserKind = enum {
+pub const Browser = BrowserType(.normal);
+pub const SelectBrowser = BrowserType(.select);
+pub const HoldBrowser = BrowserType(.hold);
+pub const MultiBrowser = BrowserType(.multi);
+pub const FileBrowser = BrowserType(.file);
+
+const BrowserKind = enum {
     normal,
     select,
     hold,
@@ -14,7 +20,7 @@ pub const BrowserKind = enum {
     file,
 };
 
-pub fn Browser(comptime kind: BrowserKind) type {
+fn BrowserType(comptime kind: BrowserKind) type {
     return struct {
         const Self = @This();
 

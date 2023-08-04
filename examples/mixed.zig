@@ -2,15 +2,15 @@
 
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Widget = zfltk.Widget;
-const Window = zfltk.Window;
-const Button = zfltk.Button;
+const Widget = zfltk.widget.Widget;
+const Window = zfltk.window.Window;
+const Button = zfltk.button.Button;
 const Color = zfltk.enums.Color;
 const std = @import("std");
 const fmt = std.fmt;
 const c = zfltk.c;
 
-fn butCb(but: *Button(.normal)) void {
+fn butCb(but: *Button) void {
     var buf: [32]u8 = undefined;
 
     const label = fmt.bufPrintZ(
@@ -22,13 +22,13 @@ fn butCb(but: *Button(.normal)) void {
     but.setLabel(label);
 }
 
-fn colorButCb(color_but: *Button(.normal), _: ?*anyopaque) void {
+fn colorButCb(color_but: *Button, _: ?*anyopaque) void {
     color_but.setColor(Color.fromRgbi(
         c.Fl_show_colormap(color_but.color().toRgbi()),
     ));
 }
 
-fn timeoutButCb(_: *Button(.normal), data: ?*anyopaque) void {
+fn timeoutButCb(_: *Button, data: ?*anyopaque) void {
     const container: *[2]usize = @ptrCast(@alignCast(data.?));
     const wait_time: f32 = @as(*f32, @ptrFromInt(container[1])).*;
 
@@ -39,7 +39,7 @@ fn timeoutCb(data: ?*anyopaque) void {
     const container: *[2]usize = @ptrCast(@alignCast(data.?));
 
     // Re-interpret our ints as pointers to get our objects back
-    var but = Button(.normal).fromRaw(@ptrFromInt(container[0]));
+    var but = Button.fromRaw(@ptrFromInt(container[0]));
     const wait_time: f32 = @as(*f32, @ptrFromInt(container[1])).*;
 
     var buf: [32]u8 = undefined;
@@ -68,7 +68,7 @@ pub fn main() !void {
         .label = "Mixed API",
     });
 
-    var but = try Button(.normal).init(.{
+    var but = try Button.init(.{
         .x = 10,
         .y = 100,
         .w = 380,
@@ -78,7 +78,7 @@ pub fn main() !void {
     but.setLabelSize(24);
     but.setCallback(butCb);
 
-    var color_but = try Button(.normal).init(.{
+    var color_but = try Button.init(.{
         .x = 10,
         .y = 10,
         .w = 185,
@@ -97,7 +97,7 @@ pub fn main() !void {
         .{wait_time},
     );
 
-    var timeout_but = try Button(.normal).init(.{
+    var timeout_but = try Button.init(.{
         .x = 205,
         .y = 10,
         .w = 185,

@@ -1,12 +1,10 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Widget = zfltk.Widget;
-const Box = zfltk.Box;
+const Box = zfltk.box.Box;
 const Event = zfltk.enums.Event;
-const Input = zfltk.Input;
-const Group = zfltk.Group;
-const Window = zfltk.Window;
-const Button = zfltk.Button;
+const Input = zfltk.input.Input;
+const Window = zfltk.window.Window;
+const Button = zfltk.button.Button;
 const std = @import("std");
 
 const ButtonMessage = enum(usize) {
@@ -14,7 +12,7 @@ const ButtonMessage = enum(usize) {
     released,
 };
 
-pub fn butCb(_: *Button(.normal), ev: Event) bool {
+pub fn butCb(_: *Button, ev: Event) bool {
     switch (ev) {
         Event.push => {
             app.send(ButtonMessage, .pushed);
@@ -42,7 +40,7 @@ pub fn main() !void {
         .label = "Hello",
     });
 
-    var inp = try Input(.normal).init(.{
+    var inp = try Input.init(.{
         .x = 10,
         .y = 10,
         .w = 380,
@@ -58,7 +56,7 @@ pub fn main() !void {
         .boxtype = .up,
     });
 
-    var but = try Button(.normal).init(.{
+    var but = try Button.init(.{
         .x = 160,
         .y = 200,
         .w = 80,

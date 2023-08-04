@@ -1,11 +1,11 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Window = zfltk.Window;
-const Button = zfltk.Button;
-const Box = zfltk.Box;
+const Window = zfltk.window.Window;
+const Button = zfltk.button.Button;
+const Box = zfltk.box.Box;
 const Color = zfltk.enums.Color;
 
-fn butCb(but: *Button(.normal), data: ?*anyopaque) void {
+fn butCb(but: *Button, data: ?*anyopaque) void {
     var box = Box.fromRaw(data.?);
 
     box.setLabel("Hello World!");
@@ -25,7 +25,7 @@ pub fn main() !void {
     });
     win.freePosition();
 
-    var but = try Button(.normal).init(.{
+    var but = try Button.init(.{
         .x = 160,
         .y = 220,
         .w = 80,

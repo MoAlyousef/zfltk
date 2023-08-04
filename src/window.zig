@@ -2,7 +2,7 @@ const std = @import("std");
 const zfltk = @import("zfltk.zig");
 const app = zfltk.app;
 const c = zfltk.c;
-const Widget = zfltk.Widget;
+const Widget = zfltk.widget.Widget;
 const Group = zfltk.Group;
 const enums = zfltk.enums;
 
@@ -132,7 +132,7 @@ pub const GlutWindow = struct {
     }
 };
 
-pub fn methods(comptime Self: type) type {
+fn methods(comptime Self: type) type {
     return struct {
         pub fn setSizeRange(self: *Self, min_w: u31, min_h: u31, max_w: u31, max_h: u31) void {
             return c.Fl_Window_size_range(@ptrCast(self.raw()), min_w, min_h, max_w, max_h);

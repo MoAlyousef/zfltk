@@ -1,11 +1,10 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Window = zfltk.Window;
-const Box = zfltk.Box;
-const Button = zfltk.Button;
-const Group = zfltk.Group;
-const Color = enums.Color;
-const enums = zfltk.enums;
+const Window = zfltk.window.Window;
+const Box = zfltk.box.Box;
+const Button = zfltk.button.Button;
+const Tile = zfltk.group.Tile;
+const Color = zfltk.enums.Color;
 
 pub fn main() !void {
     try app.init();
@@ -17,14 +16,14 @@ pub fn main() !void {
         .label = "Tile group",
     });
 
-    var tile = try Group(.tile).init(.{
+    var tile = try Tile.init(.{
         .w = 400,
         .h = 300,
     });
 
     win.resizable(tile);
 
-    var btn = try Button(.normal).init(.{
+    var btn = try Button.init(.{
         .x = 0,
         .y = 48,
         .w = tile.w() - 48,

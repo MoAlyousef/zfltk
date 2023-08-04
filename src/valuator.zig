@@ -6,7 +6,14 @@ const enums = zfltk.enums;
 const std = @import("std");
 const app = zfltk.app;
 
-pub const ValuatorKind = enum {
+pub const Slider = ValuatorType(.slider);
+pub const Dial = ValuatorType(.dial);
+pub const Counter = ValuatorType(.counter);
+pub const Scrollbar = ValuatorType(.scrollbar);
+pub const Adjuster = ValuatorType(.adjuster);
+pub const Roller = ValuatorType(.roller);
+
+const ValuatorKind = enum {
     slider,
     dial,
     counter,
@@ -61,7 +68,7 @@ pub const CounterType = enum(i32) {
     simple = 1,
 };
 
-pub fn Valuator(comptime kind: ValuatorKind) type {
+fn ValuatorType(comptime kind: ValuatorKind) type {
     return struct {
         const Self = @This();
 
@@ -150,11 +157,11 @@ pub fn Valuator(comptime kind: ValuatorKind) type {
     };
 }
 
-pub fn methods(comptime Self: type, comptime RawPtr: type) type {
+fn methods(comptime Self: type, comptime RawPtr: type) type {
     const type_name = @typeName(RawPtr);
     const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
     return struct {
-        pub inline fn valuator(self: *Self) *Valuator(.slider) {
+        pub inline fn valuator(self: *Self) *ValuatorType(.slider) {
             return @ptrCast(self);
         }
 

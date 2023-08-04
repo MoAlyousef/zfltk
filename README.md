@@ -23,7 +23,7 @@ If you're using the official package manager:
     .version = "0.0.1",
     .dependencies = .{
         .zfltk = .{
-            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.0.8.tar.gz",
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.1.0.tar.gz",
         },
     }
 }
@@ -154,12 +154,12 @@ Using the Zig wrapper (under development):
 ```zig
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Window = zfltk.Window;
-const Button = zfltk.Button;
-const Box = zfltk.Box;
+const Window = zfltk.window.Window;
+const Button = zfltk.button.Button;
+const Box = zfltk.box.Box;
 const Color = zfltk.enums.Color;
 
-fn butCb(but: *Button(.normal), data: ?*anyopaque) void {
+fn butCb(but: *Button, data: ?*anyopaque) void {
     var box = Box.fromRaw(data.?);
 
     box.setLabel("Hello World!");
@@ -177,8 +177,9 @@ pub fn main() !void {
 
         .label = "Hello",
     });
+    win.freePosition();
 
-    var but = try Button(.normal).init(.{
+    var but = try Button.init(.{
         .x = 160,
         .y = 220,
         .w = 80,
@@ -186,6 +187,8 @@ pub fn main() !void {
 
         .label = "Click me!",
     });
+
+    but.setDownBox(.flat);
 
     var box = try Box.init(.{
         .x = 10,
@@ -210,10 +213,9 @@ The messaging api can also be used:
 ```zig
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Widget = zfltk.Widget;
-const Window = zfltk.Window;
-const Button = zfltk.Button;
-const Box = zfltk.Box;
+const Window = zfltk.window.Window;
+const Button = zfltk.button.Button;
+const Box = zfltk.box.Box;
 const enums = zfltk.enums;
 
 pub const Message = enum(usize) {
@@ -233,7 +235,7 @@ pub fn main() !void {
         .label = "Hello",
     });
 
-    var but1 = try Button(.normal).init(.{
+    var but1 = try Button.init(.{
         .x = 100,
         .y = 220,
         .w = 80,
@@ -242,7 +244,7 @@ pub fn main() !void {
         .label = "Button 1",
     });
 
-    var but2 = try Button(.normal).init(.{
+    var but2 = try Button.init(.{
         .x = 200,
         .y = 220,
         .w = 80,
@@ -307,7 +309,7 @@ You can also mix and match for any missing functionalities in the Zig wrapper (s
 
 Widgets also provide a `call` method which allows to call any method that wasn't wrapped yet in the bindings:
 ```zig
-    var flex = try Group(.flex).init(.{
+    var flex = try Flex.init(.{
         .w = 400,
         .h = 300,
         .orientation = .vertical,

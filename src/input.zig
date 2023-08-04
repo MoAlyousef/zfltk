@@ -1,6 +1,6 @@
 const zfltk = @import("zfltk.zig");
 const app = zfltk.app;
-const Widget = zfltk.Widget;
+const Widget = zfltk.widget.Widget;
 const enums = zfltk.enums;
 const Event = enums.Event;
 const Color = enums.Color;
@@ -9,7 +9,13 @@ const std = @import("std");
 const widget = zfltk.widget;
 const c = zfltk.c;
 
-pub const InputKind = enum {
+pub const Input = InputType(.normal);
+pub const MultilineInput = InputType(.multiline);
+pub const IntInput = InputType(.int);
+pub const FloatInput = InputType(.float);
+pub const Secret = InputType(.secret);
+
+const InputKind = enum {
     normal,
     multiline,
     int,
@@ -17,7 +23,7 @@ pub const InputKind = enum {
     secret,
 };
 
-pub fn Input(comptime kind: InputKind) type {
+fn InputType(comptime kind: InputKind) type {
     return struct {
         const Self = @This();
 
@@ -64,7 +70,7 @@ pub fn Input(comptime kind: InputKind) type {
             app.allocator.destroy(self);
         }
 
-        pub inline fn input(self: *Self) *Input(.normal) {
+        pub inline fn input(self: *Self) *InputType(.normal) {
             return @ptrCast(self);
         }
 

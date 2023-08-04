@@ -1,10 +1,10 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
 const SharedImage = zfltk.image.SharedImage;
-const Image = zfltk.Image;
-const Window = zfltk.Window;
-const Box = zfltk.Box;
-const Group = zfltk.Group;
+const Image = zfltk.image.Image;
+const Window = zfltk.window.Window;
+const Box = zfltk.box.Box;
+const Scroll = zfltk.group.Scroll;
 const Align = zfltk.enums.Align;
 const std = @import("std");
 
@@ -18,7 +18,7 @@ pub fn main() !void {
         .label = "Image demo",
     });
 
-    var scroll = try Group(.scroll).init(.{
+    var scroll = try Scroll.init(.{
         .w = 415,
         .h = 140,
     });

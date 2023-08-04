@@ -19,23 +19,7 @@ pub const table = @import("table.zig");
 pub const tree = @import("tree.zig");
 pub const draw = @import("draw.zig");
 
-pub const Image = image.Image;
-pub const Widget = widget.Widget;
-pub const Group = group.Group;
-pub const Window = window.Window;
-pub const GlutWindow = window.GlutWindow;
-pub const Button = button.Button;
-pub const Box = box.Box;
-pub const Browser = browser.Browser;
-pub const Menu = menu.Menu;
-pub const Table = table.Table;
-pub const Input = input.Input;
-pub const Output = output.Output;
-pub const TextDisplay = text.TextDisplay;
-pub const TextBuffer = text.TextBuffer;
-pub const FileDialog = dialog.FileDialog;
-pub const Valuator = valuator.Valuator;
-pub const Tree = tree.Tree;
+const Widget = widget.Widget;
 
 pub const c = @cImport({
     @cInclude("cfl.h");

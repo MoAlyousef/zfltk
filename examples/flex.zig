@@ -1,11 +1,10 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Window = zfltk.Window;
-const Box = zfltk.Box;
-const Button = zfltk.Button;
-const Group = zfltk.Group;
-const Color = enums.Color;
-const enums = zfltk.enums;
+const Window = zfltk.window.Window;
+const Box = zfltk.box.Box;
+const Button = zfltk.button.Button;
+const Flex = zfltk.group.Flex;
+const Color = zfltk.enums.Color;
 
 pub fn main() !void {
     try app.init();
@@ -17,7 +16,7 @@ pub fn main() !void {
         .label = "Hello",
     });
 
-    var flex = try Group(.flex).init(.{
+    var flex = try Flex.init(.{
         .w = 400,
         .h = 300,
 
@@ -29,7 +28,7 @@ pub fn main() !void {
 
     win.resizable(flex);
 
-    var btn = try Button(.normal).init(.{
+    var btn = try Button.init(.{
         .h = 48,
         .label = "Button",
     });

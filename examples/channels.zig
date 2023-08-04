@@ -1,9 +1,8 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Widget = zfltk.Widget;
-const Window = zfltk.Window;
-const Button = zfltk.Button;
-const Box = zfltk.Box;
+const Window = zfltk.window.Window;
+const Button = zfltk.button.Button;
+const Box = zfltk.box.Box;
 const enums = zfltk.enums;
 
 pub const Message = enum(usize) {
@@ -23,7 +22,7 @@ pub fn main() !void {
         .label = "Hello",
     });
 
-    var but1 = try Button(.normal).init(.{
+    var but1 = try Button.init(.{
         .x = 100,
         .y = 220,
         .w = 80,
@@ -32,7 +31,7 @@ pub fn main() !void {
         .label = "Button 1",
     });
 
-    var but2 = try Button(.normal).init(.{
+    var but2 = try Button.init(.{
         .x = 200,
         .y = 220,
         .w = 80,

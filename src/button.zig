@@ -7,7 +7,15 @@ const Event = enums.Event;
 const std = @import("std");
 const c = zfltk.c;
 
-pub const ButtonKind = enum {
+pub const Button = ButtonType(.normal);
+pub const RadioButton = ButtonType(.radio);
+pub const CheckButton = ButtonType(.check);
+pub const RoundButton = ButtonType(.round);
+pub const RepeatButton = ButtonType(.repeat);
+pub const LightButton = ButtonType(.light);
+pub const EnterButton = ButtonType(.enter);
+
+const ButtonKind = enum {
     normal,
     radio,
     check,
@@ -17,7 +25,7 @@ pub const ButtonKind = enum {
     enter,
 };
 
-pub fn Button(comptime kind: ButtonKind) type {
+fn ButtonType(comptime kind: ButtonKind) type {
     return struct {
         const Self = @This();
 
@@ -71,9 +79,9 @@ pub fn Button(comptime kind: ButtonKind) type {
     };
 }
 
-pub fn methods(comptime Self: type) type {
+fn methods(comptime Self: type) type {
     return struct {
-        pub inline fn button(self: *Self) *Button(.normal) {
+        pub inline fn button(self: *Self) *ButtonType(.normal) {
             return @ptrCast(self);
         }
 

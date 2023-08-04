@@ -1,14 +1,14 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const Window = zfltk.Window;
-const Button = zfltk.Button;
-const Box = zfltk.Box;
+const Window = zfltk.window.Window;
+const Button = zfltk.button.Button;
+const Box = zfltk.box.Box;
 const Color = zfltk.enums.Color;
 const Event = zfltk.enums.Event;
 const std = @import("std");
 const draw = zfltk.draw;
 
-fn butCb(but: *Button(.normal), data: ?*anyopaque) void {
+fn butCb(but: *Button, data: ?*anyopaque) void {
     var box = Box.fromRaw(data.?);
 
     box.setLabel("Hello World!");
@@ -17,7 +17,7 @@ fn butCb(but: *Button(.normal), data: ?*anyopaque) void {
 }
 
 fn boxEventHandler(_: *Box, ev: Event, data: ?*anyopaque) bool {
-    const btn = Button(.normal).fromRaw(data.?);
+    const btn = Button.fromRaw(data.?);
     switch (ev) {
         .push => {
             std.debug.print("Click the button: {s}\n", .{btn.label()});
@@ -43,7 +43,7 @@ pub fn main() !void {
         .label = "Hello",
     });
 
-    var but = try Button(.normal).init(.{
+    var but = try Button.init(.{
         .x = 160,
         .y = 220,
         .w = 80,

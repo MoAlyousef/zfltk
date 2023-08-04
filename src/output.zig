@@ -9,12 +9,15 @@ const std = @import("std");
 const c = zfltk.c;
 const widget = zfltk.widget;
 
-pub const OutputKind = enum {
+const OutputKind = enum {
     normal,
     multiline,
 };
 
-pub fn Output(comptime kind: OutputKind) type {
+pub const Output = OutputType(.normal);
+pub const MultilineOutput = OutputType(.multiline);
+
+fn OutputType(comptime kind: OutputKind) type {
     return struct {
         const Self = @This();
 
@@ -52,7 +55,7 @@ pub fn Output(comptime kind: OutputKind) type {
             app.allocator.destroy(self);
         }
 
-        pub inline fn input(self: *Self) *Output(.normal) {
+        pub inline fn input(self: *Self) *OutputType(.normal) {
             return @ptrCast(self);
         }
 

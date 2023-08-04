@@ -2,9 +2,8 @@ const zfltk = @import("zfltk.zig");
 const app = zfltk.app;
 const std = @import("std");
 const enums = zfltk.enums;
-const Color = enums.Color;
-const Group = zfltk.Group;
-const Image = zfltk.Image;
+const Group = zfltk.group.Group;
+const Image = zfltk.image.Image;
 const c = zfltk.c;
 
 pub const Widget = struct {
@@ -154,19 +153,19 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             c.Fl_Widget_set_type(self.widget().raw(), @intFromEnum(t));
         }
 
-        pub inline fn color(self: *Self) Color {
-            return Color.fromRgbi(c.Fl_Widget_color(self.widget().raw()));
+        pub inline fn color(self: *Self) enums.Color {
+            return enums.Color.fromRgbi(c.Fl_Widget_color(self.widget().raw()));
         }
 
-        pub inline fn setColor(self: *Self, col: Color) void {
+        pub inline fn setColor(self: *Self, col: enums.Color) void {
             c.Fl_Widget_set_color(self.widget().raw(), col.toRgbi());
         }
 
-        pub inline fn labelColor(self: *Self) Color {
-            return Color.fromRgbi(c.Fl_Widget_label_color(self.widget().raw()));
+        pub inline fn labelColor(self: *Self) enums.Color {
+            return enums.Color.fromRgbi(c.Fl_Widget_label_color(self.widget().raw()));
         }
 
-        pub inline fn setLabelColor(self: *Self, col: Color) void {
+        pub inline fn setLabelColor(self: *Self, col: enums.Color) void {
             c.Fl_Widget_set_label_color(self.widget().raw(), col.toRgbi());
         }
 
@@ -228,10 +227,10 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         // TODO: fix, this causes pointer issues
-        pub inline fn parent(self: *Self) ?*Group(.normal) {
+        pub inline fn parent(self: *Self) ?*Group {
             const ptr = c.Fl_Widget_parent(self.widget().raw());
             if (ptr) |p| {
-                return Group(.normal).fromRaw(p);
+                return Group.fromRaw(p);
             } else {
                 return null;
             }

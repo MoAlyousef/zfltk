@@ -17,7 +17,7 @@ const HEIGHT: i32 = 400;
 
 var COUNT: i32 = 0;
 
-fn btnCb(_: *button.Button(.normal), data: ?*anyopaque) void {
+fn btnCb(_: *button.Button, data: ?*anyopaque) void {
     var count = box.Box.fromRaw(data.?);
     COUNT += 1;
     var buf: [250]u8 = undefined;
@@ -38,7 +38,7 @@ pub fn main() !void {
     bar.setLabelAlign(Align.left | Align.inside);
     var text = try box.Box.init(.{ .x = 250, .y = 180, .w = 100, .h = 40, .label = "You have pushed the button this many times:" });
     var count = try box.Box.init(.{ .x = 250, .y = 220, .w = 100, .h = 40, .label = "0" });
-    var but = try button.Button(.normal).init(.{ .x = WIDTH - 100, .y = HEIGHT - 100, .w = 60, .h = 60, .label = "@+6plus" });
+    var but = try button.Button.init(.{ .x = WIDTH - 100, .y = HEIGHT - 100, .w = 60, .h = 60, .label = "@+6plus" });
     win.end();
     win.resizable(win);
     win.show();

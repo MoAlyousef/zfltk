@@ -1,11 +1,10 @@
 const zfltk = @import("zfltk");
 const std = @import("std");
 const app = zfltk.app;
-const Window = zfltk.Window;
-const Button = zfltk.Button;
-const Box = zfltk.Box;
-const enums = zfltk.enums;
-const Color = enums.Color;
+const Window = zfltk.window.Window;
+const Button = zfltk.button.Button;
+const Box = zfltk.box.Box;
+const Color = zfltk.enums.Color;
 
 var count: u32 = 0;
 
@@ -42,7 +41,7 @@ pub fn thread_func(data: ?*anyopaque) !void {
     }
 }
 
-pub fn butCb(_: *Button(.normal), data: ?*anyopaque) void {
+pub fn butCb(_: *Button, data: ?*anyopaque) void {
     var thread = std.Thread.spawn(.{}, thread_func, .{data}) catch {
         return;
     };
@@ -61,7 +60,7 @@ pub fn main() !void {
         .label = "Thread awake",
     });
 
-    var but = try Button(.normal).init(.{
+    var but = try Button.init(.{
         .x = 120,
         .y = 220,
         .w = 160,

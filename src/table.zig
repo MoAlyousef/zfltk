@@ -7,12 +7,15 @@ const Event = enums.Event;
 const std = @import("std");
 const c = zfltk.c;
 
-pub const TableKind = enum {
+const TableKind = enum {
     table,
     table_row,
 };
 
-pub fn Table(comptime kind: TableKind) type {
+pub const Table = TableType(.table);
+pub const TableRow = TableType(.table_row);
+
+fn TableType(comptime kind: TableKind) type {
     return struct {
         const Self = @This();
 
@@ -61,9 +64,9 @@ pub fn Table(comptime kind: TableKind) type {
     };
 }
 
-pub fn methods(comptime Self: type) type {
+fn methods(comptime Self: type) type {
     return struct {
-        pub inline fn table(self: *Self) *Table(.table) {
+        pub inline fn table(self: *Self) *TableType(.table) {
             return @ptrCast(self);
         }
     };

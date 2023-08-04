@@ -1,6 +1,6 @@
 const zfltk = @import("zfltk");
 const app = zfltk.app;
-const GlutWindow = zfltk.GlutWindow;
+const GlutWindow = zfltk.window.GlutWindow;
 const Mode = zfltk.enums.Mode;
 
 extern fn glClearColor(r: f32, g: f32, b: f32, a: f32) void;

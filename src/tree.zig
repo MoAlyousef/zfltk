@@ -43,7 +43,7 @@ pub const Tree = struct {
     }
 };
 
-pub fn methods(comptime Self: type) type {
+fn methods(comptime Self: type) type {
     return struct {
         pub inline fn tree(self: *Self) *Tree {
             return @ptrCast(self);

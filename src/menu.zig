@@ -30,13 +30,17 @@ pub const MenuFlag = enum(i32) {
     menu_horizontal = 0x100,
 };
 
-pub const MenuKind = enum {
+pub const MenuBar = MenuType(.menu_bar);
+pub const SysMenuBar = MenuType(.sys_menu_bar);
+pub const Choice = MenuType(.choice);
+
+const MenuKind = enum {
     menu_bar,
     sys_menu_bar,
     choice,
 };
 
-pub fn Menu(comptime kind: MenuKind) type {
+fn MenuType(comptime kind: MenuKind) type {
     return struct {
         const Self = @This();
 
@@ -82,11 +86,11 @@ pub fn Menu(comptime kind: MenuKind) type {
     };
 }
 
-pub fn methods(comptime Self: type, comptime RawPtr: type) type {
+fn methods(comptime Self: type, comptime RawPtr: type) type {
     const type_name = @typeName(RawPtr);
     const ptr_name = type_name[(std.mem.indexOf(u8, type_name, "struct_Fl_") orelse 0) + 7 .. type_name.len];
     return struct {
-        pub inline fn menu(self: *Self) *Menu(.menu_bar) {
+        pub inline fn menu(self: *Self) *MenuType(.menu_bar) {
             return @ptrCast(self);
         }
 
