@@ -209,9 +209,9 @@ pub fn cfltk_link(exe: *CompileStep, install_prefix: []const u8, opts: FinalOpts
     var buf: [1024]u8 = undefined;
     const target = exe.target;
     var inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/include", .{install_prefix});
-    exe.addIncludePath(inc_dir);
+    exe.addIncludePath(Build.LazyPath{ .path = inc_dir });
     var lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib/lib", .{install_prefix});
-    exe.addLibraryPath(lib_dir);
+    exe.addLibraryPath(Build.LazyPath{ .path = lib_dir });
     exe.linkSystemLibrary("cfltk");
     exe.linkSystemLibrary("fltk");
     exe.linkSystemLibrary("fltk_images");
@@ -289,7 +289,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
     exe.linkLibCpp();
     var buf: [1024]u8 = undefined;
     var inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/include", .{install_prefix});
-    exe.addIncludePath(inc_dir);
+    exe.addIncludePath(Build.LazyPath{ .path = inc_dir });
     var cmake_src_path = try std.fmt.allocPrint(b.allocator, "{s}/cfltk", .{install_prefix});
     _ = std.fs.cwd().openDir(cmake_src_path, .{}) catch |git_err| {
         std.debug.print("Warning: {!}. The cfltk library will be grabbed!\n", .{git_err});
@@ -316,31 +316,33 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
     try cflags.append("-I/usr/local/include");
     try cflags.append(try std.fmt.allocPrint(b.allocator, "-I{s}", .{inc_dir}));
     try cflags.append("-DCFLTK_USE_GL");
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_new.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_lock.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_window.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_button.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_widget.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_group.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_text.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_box.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_input.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_menu.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_dialog.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_valuator.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_browser.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_misc.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_image.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_draw.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_table.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_tree.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_surface.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_font.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_utils.cpp", .{install_prefix}), cflags.items);
-    lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_printer.cpp", .{install_prefix}), cflags.items);
+    lib.addCSourceFiles(&[_][]const u8{
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_new.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_lock.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_window.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_button.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_widget.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_group.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_text.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_box.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_input.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_menu.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_dialog.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_valuator.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_browser.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_misc.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_image.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_draw.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_table.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_tree.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_surface.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_font.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_utils.cpp", .{install_prefix}),
+        try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_printer.cpp", .{install_prefix}),
+    }, cflags.items);
     if (target.isDarwin()) {
-        lib.addCSourceFile(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_nswindow.m", .{install_prefix}), cflags.items);
+        lib.addCSourceFile(Build.Step.Compile.CSourceFile{ .file = Build.LazyPath{ .path = try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_nswindow.m", .{install_prefix}) }, .flags = cflags.items });
     }
     const proc2 = try std.ChildProcess.exec(.{
         .allocator = b.allocator,
@@ -355,7 +357,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
         if (std.mem.startsWith(u8, x, "-L")) try Lflags.append(x[2..]);
     }
     for (Lflags.items) |f| {
-        lib.addLibraryPath(f);
+        lib.addLibraryPath(Build.LazyPath{ .path = f });
     }
     for (lflags.items) |f| {
         lib.linkSystemLibrary(f);
