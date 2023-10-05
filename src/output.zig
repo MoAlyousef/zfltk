@@ -85,7 +85,7 @@ fn OutputType(comptime kind: OutputKind) type {
         }
 
         pub fn setTextColor(self: *Output, col: Color) void {
-            c.Fl_Output_set_text_color(self.input().raw(), col.input().raw()());
+            c.Fl_Output_set_text_color(self.input().raw(), col.toRgbi());
         }
 
         pub fn setTextSize(self: *Output, sz: i32) void {
