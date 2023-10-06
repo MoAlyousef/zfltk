@@ -100,7 +100,7 @@ fn InputType(comptime kind: InputKind) type {
         }
 
         pub fn setTextColor(self: *Input, col: Color) void {
-            c.Fl_Input_set_text_color(self.input().raw(), col.input().raw()());
+            c.Fl_Input_set_text_color(self.input().raw(), col.toRgbi());
         }
 
         pub fn setTextSize(self: *Input, sz: i32) void {
