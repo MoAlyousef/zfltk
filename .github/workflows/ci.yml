@@ -15,6 +15,8 @@ jobs:
         shell: bash
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.11.0
       - name: Build
         run: zig build -Dzfltk-use-zigcc=true
   build_macos:
@@ -22,6 +24,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.11.0
       - name: Build
         run: zig build -Dzfltk-use-zigcc=true
   build_windows-mingw:
@@ -35,7 +39,7 @@ jobs:
       - shell: msys2 {0}
         run: |
           pacman -Sy
-          pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-ninja wget unzip git --needed
+          pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-gcc $MINGW_PACKAGE_PREFIX-ninja wget unzip git --needed
           wget https://ziglang.org/builds/zig-windows-x86_64-0.11.0.zip
           unzip -qq zig-windows-x86_64-0.11.0.zip
           git submodule update --init --recursive
@@ -45,8 +49,8 @@ jobs:
   #   steps:
   #     - uses: actions/checkout@v2
   #     - uses: goto-bus-stop/setup-zig@v2
-  #       with:
-  #         version: 0.11.0
+        # with:
+        #   version: 0.11.0
   #     - uses: seanmiddleditch/gha-setup-ninja@master
   #     - name: build
   #       shell: bash
