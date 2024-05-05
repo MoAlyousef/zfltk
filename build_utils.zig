@@ -175,7 +175,7 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
                 });
             }
         }
-        zfltk_config.setCwd(.{ .path = cmake_src_path});
+        zfltk_config.setCwd(b.path("zig-out/cfltk"));
         _ = std.fs.cwd().openDir(cmake_src_path, .{}) catch |git_err| {
             std.debug.print("Warning: {!}. The cfltk library will be grabbed!\n", .{git_err});
             const cfltk_fetch = b.addSystemCommand(&[_][]const u8{ "git", "clone", "https://github.com/MoAlyousef/cfltk", cmake_src_path, "--depth=1", "--recurse-submodules" });
@@ -193,7 +193,7 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
             "--parallel",
             jobs,
         });
-        zfltk_build.setCwd(.{ .path = cmake_src_path});
+        zfltk_build.setCwd(b.path("zig-out/cfltk"));
         zfltk_build.step.dependOn(&zfltk_config.step);
 
         // This only needs to run once!
@@ -202,7 +202,7 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
             "--install",
             cmake_bin_path,
         });
-        zfltk_install.setCwd(.{ .path = cmake_src_path});
+        zfltk_install.setCwd(b.path("zig-out/cfltk"));
         zfltk_install.step.dependOn(&zfltk_build.step);
         finalize_cfltk.dependOn(&zfltk_install.step);
     };
