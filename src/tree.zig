@@ -30,7 +30,7 @@ pub const Tree = struct {
         const label = if (opts.label != null) opts.label.?.ptr else null;
 
         if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
-            var self = Self.fromRaw(ptr);
+            const self = Self.fromRaw(ptr);
             return self;
         }
 

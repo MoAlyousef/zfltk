@@ -370,7 +370,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub fn centerOfParent(self: *Self) void {
-            var par = self.parent();
+            const par = self.parent();
             if (par) |p| {
                 self.centerOf(p);
             }
@@ -433,7 +433,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub fn sizeOfParent(self: *Self) void {
-            var par = self.parent();
+            const par = self.parent();
             if (par) |p| self.sizeOf(p);
         }
 

@@ -1,6 +1,6 @@
 const std = @import("std");
 const Build = std.Build;
-const CompileStep = std.build.CompileStep;
+const CompileStep = Build.Step.Compile;
 const utils = @import("build_utils.zig");
 
 pub const SdkOpts = struct {
@@ -56,9 +56,11 @@ pub fn initWithOpts(b: *Build, opts: SdkOpts) !*Sdk {
 
 pub fn getZfltkModule(sdk: *Sdk, b: *Build) *Build.Module {
     _ = sdk;
-    return b.createModule(.{
-        .source_file = .{ .path = utils.thisDir() ++ "/src/zfltk.zig" },
+    var mod = b.createModule(.{
+        .root_source_file = .{ .path = utils.thisDir() ++ "/src/zfltk.zig" },
     });
+    mod.addIncludePath(b.path("zig-out/cfltk/include"));
+    return mod;
 }
 
 pub fn link(sdk: *Sdk, exe: *CompileStep) !void {
@@ -86,7 +88,7 @@ pub fn build(b: *Build) !void {
             .optimize = mode,
             .target = target,
         });
-        exe.addModule("zfltk", zfltk_module);
+        exe.root_module.addImport("zfltk", zfltk_module);
         try sdk.link(exe);
         examples_step.dependOn(&exe.step);
         b.installArtifact(exe);

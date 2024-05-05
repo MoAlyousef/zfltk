@@ -191,7 +191,7 @@ fn TextDisplayType(comptime kind: TextKind) type {
                 var self = Self.fromRaw(ptr);
 
                 if (opts.buffer) {
-                    var buf = try TextBuffer.init();
+                    const buf = try TextBuffer.init();
                     self.setBuffer(buf);
                 }
 

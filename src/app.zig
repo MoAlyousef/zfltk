@@ -204,7 +204,7 @@ pub inline fn send(comptime T: type, t: T) void {
 }
 
 pub fn recv(comptime T: type) ?T {
-    var temp = c.Fl_thread_msg();
+    const temp = c.Fl_thread_msg();
 
     if (temp) |ptr| {
         return @enumFromInt(@intFromPtr(ptr));

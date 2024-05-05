@@ -15,7 +15,7 @@ const c = @cImport({
 // (the color format FLTK uses) so this trick can be used to make Colors both
 // efficient and easy to use
 pub const Color = switch (native_endian) {
-    .Big => packed struct {
+    .big => packed struct {
         r: u8 = 0,
         g: u8 = 0,
         b: u8 = 0,
@@ -24,7 +24,7 @@ pub const Color = switch (native_endian) {
         pub usingnamespace methods;
     },
 
-    .Little => packed struct {
+    .little => packed struct {
         i: u8 = 0,
         b: u8 = 0,
         g: u8 = 0,

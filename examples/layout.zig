@@ -28,7 +28,7 @@ pub fn main() !void {
 
     win.resizable(pack);
 
-    var btn = try Button.init(.{
+    const btn = try Button.init(.{
         .h = 48,
         .label = "Button",
     });

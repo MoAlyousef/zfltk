@@ -23,7 +23,7 @@ pub fn main() !void {
 
     win.resizable(tile);
 
-    var btn = try Button.init(.{
+    const btn = try Button.init(.{
         .x = 0,
         .y = 48,
         .w = tile.w() - 48,

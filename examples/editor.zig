@@ -31,7 +31,7 @@ pub fn openCb(_: *MenuBar, data: ?*anyopaque) void {
     var dlg = try FileDialog(.file).init(.{});
     dlg.setFilter("*.{txt,zig}");
     dlg.show();
-    var fname = dlg.filename();
+    const fname = dlg.filename();
     if (!std.mem.eql(u8, fname, "")) {
         editor.buffer().?.loadFile(fname) catch unreachable;
     }
@@ -42,7 +42,7 @@ pub fn saveCb(_: *MenuBar, data: ?*anyopaque) void {
     var dlg = try FileDialog(.save_file).init(.{ .save_as_confirm = true });
     dlg.setFilter("*.{txt,zig}");
     dlg.show();
-    var fname = dlg.filename();
+    const fname = dlg.filename();
     if (!std.mem.eql(u8, fname, "")) {
         editor.buffer().?.saveFile(fname) catch unreachable;
     }

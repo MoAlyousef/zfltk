@@ -145,7 +145,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                 @compileError("expected tuple or struct argument, found " ++ @typeName(T));
             }
 
-            inline for (std.meta.fields(T)) |w| {
+            inline for (type_info.Struct.fields) |w| {
                 const wid = @as(w.type, @field(widgets, w.name));
 
                 if (!comptime zfltk.isWidget(w.type)) {

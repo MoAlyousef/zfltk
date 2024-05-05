@@ -35,7 +35,7 @@ pub fn main() !void {
     scroll.add(.{mybox});
     win.add(.{scroll});
 
-    var img = try Image.load(.png, "screenshots/logo.png");
+    const img = try Image.load(.png, "screenshots/logo.png");
 
     mybox.setImage(img);
 
