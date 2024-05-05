@@ -258,6 +258,7 @@ pub fn cfltk_link(exe: *CompileStep, install_prefix: []const u8, opts: FinalOpts
         exe.linkFramework("Cocoa");
         exe.linkFramework("ApplicationServices");
         exe.linkFramework("OpenGL");
+        exe.linkFramework("UniformTypeIdentifiers");
     } else {
         if (opts.use_wayland) {
             exe.linkSystemLibrary("wayland-client");
