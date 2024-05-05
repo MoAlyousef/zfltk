@@ -25,9 +25,7 @@ If you're using the official package manager:
         "src",
         "build.zig",
         "build.zig.zon",
-        "LICENSE",
-        "README.md",
-    }
+    },
     .dependencies = .{
         .zfltk = .{
             .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.2.0.tar.gz",
