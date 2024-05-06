@@ -44,14 +44,14 @@ jobs:
           unzip -qq zig-windows-x86_64-0.12.0.zip
           git submodule update --init --recursive
           zig-windows-x86_64-0.12.0/zig build --search-prefix $MINGW_PREFIX
-  # build_windows:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: goto-bus-stop/setup-zig@v2
-        # with:
-        #   version: 0.12.0
-  #     - uses: seanmiddleditch/gha-setup-ninja@master
-  #     - name: build
-  #       shell: bash
-  #       run: zig build
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.12.0
+      - uses: seanmiddleditch/gha-setup-ninja@master
+      - name: build
+        shell: bash
+        run: zig build
