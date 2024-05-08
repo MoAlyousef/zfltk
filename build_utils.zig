@@ -215,6 +215,8 @@ pub fn cfltk_link(exe: *CompileStep, install_prefix: []const u8, opts: FinalOpts
     exe.addIncludePath(.{ .path = inc_dir });
     const lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib/lib", .{install_prefix});
     exe.addLibraryPath(.{ .path = lib_dir });
+    const lib64_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib/lib64", .{install_prefix});
+    exe.addLibraryPath(.{ .path = lib64_dir });
     exe.linkSystemLibrary("cfltk");
     exe.linkSystemLibrary("fltk");
     exe.linkSystemLibrary("fltk_images");
