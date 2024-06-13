@@ -28,7 +28,7 @@ If you're using the official package manager:
     },
     .dependencies = .{
         .zfltk = .{
-            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.2.0.tar.gz",
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.3.0.tar.gz",
         },
     }
 }
