@@ -57,7 +57,7 @@ pub fn initWithOpts(b: *Build, opts: SdkOpts) !*Sdk {
 pub fn getZfltkModule(sdk: *Sdk, b: *Build) *Build.Module {
     _ = sdk;
     var mod = b.createModule(.{
-        .root_source_file = .{ .path = utils.thisDir() ++ "/src/zfltk.zig" },
+        .root_source_file = b.path("src/zfltk.zig"),
     });
     mod.addIncludePath(b.path("zig-out/cfltk/include"));
     return mod;
@@ -84,7 +84,7 @@ pub fn build(b: *Build) !void {
     for (utils.examples) |example| {
         const exe = b.addExecutable(.{
             .name = example.output,
-            .root_source_file = .{ .path = example.input },
+            .root_source_file = b.path(example.input),
             .optimize = mode,
             .target = target,
         });

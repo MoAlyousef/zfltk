@@ -212,11 +212,11 @@ pub fn cfltk_link(exe: *CompileStep, install_prefix: []const u8, opts: FinalOpts
     var buf: [1024]u8 = undefined;
     const target = exe.root_module.resolved_target.?.result;
     const inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/include", .{install_prefix});
-    exe.addIncludePath(.{ .path = inc_dir });
+    exe.addIncludePath(.{ .cwd_relative = inc_dir });
     const lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib/lib", .{install_prefix});
-    exe.addLibraryPath(.{ .path = lib_dir });
+    exe.addLibraryPath(.{ .cwd_relative = lib_dir });
     const lib64_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib/lib64", .{install_prefix});
-    exe.addLibraryPath(.{ .path = lib64_dir });
+    exe.addLibraryPath(.{ .cwd_relative = lib64_dir });
     exe.linkSystemLibrary("cfltk");
     exe.linkSystemLibrary("fltk");
     exe.linkSystemLibrary("fltk_images");
@@ -295,7 +295,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
     exe.linkLibCpp();
     var buf: [1024]u8 = undefined;
     const inc_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/include", .{install_prefix});
-    exe.addIncludePath(.{ .path = inc_dir });
+    exe.addIncludePath(b.path(inc_dir));
     const cmake_src_path = try std.fmt.allocPrint(b.allocator, "{s}/cfltk", .{install_prefix});
     _ = std.fs.cwd().openDir(cmake_src_path, .{}) catch |git_err| {
         std.debug.print("Warning: {!}. The cfltk library will be grabbed!\n", .{git_err});
@@ -308,7 +308,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
         .optimize = exe.root_module.optimize.?,
         .use_llvm = false,
     });
-    const proc = try std.ChildProcess.run(.{
+    const proc = try std.process.Child.run(.{
         .allocator = b.allocator,
         .argv = &[_][]const u8{ "fltk-config", "--use-images", "--use-gl", "--cflags" },
     });
@@ -348,9 +348,9 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
         try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_printer.cpp", .{install_prefix}),
     }, .flags = cflags.items});
     if (target.isDarwin()) {
-        lib.addCSourceFile(.{ .file = .{ .path = try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_nswindow.m", .{install_prefix}) }, .flags = cflags.items });
+        lib.addCSourceFile(.{ .file = b.path(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_nswindow.m", .{install_prefix})), .flags = cflags.items });
     }
-    const proc2 = try std.ChildProcess.run(.{
+    const proc2 = try std.process.Child.run(.{
         .allocator = b.allocator,
         .argv = &[_][]const u8{ "fltk-config", "--use-images", "--use-gl", "--ldflags" },
     });
@@ -363,7 +363,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
         if (std.mem.startsWith(u8, x, "-L")) try Lflags.append(x[2..]);
     }
     for (Lflags.items) |f| {
-        lib.addLibraryPath(.{ .path = f });
+        lib.addLibraryPath(b.path(f));
     }
     for (lflags.items) |f| {
         lib.linkSystemLibrary(f);

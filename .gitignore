@@ -6,3 +6,4 @@ zig-cache/
 /docgen_tmp/
 temp.zig
 /zig-out
+.zig-cache/
