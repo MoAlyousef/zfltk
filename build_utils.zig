@@ -7,7 +7,7 @@ pub const FinalOpts = struct {
     system_jpeg: bool = false,
     system_png: bool = false,
     system_zlib: bool = false,
-    use_zig_cc: bool = false,
+    build_examples: bool = false,
     use_fltk_config: bool = false,
 };
 
@@ -51,17 +51,6 @@ pub const examples = &[_]Example{
 };
 
 pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_prefix: []const u8, opts: FinalOpts) !void {
-    const zig_exe = b.graph.zig_exe;
-    var zig_cc_buf: [250]u8 = undefined;
-    var zig_cpp_buf: [250]u8 = undefined;
-    const use_zig_cc = switch (opts.use_zig_cc) {
-        false => "",
-        true => try std.fmt.bufPrint(zig_cc_buf[0..], "-DCMAKE_C_COMPILER={s};cc", .{zig_exe}),
-    };
-    const use_zig_cpp = switch (opts.use_zig_cc) {
-        false => "",
-        true => try std.fmt.bufPrint(zig_cpp_buf[0..], "-DCMAKE_CXX_COMPILER={s};c++", .{zig_exe}),
-    };
     const target = b.host.result;
     var buf: [1024]u8 = undefined;
     const sdk_lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib", .{install_prefix});
@@ -95,8 +84,6 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
                 cmake_src_path,
                 "-GNinja",
                 "-DCMAKE_BUILD_TYPE=Release",
-                use_zig_cc,
-                use_zig_cpp,
                 cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 which_png,
@@ -115,8 +102,6 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
                 "-S",
                 cmake_src_path,
                 "-DCMAKE_BUILD_TYPE=Release",
-                use_zig_cc,
-                use_zig_cpp,
                 cmake_inst_path,
                 "-DFLTK_BUILD_TEST=OFF",
                 which_png,
@@ -136,8 +121,6 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
                     "-S",
                     cmake_src_path,
                     "-DCMAKE_BUILD_TYPE=Release",
-                    use_zig_cc,
-                    use_zig_cpp,
                     cmake_inst_path,
                     "-DFLTK_BUILD_TEST=OFF",
                     which_png,
@@ -158,8 +141,6 @@ pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_p
                     "-S",
                     cmake_src_path,
                     "-DCMAKE_BUILD_TYPE=Release",
-                    use_zig_cc,
-                    use_zig_cpp,
                     cmake_inst_path,
                     "-DFLTK_BUILD_TEST=OFF",
                     which_png,

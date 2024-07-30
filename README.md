@@ -1,23 +1,18 @@
 # zfltk
 A Zig wrapper for the FLTK gui library.
 
-## Running the examples
+## Building the package from source
 ```
 git clone https://github.com/MoAlyousef/zfltk
 cd zfltk
-zig build run-simple
-zig build run-capi
-zig build run-editor
-zig build run-input
-zig build run-image
-zig build run-mixed
+zig build
 ```
 
+To build the examples, pass `-Dzfltk-build-examples=true` to your `zig build` command.
+
 ## Usage
-### Official Zig package manager:
-If you're using the official package manager:
+zfltk supports the zig package manager. You can add it as a dependency to your project in your build.zig.zon:
 ```zig
-// in your build.zig.zon
 .{
     .name = "app",
     .version = "0.0.1",
@@ -56,58 +51,6 @@ pub fn build(b: *Build) !void {
     exe.root_module.addImport("zfltk", zfltk_module);
     try sdk.link(exe);
 
-    b.installArtifact(exe);
-
-    const run_cmd = b.addRunArtifact(exe);
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
-
-    const run_step = b.step("run", "Run the app");
-    run_step.dependOn(&run_cmd.step);
-}
-```
-Then you can run:
-```
-zig build run
-```
-
-### Via vendoring
-You can either use git clone or git submodules:
-```
-# via git submodule
-git submodule add https://github.com/moalyousef/zfltk
-cd zfltk
-cd ..
-```
-```
-# via git clone
-git clone https://github.com/moalyousef/zfltk
-cd zfltk
-cd ..
-```
-then you will need a build.zig file as follows:
-```zig
-const std = @import("std");
-const Sdk = @import("zfltk/build.zig");
-const Build = std.Build;
-
-pub fn build(b: *Build) !void {
-    const target = b.standardTargetOptions(.{});
-    const mode = b.standardOptimizeOption(.{});
-
-    const exe = b.addExecutable(.{
-        .name = "app",
-        .root_source_file = b.path("src/main.zig"),
-        .optimize = mode,
-        .target = target,
-    });
-
-    const sdk = try Sdk.init(b);
-    const zfltk_module = sdk.getZfltkModule(b);
-    exe.root_module.addImport("zfltk", zfltk_module);
-    try sdk.link(exe);
-    
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);

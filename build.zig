@@ -8,15 +8,15 @@ pub const SdkOpts = struct {
     system_jpeg: bool = false,
     system_png: bool = false,
     system_zlib: bool = false,
-    use_zig_cc: bool = false,
     use_fltk_config: bool = false,
+    build_examples: bool = false,
     fn finalOpts(self: SdkOpts) utils.FinalOpts {
         return utils.FinalOpts{
             .use_wayland = self.use_wayland,
             .system_jpeg = self.system_jpeg,
             .system_png = self.system_png,
             .system_zlib = self.system_zlib,
-            .use_zig_cc = self.use_zig_cc,
+            .build_examples = self.build_examples,
             .use_fltk_config = self.use_fltk_config,
         };
     }
@@ -38,7 +38,7 @@ pub fn initWithOpts(b: *Build, opts: SdkOpts) !*Sdk {
     final_opts.system_jpeg = b.option(bool, "zfltk-system-libjpeg", "link system libjpeg") orelse opts.system_jpeg;
     final_opts.system_png = b.option(bool, "zfltk-system-libpng", "link system libpng") orelse opts.system_png;
     final_opts.system_zlib = b.option(bool, "zfltk-system-zlib", "link system zlib") orelse opts.system_zlib;
-    final_opts.use_zig_cc = b.option(bool, "zfltk-use-zigcc", "use zig cc and zig c++ to build FLTK and cfltk") orelse opts.use_zig_cc;
+    final_opts.build_examples = b.option(bool, "zfltk-build-examples", "Build zfltk examples") orelse opts.build_examples;
     final_opts.use_fltk_config = b.option(bool, "zfltk-use-fltk-config", "use fltk-config instead of building fltk from source") orelse opts.use_fltk_config;
     const install_prefix = b.install_prefix;
     const finalize_cfltk = b.step("finalize cfltk install", "Installs cfltk");
@@ -79,23 +79,25 @@ pub fn build(b: *Build) !void {
     const mode = b.standardOptimizeOption(.{});
     const sdk = try Sdk.init(b);
     const zfltk_module = sdk.getZfltkModule(b);
-    const examples_step = b.step("examples", "build the examples");
-    b.default_step.dependOn(examples_step);
+    if (sdk.opts.build_examples) {
+        const examples_step = b.step("examples", "build the examples");
+        b.default_step.dependOn(examples_step);
 
-    for (utils.examples) |example| {
-        const exe = b.addExecutable(.{
-            .name = example.output,
-            .root_source_file = b.path(example.input),
-            .optimize = mode,
-            .target = target,
-        });
-        exe.root_module.addImport("zfltk", zfltk_module);
-        try sdk.link(exe);
-        examples_step.dependOn(&exe.step);
-        b.installArtifact(exe);
+        for (utils.examples) |example| {
+            const exe = b.addExecutable(.{
+                .name = example.output,
+                .root_source_file = b.path(example.input),
+                .optimize = mode,
+                .target = target,
+            });
+            exe.root_module.addImport("zfltk", zfltk_module);
+            try sdk.link(exe);
+            examples_step.dependOn(&exe.step);
+            b.installArtifact(exe);
 
-        const run_cmd = b.addRunArtifact(exe);
-        const run_step = b.step(b.fmt("run-{s}", .{example.output}), example.description.?);
-        run_step.dependOn(&run_cmd.step);
+            const run_cmd = b.addRunArtifact(exe);
+            const run_step = b.step(b.fmt("run-{s}", .{example.output}), example.description.?);
+            run_step.dependOn(&run_cmd.step);
+        }
     }
 }
