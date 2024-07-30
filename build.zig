@@ -56,8 +56,9 @@ pub fn initWithOpts(b: *Build, opts: SdkOpts) !*Sdk {
 
 pub fn getZfltkModule(sdk: *Sdk, b: *Build) *Build.Module {
     _ = sdk;
-    var mod = b.createModule(.{
-        .root_source_file = b.path("src/zfltk.zig"),
+    const prefix = comptime std.fs.path.dirname(@src().file) orelse unreachable;
+    var mod = b.addModule("zfltk", .{
+        .root_source_file = .{ .cwd_relative = prefix ++ "/src/zfltk.zig" },
     });
     mod.addIncludePath(b.path("zig-out/cfltk/include"));
     return mod;
