@@ -28,7 +28,7 @@ If you're using the official package manager:
     },
     .dependencies = .{
         .zfltk = .{
-            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.3.0.tar.gz",
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.4.0.tar.gz",
         },
     }
 }
@@ -46,7 +46,7 @@ pub fn build(b: *Build) !void {
     const mode = b.standardOptimizeOption(.{});
     const exe = b.addExecutable(.{
         .name = "app",
-        .root_source_file = .{.path = "src/main.zig" },
+        .root_source_file = b.path("src/main.zig"),
         .optimize = mode,
         .target = target,
     });
@@ -98,7 +98,7 @@ pub fn build(b: *Build) !void {
 
     const exe = b.addExecutable(.{
         .name = "app",
-        .root_source_file = .{.path = "src/main.zig" },
+        .root_source_file = b.path("src/main.zig"),
         .optimize = mode,
         .target = target,
     });
