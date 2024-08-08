@@ -45,17 +45,17 @@ pub const TextBuffer = struct {
 
     // TODO: find a fast way to implement these methods using slices
     /// Sets the text of the buffer
-    pub fn setText(self: *TextBuffer, txt: [*]const u8) void {
+    pub fn setText(self: *TextBuffer, txt: [:0]const u8) void {
         return c.Fl_Text_Buffer_set_text(self.raw(), txt);
     }
 
     /// Returns the text of the buffer
-    pub fn text(self: *TextBuffer) [*]const u8 {
+    pub fn text(self: *TextBuffer) [:0]const u8 {
         return c.Fl_Text_Buffer_text(self.raw());
     }
 
     /// Appends to the buffer
-    pub fn append(self: *TextBuffer, str: [*]const u8) void {
+    pub fn append(self: *TextBuffer, str: [:0]const u8) void {
         return c.Fl_Text_Buffer_append(self.raw(), str);
     }
 
@@ -69,17 +69,17 @@ pub const TextBuffer = struct {
         return c.Fl_Text_Buffer_remove(self.raw(), @intCast(start), @intCast(end));
     }
     /// Returns the text within the range
-    pub fn textRange(self: *TextBuffer, start: u32, end: u32) [*]const u8 {
+    pub fn textRange(self: *TextBuffer, start: u32, end: u32) [:0]const u8 {
         return c.Fl_Text_Buffer_text_range(self.raw(), @intCast(start), @intCast(end));
     }
 
     /// Inserts text into a position
-    pub fn insert(self: *TextBuffer, pos: u32, str: [*]const u8) void {
+    pub fn insert(self: *TextBuffer, pos: u32, str: [:0]const u8) void {
         c.Fl_Text_Buffer_insert(self.raw(), @intCast(pos), str);
     }
 
     /// Replaces text from position ```start``` to ```end```
-    pub fn replace(self: *TextBuffer, start: u32, end: u32, txt: [*]const u8) void {
+    pub fn replace(self: *TextBuffer, start: u32, end: u32, txt: [:0]const u8) void {
         c.Fl_Text_Buffer_replace(self.raw(), @intCast(start), @intCast(end), txt);
     }
 
