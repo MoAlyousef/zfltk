@@ -54,9 +54,9 @@ pub fn isWidget(comptime T: type) bool {
     if (T == *Widget) return true;
 
     const tfo = @typeInfo(T);
-    if (tfo != .Pointer) return false;
+    if (tfo != .pointer) return false;
 
-    const Child = tfo.Pointer.child;
+    const Child = tfo.pointer.child;
 
     if (!@hasDecl(Child, "widget")) {
         return false;

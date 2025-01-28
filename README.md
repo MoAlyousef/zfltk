@@ -23,12 +23,13 @@ zfltk supports the zig package manager. You can add it as a dependency to your p
     },
     .dependencies = .{
         .zfltk = .{
-            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.6.0.tar.gz",
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.7.0.tar.gz",
         },
     }
 }
 ```
 (This is missing the hash, zig build will give you the correct hash, which you should add after the url)
+(pkg0.7.0 is compatible with zig 0.14).
 
 In your build.zig:
 ```zig

@@ -51,7 +51,7 @@ pub const examples = &[_]Example{
 };
 
 pub fn cfltk_build_from_source(b: *Build, finalize_cfltk: *Build.Step, install_prefix: []const u8, opts: FinalOpts) !void {
-    const target = b.host.result;
+    const target = try std.zig.system.resolveTargetQuery(.{});
     var buf: [1024]u8 = undefined;
     const sdk_lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib", .{install_prefix});
     _ = std.fs.cwd().openDir(sdk_lib_dir, .{}) catch |err| {
@@ -196,8 +196,6 @@ pub fn cfltk_link(exe: *CompileStep, install_prefix: []const u8, opts: FinalOpts
     exe.addIncludePath(.{ .cwd_relative = inc_dir });
     const lib_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib/lib", .{install_prefix});
     exe.addLibraryPath(.{ .cwd_relative = lib_dir });
-    const lib64_dir = try std.fmt.bufPrint(buf[0..], "{s}/cfltk/lib/lib64", .{install_prefix});
-    exe.addLibraryPath(.{ .cwd_relative = lib64_dir });
     exe.linkSystemLibrary("cfltk");
     exe.linkSystemLibrary("fltk");
     exe.linkSystemLibrary("fltk_images");
@@ -295,7 +293,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
     });
     const out = proc.stdout;
     var cflags = std.ArrayList([]const u8).init(b.allocator);
-    var it = std.mem.tokenize(u8, out, " ");
+    var it = std.mem.tokenizeAny(u8, out, " ");
     while (it.next()) |x| {
         try cflags.append(x);
     }
@@ -303,7 +301,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
     try cflags.append("-I/usr/local/include");
     try cflags.append(try std.fmt.allocPrint(b.allocator, "-I{s}", .{inc_dir}));
     try cflags.append("-DCFLTK_USE_GL");
-    lib.addCSourceFiles(.{.files = &[_][]const u8{
+    lib.addCSourceFiles(.{ .files = &[_][]const u8{
         try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_new.cpp", .{install_prefix}),
         try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_lock.cpp", .{install_prefix}),
         try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl.cpp", .{install_prefix}),
@@ -327,7 +325,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
         try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_font.cpp", .{install_prefix}),
         try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_utils.cpp", .{install_prefix}),
         try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_printer.cpp", .{install_prefix}),
-    }, .flags = cflags.items});
+    }, .flags = cflags.items });
     if (target.isDarwin()) {
         lib.addCSourceFile(.{ .file = b.path(try std.fmt.allocPrint(b.allocator, "{s}/cfltk/src/cfl_nswindow.m", .{install_prefix})), .flags = cflags.items });
     }
@@ -338,7 +336,7 @@ pub fn link_using_fltk_config(b: *Build, exe: *CompileStep, finalize_cfltk: *Bui
     const out2 = proc2.stdout;
     var lflags = std.ArrayList([]const u8).init(b.allocator);
     var Lflags = std.ArrayList([]const u8).init(b.allocator);
-    var it2 = std.mem.tokenize(u8, out2, " ");
+    var it2 = std.mem.tokenizeAny(u8, out2, " ");
     while (it2.next()) |x| {
         if (std.mem.startsWith(u8, x, "-l") and !std.mem.startsWith(u8, x, "-ldl")) try lflags.append(x[2..]);
         if (std.mem.startsWith(u8, x, "-L")) try Lflags.append(x[2..]);

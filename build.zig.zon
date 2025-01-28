@@ -1,6 +1,6 @@
 .{
     .name = "zfltk",
-    .version = "0.0.3", // zig 0.13.0
+    .version = "0.0.4", // zig 0.14.0
     .paths = .{
         "src",
         "build.zig",
@@ -8,5 +8,5 @@
         "build.zig.zon",
         "LICENSE",
         "README.md",
-    }
+    },
 }

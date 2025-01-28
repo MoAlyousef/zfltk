@@ -141,11 +141,11 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             const T = @TypeOf(widgets);
             const type_info = @typeInfo(T);
 
-            if (type_info != .Struct) {
+            if (type_info != .@"struct") {
                 @compileError("expected tuple or struct argument, found " ++ @typeName(T));
             }
 
-            inline for (type_info.Struct.fields) |w| {
+            inline for (type_info.@"struct".fields) |w| {
                 const wid = @as(w.type, @field(widgets, w.name));
 
                 if (!comptime zfltk.isWidget(w.type)) {
