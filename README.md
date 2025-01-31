@@ -2,7 +2,7 @@
 A Zig wrapper for the FLTK gui library.
 
 ## Building the package from source
-```
+```sh
 git clone https://github.com/MoAlyousef/zfltk
 cd zfltk
 zig build
@@ -11,27 +11,43 @@ zig build
 To build the examples, pass `-Dzfltk-build-examples=true` to your `zig build` command.
 
 ## Usage
-zfltk supports the zig package manager. You can add it as a dependency to your project in your build.zig.zon:
+zfltk supports the zig package manager. To create a new project:
+
+```sh
+mkdir myproject
+cd myproject
+zig init
+```
+
+This should create `build.zig`, `build.zig.zon` and other files.
+
+You can add zfltk as a dependency to your project with one of these:
+
+```sh
+## specific release
+# 0.6.0 for zig 0.13
+zig fetch --save=zfltk https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.6.0.zip
+# or 0.7.0 for zig 0.14
+zig fetch --save=zfltk https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.7.0.zip
+## or main branch
+zig fetch --save=zfltk https://github.com/MoAlyousef/zfltk/archive/refs/heads/main.zip
+```
+
+This might add something like this in your `build.zig.zon`:
 ```zig
 .{
-    .name = "app",
-    .version = "0.0.1",
-    .paths = .{
-        "src",
-        "build.zig",
-        "build.zig.zon",
-    },
+    ...
     .dependencies = .{
         .zfltk = .{
-            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.7.0.tar.gz",
+            .url = "https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.7.0.zip",
+            .hash = "...",
         },
-    }
+    },
+    ...
 }
 ```
-(This is missing the hash, zig build will give you the correct hash, which you should add after the url)
-(pkg0.7.0 is compatible with zig 0.14).
 
-In your build.zig:
+You can put this in `build.zig`:
 ```zig
 const std = @import("std");
 const Sdk = @import("zfltk");
@@ -63,10 +79,43 @@ pub fn build(b: *Build) !void {
     run_step.dependOn(&run_cmd.step);
 }
 ```
-Then you can run:
+
+Or you can make the changes yourself to an existing `build.zig` file. The changes are (a) `const Sdk` and `const Build` lines at the top, (b) `void` to `!void` in `fn build` line, (c) adding some lines before `b.installArtifact(exe);` line. In a fresh project, something like:
+
+```diff
+@@ -1,9 +1,11 @@
+ const std = @import("std");
++const Sdk = @import("zfltk");
++const Build = std.Build;
+ 
+ // Although this function looks imperative, note that its job is to
+ // declaratively construct a build graph that will be executed by an external
+ // runner.
+-pub fn build(b: *std.Build) void {
++pub fn build(b: *std.Build) !void {
+     // Standard target options allows the person running `zig build` to choose
+     // what target to build for. Here we do not override the defaults, which
+     // means any target is allowed, and the default is native. Other options
+@@ -36,6 +38,11 @@ pub fn build(b: *std.Build) void {
+         .optimize = optimize,
+     });
+ 
++    const sdk = try Sdk.init(b);
++    const zfltk_module = sdk.getZfltkModule(b);
++    exe.root_module.addImport("zfltk", zfltk_module);
++    try sdk.link(exe);
++
+     // This declares intent for the executable to be installed into the
+     // standard location when the user invokes the "install" step (the default
+     // step when running `zig build`).
 ```
+
+Then you can run:
+```sh
 zig build run
 ```
+
+When you run this first time on a new project it should build [cfltk](https://github.com/MoAlyousef/cfltk/). This might require having some development packages to be installed on the system which are mentioned in the "Dependencies" section below.
 
 ## Dependencies 
 
@@ -78,23 +127,23 @@ This requires CMake (and Ninja on Windows) as a build system, and is only requir
 - Linux: X11 and OpenGL development headers need to be installed for development. The libraries themselves are available on linux distros with a graphical user interface.
 
 For Debian-based GUI distributions, that means running:
-```
+```sh
 sudo apt-get install libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpango1.0-dev libpng-dev libgl1-mesa-dev libglu1-mesa-dev
 ```
 For RHEL-based GUI distributions, that means running:
-```
+```sh
 sudo yum groupinstall "X Software Development" && yum install pango-devel libXinerama-devel libpng-devel libstdc++-static
 ```
 For Arch-based GUI distributions, that means running:
-```
+```sh
 sudo pacman -S libx11 libxext libxft libxinerama libxcursor libxrender libxfixes libpng pango cairo libgl mesa --needed
 ```
 For Alpine linux:
-```
+```sh
 apk add pango-dev fontconfig-dev libxinerama-dev libxfixes-dev libxcursor-dev libpng-dev mesa-gl
 ```
 For nixos:
-```
+```sh
 nix-shell --packages rustc cmake git gcc xorg.libXext xorg.libXft xorg.libXinerama xorg.libXcursor xorg.libXrender xorg.libXfixes libcerf pango cairo libGL mesa pkg-config
 ```
 
