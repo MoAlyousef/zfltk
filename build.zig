@@ -56,11 +56,15 @@ pub fn initWithOpts(b: *Build, opts: SdkOpts) !*Sdk {
 
 pub fn getZfltkModule(sdk: *Sdk, b: *Build) *Build.Module {
     _ = sdk;
-    var mod = b.addModule("zfltk", .{
-        .root_source_file = b.path("./src/zfltk.zig"),
-    });
-    mod.addIncludePath(b.path("zig-out/cfltk/include"));
-    return mod;
+    // var mod = b.addModule("zfltk", .{
+    //     .root_source_file = b.path("./src/zfltk.zig"),
+    // });
+    // mod.addIncludePath(b.path("zig-out/cfltk/include"));
+    // return mod;
+    if (b.modules.contains("zfltk")) {
+        return b.modules.get("zfltk").?;
+    }
+    return b.addModule("zfltk", .{ .root_source_file = b.path("src/zfltk.zig") });
 }
 
 pub fn link(sdk: *Sdk, exe: *CompileStep) !void {
