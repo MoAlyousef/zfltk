@@ -63,7 +63,7 @@ zig build run
 zfltk requires a system install of cfltk. CMake and a C++ compiler.
 You can install cfltk using:
 ```sh
-git clone https://github.com/MoAlyousef/cfltk
+git clone https://github.com/MoAlyousef/cfltk --recurse-submodules --depth=1
 cd cfltk
 ./scripts/bootstrap_common.sh
 ```
