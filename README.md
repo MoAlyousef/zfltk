@@ -27,8 +27,6 @@ You can add zfltk as a dependency to your project with one of these:
 ## specific release
 # 0.6.0 for zig 0.13
 zig fetch --save=zfltk https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.6.0.zip
-# or 0.7.0 for zig 0.14
-zig fetch --save=zfltk https://github.com/MoAlyousef/zfltk/archive/refs/tags/pkg0.7.0.zip
 ## or main branch
 zig fetch --save=zfltk https://github.com/MoAlyousef/zfltk/archive/refs/heads/main.zip
 ```
@@ -47,67 +45,13 @@ This might add something like this in your `build.zig.zon`:
 }
 ```
 
-You can put this in `build.zig`:
+You can add the following to your build.zig:
 ```zig
-const std = @import("std");
-const Sdk = @import("zfltk");
-const Build = std.Build;
-
-pub fn build(b: *Build) !void {
-    const target = b.standardTargetOptions(.{});
-    const mode = b.standardOptimizeOption(.{});
-    const exe = b.addExecutable(.{
-        .name = "app",
-        .root_source_file = b.path("src/main.zig"),
-        .optimize = mode,
+    const zfltk_dep = b.dependency("zfltk", .{
         .target = target,
+        .optimize = optimize,
     });
-
-    const sdk = try Sdk.init(b);
-    const zfltk_module = sdk.getZfltkModule(b);
-    exe.root_module.addImport("zfltk", zfltk_module);
-    try sdk.link(exe);
-
-    b.installArtifact(exe);
-
-    const run_cmd = b.addRunArtifact(exe);
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
-
-    const run_step = b.step("run", "Run the app");
-    run_step.dependOn(&run_cmd.step);
-}
-```
-
-Or you can make the changes yourself to an existing `build.zig` file. The changes are (a) `const Sdk` and `const Build` lines at the top, (b) `void` to `!void` in `fn build` line, (c) adding some lines before `b.installArtifact(exe);` line. In a fresh project, something like:
-
-```diff
-@@ -1,9 +1,11 @@
- const std = @import("std");
-+const Sdk = @import("zfltk");
-+const Build = std.Build;
- 
- // Although this function looks imperative, note that its job is to
- // declaratively construct a build graph that will be executed by an external
- // runner.
--pub fn build(b: *std.Build) void {
-+pub fn build(b: *std.Build) !void {
-     // Standard target options allows the person running `zig build` to choose
-     // what target to build for. Here we do not override the defaults, which
-     // means any target is allowed, and the default is native. Other options
-@@ -36,6 +38,11 @@ pub fn build(b: *std.Build) void {
-         .optimize = optimize,
-     });
- 
-+    const sdk = try Sdk.init(b);
-+    const zfltk_module = sdk.getZfltkModule(b);
-+    exe.root_module.addImport("zfltk", zfltk_module);
-+    try sdk.link(exe);
-+
-     // This declares intent for the executable to be installed into the
-     // standard location when the user invokes the "install" step (the default
-     // step when running `zig build`).
+    exe.root_module.addImport("zfltk", zfltk_dep.module("zfltk"));
 ```
 
 Then you can run:
@@ -115,15 +59,24 @@ Then you can run:
 zig build run
 ```
 
-When you run this first time on a new project it should build [cfltk](https://github.com/MoAlyousef/cfltk/). This might require having some development packages to be installed on the system which are mentioned in the "Dependencies" section below.
-
 ## Dependencies 
+zfltk requires a system install of cfltk. CMake and a C++ compiler.
+You can install cfltk using:
+```sh
+git clone https://github.com/MoAlyousef/cfltk
+cd cfltk
+./scripts/bootstrap_common.sh
+```
+This might require super user privileges. cfltk and fltk are statically linked to your executable.
+If you install cfltk into a non-standard search path via manually invoking cmake and passing a `-DCMAKE_INSTALL_PREFIX=/some/path`, you would need to supply your executable with an include path and library path:
+```zig
+    exe.addLibraryPath("/some/path/include");
+    exe.addIncludePath("/some/path/lib");
+```
 
-This repo tracks cfltk, the C bindings to FLTK. It (along with FLTK) is statically linked to your application.
-This requires CMake (and Ninja on Windows) as a build system, and is only required once.
-
-- Windows: No dependencies.
-- MacOS: No dependencies.
+cfltk dependencies:
+- Windows: With mingw, no dependencies.
+- MacOS: MacOS SDK.
 - Linux: X11 and OpenGL development headers need to be installed for development. The libraries themselves are available on linux distros with a graphical user interface.
 
 For Debian-based GUI distributions, that means running:
@@ -280,12 +233,12 @@ pub fn main() !void {
 Using the C Api directly:
 ```zig
 const c = @cImport({
-    @cInclude("cfl.h"); // Fl_init_all, Fl_run
-    @cInclude("cfl_enums.h"); // Fl_Color_*
-    @cInclude("cfl_image.h"); // Fl_register_images
-    @cInclude("cfl_button.h"); // Fl_Button
-    @cInclude("cfl_box.h"); // Fl_Box
-    @cInclude("cfl_window.h"); // Fl_Window
+    @cInclude("cfltk/cfl.h"); // Fl_init_all, Fl_run
+    @cInclude("cfltk/cfl_enums.h"); // Fl_Color_*
+    @cInclude("cfltk/cfl_image.h"); // Fl_register_images
+    @cInclude("cfltk/cfl_button.h"); // Fl_Button
+    @cInclude("cfltk/cfl_box.h"); // Fl_Box
+    @cInclude("cfltk/cfl_window.h"); // Fl_Window
 });
 
 // fltk initizialization of optional functionalities

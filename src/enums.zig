@@ -7,7 +7,7 @@ const builtin = @import("builtin");
 const native_endian = builtin.cpu.arch.endian();
 
 const c = @cImport({
-    @cInclude("cfl.h");
+    @cInclude("cfltk/cfl.h");
 });
 
 // DO NOT add more elements to this stuct.

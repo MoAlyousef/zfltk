@@ -22,23 +22,23 @@ pub const draw = @import("draw.zig");
 const Widget = widget.Widget;
 
 pub const c = @cImport({
-    @cInclude("cfl.h");
-    @cInclude("cfl_widget.h");
-    @cInclude("cfl_box.h");
-    @cInclude("cfl_button.h");
-    @cInclude("cfl_window.h");
-    @cInclude("cfl_browser.h");
-    @cInclude("cfl_menu.h");
-    @cInclude("cfl_input.h");
-    @cInclude("cfl_text.h");
-    @cInclude("cfl_image.h");
-    @cInclude("cfl_enums.h");
-    @cInclude("cfl_dialog.h");
-    @cInclude("cfl_group.h");
-    @cInclude("cfl_draw.h");
-    @cInclude("cfl_table.h");
-    @cInclude("cfl_valuator.h");
-    @cInclude("cfl_tree.h");
+    @cInclude("cfltk/cfl.h");
+    @cInclude("cfltk/cfl_widget.h");
+    @cInclude("cfltk/cfl_box.h");
+    @cInclude("cfltk/cfl_button.h");
+    @cInclude("cfltk/cfl_window.h");
+    @cInclude("cfltk/cfl_browser.h");
+    @cInclude("cfltk/cfl_menu.h");
+    @cInclude("cfltk/cfl_input.h");
+    @cInclude("cfltk/cfl_text.h");
+    @cInclude("cfltk/cfl_image.h");
+    @cInclude("cfltk/cfl_enums.h");
+    @cInclude("cfltk/cfl_dialog.h");
+    @cInclude("cfltk/cfl_group.h");
+    @cInclude("cfltk/cfl_draw.h");
+    @cInclude("cfltk/cfl_table.h");
+    @cInclude("cfltk/cfl_valuator.h");
+    @cInclude("cfltk/cfl_tree.h");
 });
 
 pub fn widgetCast(comptime T: type, wid: anytype) T {
