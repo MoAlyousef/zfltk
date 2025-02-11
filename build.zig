@@ -91,12 +91,12 @@ pub fn build(b: *std.Build) !void {
         zfltk.linkFramework("OpenGL", .{});
         zfltk.linkFramework("UniformTypeIdentifiers", .{});
     } else {
-        // zfltk.linkSystemLibrary("wayland-client", .{});
-        // zfltk.linkSystemLibrary("wayland-cursor", .{});
-        // zfltk.linkSystemLibrary("xkbcommon", .{});
-        // zfltk.linkSystemLibrary("dbus-1", .{});
-        // zfltk.linkSystemLibrary("EGL", .{});
-        // zfltk.linkSystemLibrary("wayland-egl", .{});
+        zfltk.linkSystemLibrary("wayland-client", .{});
+        zfltk.linkSystemLibrary("wayland-cursor", .{});
+        zfltk.linkSystemLibrary("xkbcommon", .{});
+        zfltk.linkSystemLibrary("dbus-1", .{});
+        zfltk.linkSystemLibrary("EGL", .{});
+        zfltk.linkSystemLibrary("wayland-egl", .{});
         zfltk.linkSystemLibrary("GL", .{});
         zfltk.linkSystemLibrary("GLU", .{});
         zfltk.linkSystemLibrary("pthread", .{});
