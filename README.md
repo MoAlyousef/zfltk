@@ -60,20 +60,23 @@ zig build run
 ```
 
 ## Dependencies 
-zfltk requires a system install of cfltk. CMake and a C++ compiler.
+zfltk requires a system install of cfltk (which along with fltk will be statically linked to your executable). CMake and a C++ compiler.
 You can install cfltk using:
 ```sh
 git clone https://github.com/MoAlyousef/cfltk --recurse-submodules --depth=1
 cd cfltk
-./scripts/bootstrap_common.sh
+./scripts/bootstrap_posix.sh # optionally specify a -DCMAKE_INSTALL_PREFX=/some/path
 ```
-This might require super user privileges. cfltk and fltk are statically linked to your executable.
-If you install cfltk into a non-standard search path via manually invoking cmake and passing a `-DCMAKE_INSTALL_PREFIX=/some/path`, you would need to supply your executable with an include path and library path:
+This might require super user privileges if no install prefix is provided since it might install to /usr/local.
+If you install cfltk into a non-standard search path you would need to supply your executable with an include path and library path:
 ```zig
     exe.addLibraryPath("/some/path/include");
     exe.addIncludePath("/some/path/lib");
 ```
-
+Alternatively you can supply the zig executable with a search prefix:
+```bash
+zig build --search-prefix /some/path
+```
 cfltk dependencies:
 - Windows: With mingw, no dependencies.
 - MacOS: MacOS SDK.
