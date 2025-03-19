@@ -1,5 +1,5 @@
 .{
-    .name = "zfltk",
+    .name = .zfltk,
     .version = "0.0.4", // zig 0.14.0
     .paths = .{
         "src",
@@ -9,4 +9,5 @@
         "LICENSE",
         "README.md",
     },
+    .fingerprint = 0xbbf391ca6351757f,
 }

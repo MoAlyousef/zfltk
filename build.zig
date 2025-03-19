@@ -84,7 +84,7 @@ pub fn build(b: *std.Build) !void {
         zfltk.linkSystemLibrary("gdiplus", .{});
         zfltk.linkSystemLibrary("opengl32", .{});
         zfltk.linkSystemLibrary("glu32", .{});
-    } else if (target_os.isDarwin()) {
+    } else if (target_os.os.tag.isDarwin()) {
         zfltk.linkFramework("Carbon", .{});
         zfltk.linkFramework("Cocoa", .{});
         zfltk.linkFramework("ApplicationServices", .{});
