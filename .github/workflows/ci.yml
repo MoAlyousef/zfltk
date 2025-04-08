@@ -13,7 +13,7 @@ jobs:
       - name: Download deps
         run: sudo apt-get update && sudo apt-get install libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev
         shell: bash
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
         with:
           version: 0.14.0
@@ -21,11 +21,11 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && ./scripts/bootstrap_posix.sh && cd ..
-          zig build
+          zig build -Dzfltk-build-examples=true
   build_macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
         with:
           version: 0.14.0
@@ -33,11 +33,11 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && ./scripts/bootstrap_posix.sh && cd ..
-          zig build
+          zig build -Dzfltk-build-examples=true
   build_windows-mingw:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
@@ -46,15 +46,15 @@ jobs:
         run: |
           pacman -Sy
           pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-gcc $MINGW_PACKAGE_PREFIX-ninja wget unzip git --needed
-          wget https://ziglang.org/builds/zig-windows-x86_64-0.14.0.zip
+          wget https://ziglang.org/download/0.14.0/zig-windows-x86_64-0.14.0.zip
           unzip -qq zig-windows-x86_64-0.14.0.zip
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && ./scripts/bootstrap_posix.sh -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX && cd ..
-          zig-windows-x86_64-0.14.0/zig build --search-prefix $MINGW_PREFIX
+          zig-windows-x86_64-0.14.0/zig build --search-prefix $MINGW_PREFIX -Dzfltk-build-examples=true
   build_windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
         with:
           version: 0.14.0
@@ -63,5 +63,5 @@ jobs:
         shell: bash
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
-          cd cfltk && ./scripts/bootstrap_posix.sh -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX && cd ..
-          zig build
+          cd cfltk && ./scripts/bootstrap_posix.sh -DCMAKE_INSTALL_PREFIX=C:\\cfltk && cd ..
+          zig build --search-prefix C:\\cfltk -Dzfltk-build-examples=true
