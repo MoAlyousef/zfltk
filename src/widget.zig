@@ -552,7 +552,7 @@ pub fn zfltk_event_handler_ex(wid: ?*c.Fl_Widget, ev: c_int, data: ?*anyopaque) 
 
 pub fn zfltk_draw_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     const cb: *const fn (*Widget, ?*anyopaque) void = @ptrCast(
-        data,
+        @alignCast(data),
     );
 
     cb(
