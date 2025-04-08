@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main ]
   pull_request:
-    branches: [ dev ]
+    branches: [ main ]
 
 jobs:
   build_linux:
@@ -18,7 +18,10 @@ jobs:
         with:
           version: 0.14.0
       - name: Build
-        run: zig build
+        run: |
+          git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
+          cd cfltk && ./scripts/bootstrap_posix.sh && cd ..
+          zig build
   build_macos:
     runs-on: macos-latest
     steps:
@@ -27,7 +30,10 @@ jobs:
         with:
           version: 0.14.0
       - name: Build
-        run: zig build
+        run: |
+          git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
+          cd cfltk && ./scripts/bootstrap_posix.sh && cd ..
+          zig build
   build_windows-mingw:
     runs-on: windows-latest
     steps:
@@ -42,7 +48,8 @@ jobs:
           pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-gcc $MINGW_PACKAGE_PREFIX-ninja wget unzip git --needed
           wget https://ziglang.org/builds/zig-windows-x86_64-0.14.0.zip
           unzip -qq zig-windows-x86_64-0.14.0.zip
-          git submodule update --init --recursive
+          git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
+          cd cfltk && ./scripts/bootstrap_posix.sh -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX && cd ..
           zig-windows-x86_64-0.14.0/zig build --search-prefix $MINGW_PREFIX
   build_windows:
     runs-on: windows-latest
@@ -54,4 +61,7 @@ jobs:
       - uses: seanmiddleditch/gha-setup-ninja@master
       - name: build
         shell: bash
-        run: zig build
+        run: |
+          git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
+          cd cfltk && ./scripts/bootstrap_posix.sh -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX && cd ..
+          zig build
