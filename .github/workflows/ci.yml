@@ -63,5 +63,5 @@ jobs:
         shell: bash
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
-          cd cfltk && cmake -Bbin -GNinja -DFLTK_BUILD_TEST=OFF -DFLTK_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=C:\\cfltk && cmake --build bin --config Release && cd ..
+          cd cfltk && cmake -Bbin -GNinja -DFLTK_BUILD_TEST=OFF -DFLTK_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=C:\\cfltk && cmake --build bin --config Release && cmake --install bin --config Release && cd ..
           zig build --search-prefix C:\\cfltk -Dzfltk-build-examples=true
