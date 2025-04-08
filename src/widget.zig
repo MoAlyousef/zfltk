@@ -504,7 +504,7 @@ pub fn shim(_: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
 pub fn zfltk_cb_handler(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void {
     // Fetch function pointer from the data. This is added to the data
     // pointer on `setCallback`.
-    const cb: *const fn (*Widget) void = @ptrCast(data);
+    const cb: *const fn (*Widget) void = @ptrCast(@alignCast(data));
 
     if (wid) |ptr| {
         cb(Widget.fromRaw(ptr));
@@ -526,7 +526,7 @@ pub fn zfltk_cb_handler_ex(wid: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) v
 
 pub fn zfltk_event_handler(wid: ?*c.Fl_Widget, event: c_int, data: ?*anyopaque) callconv(.C) c_int {
     const cb: *const fn (*Widget, enums.Event, ?*anyopaque) bool = @ptrCast(
-        data,
+        @alignCast(data),
     );
 
     return @intFromBool(cb(
