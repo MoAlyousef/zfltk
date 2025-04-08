@@ -58,10 +58,8 @@ jobs:
       - uses: goto-bus-stop/setup-zig@v2
         with:
           version: 0.14.0
-      - uses: seanmiddleditch/gha-setup-ninja@master
       - name: build
-        shell: bash
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
-          cd cfltk && ./scripts/bootstrap_msvc.bat -DCMAKE_INSTALL_PREFIX=C:\\cfltk && cd ..
-          zig build --search-prefix C:\\cfltk -Dzfltk-build-examples=true
+          cd cfltk && .\scripts\bootstrap_msvc.bat -DCMAKE_INSTALL_PREFIX=C:\cfltk && cd ..
+          zig build --search-prefix C:\cfltk -Dzfltk-build-examples=true
