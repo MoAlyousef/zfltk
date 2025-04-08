@@ -20,7 +20,7 @@ jobs:
       - name: Build
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
-          cd cfltk && ./scripts/bootstrap_posix.sh && cd ..
+          cd cfltk && sudo ./scripts/bootstrap_posix.sh && cd ..
           zig build -Dzfltk-build-examples=true
   build_macos:
     runs-on: macos-latest
@@ -32,7 +32,7 @@ jobs:
       - name: Build
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
-          cd cfltk && ./scripts/bootstrap_posix.sh && cd ..
+          cd cfltk && sudo ./scripts/bootstrap_posix.sh && cd ..
           zig build -Dzfltk-build-examples=true
   build_windows-mingw:
     runs-on: windows-latest
@@ -63,5 +63,5 @@ jobs:
         shell: bash
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
-          cd cfltk && ./scripts/bootstrap_posix.sh -DCMAKE_INSTALL_PREFIX=C:\\cfltk && cd ..
+          cd cfltk && ./scripts/bootstrap_msvc.bat -DCMAKE_INSTALL_PREFIX=C:\\cfltk && cd ..
           zig build --search-prefix C:\\cfltk -Dzfltk-build-examples=true

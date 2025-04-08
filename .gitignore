@@ -5,5 +5,5 @@ zig-cache/
 /build-*/
 /docgen_tmp/
 temp.zig
-/zig-out
+zig-out/bin
 .zig-cache/
