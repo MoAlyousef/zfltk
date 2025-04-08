@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download deps
-        run: sudo apt-get update && sudo apt-get install libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev
+        run: sudo apt-get update && sudo apt-get install libx11-dev libxext-dev libxft-dev libxinerama-dev libxcursor-dev libxrender-dev libxfixes-dev libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev libxkbcommon-dev libwayland-dev wayland-protocols libdbus-1-dev
         shell: bash
       - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
@@ -33,7 +33,7 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && sudo ./scripts/bootstrap_posix.sh && cd ..
-          zig build -Dzfltk-build-examples=true
+          zig build --search-prefix /usr/local -Dzfltk-build-examples=true
   build_windows-mingw:
     runs-on: windows-latest
     steps:
