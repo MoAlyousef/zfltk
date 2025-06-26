@@ -89,6 +89,7 @@ pub fn build(b: *std.Build) !void {
         zfltk.linkFramework("Cocoa", .{});
         zfltk.linkFramework("ApplicationServices", .{});
         zfltk.linkFramework("OpenGL", .{});
+        zfltk.linkFramework("ScreenCaptureKit", .{});
         zfltk.linkFramework("UniformTypeIdentifiers", .{});
     } else {
         zfltk.linkSystemLibrary("wayland-client", .{});
