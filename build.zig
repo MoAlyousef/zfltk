@@ -121,9 +121,13 @@ pub fn build(b: *std.Build) !void {
         for (examples) |ex| {
             const exe = b.addExecutable(.{
                 .name = ex.output,
-                .root_source_file = b.path(ex.input),
-                .target = target,
-                .optimize = optimize,
+                .root_module = b.createModule(.{
+                    .root_source_file = b.path(ex.input),
+                    .target = target,
+                    .optimize = optimize,
+                    .link_libc = true,
+                    .link_libcpp = true,
+                }),
             });
 
             exe.root_module.addImport("zfltk", zfltk);
