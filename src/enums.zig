@@ -21,7 +21,18 @@ pub const Color = switch (native_endian) {
         b: u8 = 0,
         i: u8 = 0,
 
-        pub usingnamespace methods;
+        // Forwarders (Zig 0.15.1 no usingnamespace)
+        pub const Names = methods.Names;
+        pub fn fromName(name: Names) Color { return methods.fromName(name); }
+        pub fn fromIndex(idx: u8) Color { return methods.fromIndex(idx); }
+        pub fn mapSelection(col: Color) Color { return methods.mapSelection(col); }
+        pub fn fromRgb(r: u8, g: u8, b: u8) Color { return methods.fromRgb(r, g, b); }
+        pub fn toRgbi(col: Color) u32 { return methods.toRgbi(col); }
+        pub fn fromRgbi(val: u32) Color { return methods.fromRgbi(val); }
+        pub fn toHex(col: Color) u24 { return methods.toHex(col); }
+        pub fn fromHex(val: u24) Color { return methods.fromHex(val); }
+        pub fn darken(col: Color, val: u8) Color { return methods.darken(col, val); }
+        pub fn lighten(col: Color, val: u8) Color { return methods.lighten(col, val); }
     },
 
     .little => packed struct {
@@ -30,7 +41,18 @@ pub const Color = switch (native_endian) {
         g: u8 = 0,
         r: u8 = 0,
 
-        pub usingnamespace methods;
+        // Forwarders (Zig 0.15.1 no usingnamespace)
+        pub const Names = methods.Names;
+        pub fn fromName(name: Names) Color { return methods.fromName(name); }
+        pub fn fromIndex(idx: u8) Color { return methods.fromIndex(idx); }
+        pub fn mapSelection(col: Color) Color { return methods.mapSelection(col); }
+        pub fn fromRgb(r: u8, g: u8, b: u8) Color { return methods.fromRgb(r, g, b); }
+        pub fn toRgbi(col: Color) u32 { return methods.toRgbi(col); }
+        pub fn fromRgbi(val: u32) Color { return methods.fromRgbi(val); }
+        pub fn toHex(col: Color) u24 { return methods.toHex(col); }
+        pub fn fromHex(val: u24) Color { return methods.fromHex(val); }
+        pub fn darken(col: Color, val: u8) Color { return methods.darken(col, val); }
+        pub fn lighten(col: Color, val: u8) Color { return methods.lighten(col, val); }
     },
 };
 

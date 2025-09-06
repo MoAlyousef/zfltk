@@ -26,7 +26,7 @@ pub fn main() !void {
         .spacing = 6,
     });
 
-    win.resizable(pack);
+    win.group_methods().resizable(pack);
 
     const btn = try Button.init(.{
         .h = 48,
@@ -35,7 +35,7 @@ pub fn main() !void {
 
     // In pack groups, the size must be provided as they don't automatically
     // adjust like flex groups. See `flex.zig`
-    pack.add(.{
+    pack.group_methods().add(.{
         try Box.init(.{ .h = 48, .boxtype = .down }),
         btn,
         try Box.init(.{ .h = 48, .boxtype = .down }),
@@ -43,9 +43,9 @@ pub fn main() !void {
 
     // Flex has its own `end` method which recalculates layouts but the API
     // remains consistent by utilizing Zig's comptime
-    pack.end();
+    pack.group_methods().end();
 
-    win.end();
-    win.show();
+    win.group_methods().end();
+    win.widget_methods().show();
     try app.run();
 }

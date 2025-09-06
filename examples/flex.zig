@@ -26,7 +26,7 @@ pub fn main() !void {
         .spacing = 6,
     });
 
-    win.resizable(flex);
+    win.group_methods().resizable(flex);
 
     var btn = try Button.init(.{
         .h = 48,
@@ -35,19 +35,19 @@ pub fn main() !void {
 
     // This demonstrates how you can add inline widgets which have no purpose
     // besides aesthetics. This could be useful for spacers and whatnot
-    flex.add(.{
+    flex.group_methods().add(.{
         try Box.init(.{ .boxtype = .down }),
         btn,
         try Box.init(.{ .boxtype = .down }),
     });
 
-    flex.fixed(btn, btn.h());
+    flex.group_methods().fixed(btn, btn.widget_methods().h());
 
     // Flex has its own `end` method which recalculates layouts but the API
     // remains consistent by utilizing Zig's comptime
-    flex.end();
+    flex.group_methods().end();
 
-    win.end();
-    win.show();
+    win.group_methods().end();
+    win.widget_methods().show();
     try app.run();
 }

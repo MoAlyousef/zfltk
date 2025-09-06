@@ -31,9 +31,9 @@ pub fn main() !void {
     browser.add("root\t13115\t0.0\t0.0\t1352\t0\ttty2\tSW\tAug30\t0:00\t@b@f/sbin/mingetty tty2");
     browser.add("root\t13464\t0.0\t0.0\t1352\t0\ttty1\tSW\tAug30\t0:00\t@b@f/sbin/mingetty tty1 --noclear");
 
-    win.end();
-    win.resizable(browser);
-    win.show();
+    win.group_methods().end();
+    win.group_methods().resizable(browser);
+    win.widget_methods().show();
 
     try app.run();
 }

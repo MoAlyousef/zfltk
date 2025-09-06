@@ -21,23 +21,23 @@ pub fn main() !void {
         .h = 300,
     });
 
-    win.resizable(tile);
+    win.group_methods().resizable(tile);
 
     const btn = try Button.init(.{
         .x = 0,
         .y = 48,
-        .w = tile.w() - 48,
+        .w = tile.widget_methods().w() - 48,
         .h = 48,
         .label = "Button",
     });
 
     // This demonstrates how you can add inline widgets which have no purpose
     // besides aesthetics. This could be useful for spacers and whatnot
-    tile.add(.{
+    tile.group_methods().add(.{
         try Box.init(.{
             .x = 0,
             .y = 0,
-            .w = tile.w() - 48,
+            .w = tile.widget_methods().w() - 48,
             .h = 48,
             .boxtype = .down,
         }),
@@ -45,23 +45,23 @@ pub fn main() !void {
         try Box.init(.{
             .x = 0,
             .y = 96,
-            .w = tile.w() - 48,
-            .h = tile.h() - 96,
+            .w = tile.widget_methods().w() - 48,
+            .h = tile.widget_methods().h() - 96,
             .boxtype = .down,
             .label = "Try dragging between\nwidget borders!",
         }),
         try Box.init(.{
-            .x = tile.w() - 48,
+            .x = tile.widget_methods().w() - 48,
             .y = 0,
             .w = 48,
-            .h = tile.h(),
+            .h = tile.widget_methods().h(),
             .boxtype = .down,
         }),
     });
 
-    tile.end();
+    tile.group_methods().end();
 
-    win.end();
-    win.show();
+    win.group_methods().end();
+    win.widget_methods().show();
     try app.run();
 }

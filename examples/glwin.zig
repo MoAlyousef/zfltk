@@ -22,10 +22,10 @@ pub fn main() !void {
         .label = "Hello OpenGL",
     });
     win.setMode(Mode.opengl3 | Mode.multi_sample);
-    win.end();
-    win.resizable(win);
-    win.show();
+    win.group_methods().end();
+    win.group_methods().resizable(win);
+    win.widget_methods().show();
 
-    win.setDrawHandler(winDraw);
+    win.widget_methods().setDrawHandler(winDraw);
     try app.run();
 }

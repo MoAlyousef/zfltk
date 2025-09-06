@@ -16,13 +16,13 @@ pub fn thread_func(data: ?*anyopaque) !void {
     var buf: [256]u8 = undefined;
 
     while (true) {
-        std.time.sleep(10_000_000);
+        std.Thread.sleep(10_000_000);
 
         const val = try std.fmt.bufPrintZ(buf[0..], "Hello!\n{d}", .{count});
 
-        mybox.setLabel(val);
+        mybox.widget_methods().setLabel(val);
 
-        const col = mybox.labelColor();
+        const col = mybox.widget_methods().labelColor();
 
         if (col.toHex() == 0xffffff) {
             lighten = false;
@@ -31,9 +31,9 @@ pub fn thread_func(data: ?*anyopaque) !void {
         }
 
         if (lighten) {
-            mybox.setLabelColor(col.lighten(4));
+            mybox.widget_methods().setLabelColor(col.lighten(4));
         } else {
-            mybox.setLabelColor(col.darken(4));
+            mybox.widget_methods().setLabelColor(col.darken(4));
         }
 
         app.awake();
@@ -69,7 +69,7 @@ pub fn main() !void {
         .label = "Start threading!",
     });
 
-    but.clearVisibleFocus();
+    but.widget_methods().clearVisibleFocus();
 
     var mybox = try Box.init(.{
         .x = 10,
@@ -80,11 +80,11 @@ pub fn main() !void {
         .label = "Hello!\n ",
     });
 
-    but.setCallbackEx(butCb, mybox.raw());
-    mybox.setLabelSize(48);
+    but.widget_methods().setCallbackEx(butCb, mybox.raw());
+    mybox.widget_methods().setLabelSize(48);
 
-    win.end();
-    win.show();
+    win.group_methods().end();
+    win.widget_methods().show();
 
     try app.run();
 }

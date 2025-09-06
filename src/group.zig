@@ -4,7 +4,6 @@ const Widget = zfltk.Widget;
 const widget = zfltk.widget;
 const c = zfltk.c;
 const std = @import("std");
-const widget_methods = zfltk.widget_methods;
 const enums = zfltk.enums;
 
 pub const GroupPtr = ?*c.Fl_Group;
@@ -48,9 +47,22 @@ fn GroupType(comptime kind: GroupKind) type {
     return struct {
         const Self = @This();
 
-        // Expose methods from `inherited` structs
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self, RawPtr);
+        // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+        pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
+        pub const group_ns = methods(Self, RawPtr);
+
+        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+        pub inline fn group_methods(self: *Self) GroupMethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+
+        inline fn widget(self: *Self) *GroupType(.normal) {
+            return widget_ns.widget(self);
+        }
+        inline fn raw(self: *Self) RawPtr {
+            return widget_ns.raw(self);
+        }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self {
+            return widget_ns.fromRaw(ptr);
+        }
 
         const GroupRawPtr = *c.Fl_Group;
 
@@ -92,7 +104,7 @@ fn GroupType(comptime kind: GroupKind) type {
 
                 switch (kind) {
                     .pack, .flex => {
-                        self.setSpacing(opts.spacing);
+                        group_ns.setSpacing(self, opts.spacing);
 
                         if (opts.orientation == .horizontal) {
                             c.Fl_Widget_set_type(self.widget().raw(), 1);
@@ -126,15 +138,15 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub fn begin(self: *Self) void {
-            @field(c, ptr_name ++ "_begin")(self.raw());
+            @field(c, ptr_name ++ "_begin")(zfltk.widget.methods(Self, RawPtr).raw(self));
         }
 
         pub fn end(self: *Self) void {
-            @field(c, ptr_name ++ "_end")(self.raw());
+            @field(c, ptr_name ++ "_end")(zfltk.widget.methods(Self, RawPtr).raw(self));
         }
 
         pub fn find(self: *Self, wid: *Widget) u32 {
-            return @intCast(@field(c, ptr_name ++ "_find")(self.raw(), wid.raw()));
+            return @intCast(@field(c, ptr_name ++ "_find")(zfltk.widget.methods(Self, RawPtr).raw(self), zfltk.widget.methods(Widget, *c.Fl_Widget).raw(wid)));
         }
 
         pub fn add(self: *Self, widgets: anytype) void {
@@ -148,51 +160,48 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             inline for (type_info.@"struct".fields) |w| {
                 const wid = @as(w.type, @field(widgets, w.name));
 
-                if (!comptime zfltk.isWidget(w.type)) {
-                    @compileError("expected FLTK widget, found " ++ @typeName(w.type));
-                }
+                // accept any widget-like type
 
-                @field(c, ptr_name ++ "_add")(self.raw(), wid.widget().raw());
+                const WPtrT = @TypeOf(wid);
+                const W = @typeInfo(WPtrT).pointer.child;
+                @field(c, ptr_name ++ "_add")(zfltk.widget.methods(Self, RawPtr).raw(self), zfltk.widget.methods(W, W.RawPtr).widgetRaw(wid));
             }
         }
 
         pub fn insert(self: *Self, wid: anytype, index: u32) void {
             const T = @TypeOf(wid);
-            if (!comptime zfltk.isWidget(T)) {
-                @compileError("expected FLTK widget, found " ++ @typeName(T));
-            }
+            // accept any widget-like type
 
-            return @field(c, ptr_name ++ "_insert")(self.raw(), wid.raw(), index);
+            const W = @typeInfo(T).pointer.child;
+            return @field(c, ptr_name ++ "_insert")(zfltk.widget.methods(Self, RawPtr).raw(self), zfltk.widget.methods(W, W.RawPtr).raw(wid), index);
         }
 
         pub fn remove(self: *Self, wid: anytype) void {
             const T = @TypeOf(wid);
-            if (!comptime zfltk.isWidget(T)) {
-                @compileError("expected FLTK widget, found " ++ @typeName(T));
-            }
+            // accept any widget-like type
 
-            return @field(c, ptr_name ++ "_remove")(self.raw(), wid.raw());
+            const W = @typeInfo(T).pointer.child;
+            return @field(c, ptr_name ++ "_remove")(zfltk.widget.methods(Self, RawPtr).raw(self), zfltk.widget.methods(W, W.RawPtr).raw(wid));
         }
 
         pub fn resizable(self: *Self, wid: anytype) void {
             const T = @TypeOf(wid);
-            if (!comptime zfltk.isWidget(T)) {
-                @compileError("expected FLTK widget, found " ++ @typeName(T));
-            }
+            // accept any widget-like type
 
-            return @field(c, ptr_name ++ "_resizable")(self.raw(), wid.widget().raw());
+            const W = @typeInfo(T).pointer.child;
+            return @field(c, ptr_name ++ "_resizable")(zfltk.widget.methods(Self, RawPtr).raw(self), zfltk.widget.methods(W, W.RawPtr).widgetRaw(wid));
         }
 
         pub fn clear(self: *Self) void {
-            @field(c, ptr_name ++ "_clear")(self.raw());
+            @field(c, ptr_name ++ "_clear")(zfltk.widget.methods(Self, RawPtr).raw(self));
         }
 
         pub fn children(self: *Self) u31 {
-            return @intCast(@field(c, ptr_name ++ "_children")(self.raw()));
+            return @intCast(@field(c, ptr_name ++ "_children")(zfltk.widget.methods(Self, RawPtr).raw(self)));
         }
 
         pub fn child(self: *Self, idx: u31) ?*Widget {
-            if (@field(c, ptr_name ++ "_child")(self.raw(), idx)) |ptr| {
+            if (@field(c, ptr_name ++ "_child")(zfltk.widget.methods(Self, RawPtr).raw(self), idx)) |ptr| {
                 return Widget.fromRaw(ptr);
             }
 
@@ -227,11 +236,8 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
             }
 
             const T = @TypeOf(wid);
-            if (!comptime zfltk.isWidget(T)) {
-                @compileError("expected FLTK widget, found " ++ @typeName(T));
-            }
-
-            c.Fl_Flex_set_size(self.raw(), wid.widget().raw(), sz);
+            const W = @typeInfo(T).pointer.child;
+            c.Fl_Flex_set_size(self.raw(), zfltk.widget.methods(W, W.RawPtr).widgetRaw(wid), sz);
         }
 
         pub fn setMargin(self: *Self, sz: u31) void {
@@ -259,7 +265,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
                 @compileError("method `setScrollbar` only usable with scroll groups");
             }
 
-            self.setKind(ScrollType, scrollbar);
+            zfltk.widget.methods(Self, RawPtr).setKind(self, ScrollType, scrollbar);
         }
 
         pub inline fn setScrollbarSize(self: *Self, size: u31) void {
@@ -269,6 +275,22 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
             c.Fl_Scroll_set_scrollbar_size(self.raw(), size);
         }
+    };
+}
+
+pub fn GroupMethodsProxy(comptime Self: type, comptime RawPtr: type) type {
+    const GM = methods(Self, RawPtr);
+    return struct {
+        self: *Self,
+        pub inline fn end(p: @This()) void { GM.end(p.self); }
+        pub inline fn begin(p: @This()) void { GM.begin(p.self); }
+        pub inline fn add(p: @This(), widgets: anytype) void { GM.add(p.self, widgets); }
+        pub inline fn resizable(p: @This(), wid: anytype) void { GM.resizable(p.self, wid); }
+        pub inline fn setScrollbar(p: @This(), t: ScrollType) void { GM.setScrollbar(p.self, t); }
+        pub inline fn fixed(p: @This(), wid: anytype, sz: i32) void { GM.fixed(p.self, wid, sz); }
+        pub inline fn setMargin(p: @This(), sz: u31) void { GM.setMargin(p.self, sz); }
+        pub inline fn setMargins(p: @This(), l: u31, t: u31, r: u31, b: u31) void { GM.setMargins(p.self, l, t, r, b); }
+        pub inline fn setScrollbarSize(p: @This(), size: u31) void { GM.setScrollbarSize(p.self, size); }
     };
 }
 

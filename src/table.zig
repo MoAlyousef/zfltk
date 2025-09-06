@@ -19,8 +19,9 @@ fn TableType(comptime kind: TableKind) type {
     return struct {
         const Self = @This();
 
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self);
+        // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+        pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
+        pub const own_methods = methods(Self);
 
         pub const RawPtr = switch (kind) {
             .table => *c.Fl_Table,

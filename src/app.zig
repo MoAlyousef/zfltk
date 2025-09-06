@@ -65,7 +65,7 @@ pub inline fn unlock() void {
 // Set the boxtype's draw callback
 pub inline fn setBoxTypeEx(
     box: enums.BoxType,
-    f: *const fn (i32, i32, i32, i32, enums.Color) callconv(.C) void,
+    f: *const fn (i32, i32, i32, i32, enums.Color) callconv(.c) void,
     off_x: i32,
     off_y: i32,
     off_w: i32,
@@ -85,7 +85,7 @@ pub inline fn setBoxTypeEx(
 // are unneeded
 pub inline fn setBoxType(
     box: enums.BoxType,
-    f: *const fn (i32, i32, i32, i32, enums.Color) callconv(.C) void,
+    f: *const fn (i32, i32, i32, i32, enums.Color) callconv(.c) void,
 ) void {
     setBoxTypeEx(box, f, 0, 0, 0, 0);
 }
@@ -167,7 +167,7 @@ pub const WidgetTracker = struct {
     pub const RawPointer = *c.Fl_Widget_Tracker;
 
     pub fn init(w: *Widget) WidgetTracker {
-        if (c.Fl_Widget_Tracker_new(w.raw())) |ptr| {
+        if (c.Fl_Widget_Tracker_new(@import("widget.zig").Widget.methods_ns.raw(w))) |ptr| {
             return WidgetTracker{ .inner = ptr };
         }
 
@@ -219,7 +219,7 @@ pub fn addTimeout(d: f32, f: *const fn () void) void {
     c.Fl_add_timeout(d, &zfltk_timeout_handler, @ptrFromInt(@intFromPtr(f)));
 }
 
-fn zfltk_timeout_handler(data: ?*anyopaque) callconv(.C) void {
+fn zfltk_timeout_handler(data: ?*anyopaque) callconv(.c) void {
     const cb: *const fn () void = @ptrCast(data);
     cb();
 }
@@ -234,7 +234,7 @@ pub fn addTimeoutEx(d: f32, f: *const fn (?*anyopaque) void, data: ?*anyopaque) 
     c.Fl_add_timeout(d, &zfltk_timeout_handler_ex, @ptrCast(container.ptr));
 }
 
-fn zfltk_timeout_handler_ex(data: ?*anyopaque) callconv(.C) void {
+fn zfltk_timeout_handler_ex(data: ?*anyopaque) callconv(.c) void {
     const container: *[2]usize = @ptrCast(@alignCast(data));
 
     const cb: *const fn (?*anyopaque) void = @ptrFromInt(container[0]);

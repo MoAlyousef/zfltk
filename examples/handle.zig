@@ -11,16 +11,16 @@ const draw = zfltk.draw;
 fn butCb(but: *Button, data: ?*anyopaque) void {
     var box = Box.fromRaw(data.?);
 
-    box.setLabel("Hello World!");
+    box.widget_methods().setLabel("Hello World!");
 
-    but.setColor(Color.fromName(.cyan));
+    but.widget_methods().setColor(Color.fromName(.cyan));
 }
 
 fn boxEventHandler(_: *Box, ev: Event, data: ?*anyopaque) bool {
     const btn = Button.fromRaw(data.?);
     switch (ev) {
         .push => {
-            std.debug.print("Click the button: {s}\n", .{btn.label()});
+            std.debug.print("Click the button: {s}\n", .{btn.widget_methods().label()});
             return true;
         },
         else => return false,
@@ -29,7 +29,7 @@ fn boxEventHandler(_: *Box, ev: Event, data: ?*anyopaque) bool {
 
 fn boxDrawHandler(box: *Box) void {
     draw.setLineStyle(.DashDot, 2);
-    draw.rectWithColor(box.x() + 10, box.y() + 10, box.w() - 20, box.h() - 20, Color.fromName(.cyan));
+    draw.rectWithColor(box.widget_methods().x() + 10, box.widget_methods().y() + 10, box.widget_methods().w() - 20, box.widget_methods().h() - 20, Color.fromName(.cyan));
 }
 
 pub fn main() !void {
@@ -52,7 +52,7 @@ pub fn main() !void {
         .label = "Click me!",
     });
 
-    but.setDownBox(.flat);
+    but.own_methods().setDownBox(.flat);
 
     var box = try Box.init(.{
         .x = 10,
@@ -63,15 +63,15 @@ pub fn main() !void {
         .boxtype = .up,
     });
 
-    box.setEventHandlerEx(boxEventHandler, but);
-    box.setDrawHandler(boxDrawHandler);
+    box.widget_methods().setEventHandlerEx(boxEventHandler, but);
+    box.widget_methods().setDrawHandler(boxDrawHandler);
 
-    box.setLabelFont(.courier);
-    box.setLabelSize(18);
+    box.widget_methods().setLabelFont(.courier);
+    box.widget_methods().setLabelSize(18);
 
-    win.end();
-    win.show();
+    win.group_methods().end();
+    win.widget_methods().show();
 
-    but.setCallbackEx(butCb, box);
+    but.widget_methods().setCallbackEx(butCb, box);
     try app.run();
 }

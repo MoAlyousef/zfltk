@@ -29,10 +29,22 @@ fn ButtonType(comptime kind: ButtonKind) type {
     return struct {
         const Self = @This();
 
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self);
+        // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+        pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
+        pub const own_ns = methods(Self);
 
-        const RawPtr = switch (kind) {
+        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+        pub inline fn own_methods(self: *Self) ButtonOwnMethodsProxy(Self) { return .{ .self = self }; }
+
+        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
+        pub inline fn raw(self: *Self) RawPtr {
+            return widget_ns.raw(self);
+        }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self {
+            return widget_ns.fromRaw(ptr);
+        }
+
+        pub const RawPtr = switch (kind) {
             .normal => *c.Fl_Button,
             .radio => *c.Fl_Radio_Button,
             .check => *c.Fl_Check_Button,
@@ -86,32 +98,44 @@ fn methods(comptime Self: type) type {
         }
 
         pub fn shortcut(self: *Self) i32 {
-            return c.Fl_Button_shortcut(self.button().raw());
+            return c.Fl_Button_shortcut(zfltk.widget.methods(Self, Self.RawPtr).raw(self));
         }
 
         pub fn setShortcut(self: *Self, shrtct: i32) void {
-            c.Fl_Button_set_shortcut(self.button().raw(), shrtct);
+            c.Fl_Button_set_shortcut(zfltk.widget.methods(Self, Self.RawPtr).raw(self), shrtct);
         }
 
         pub fn clear(self: *Self) void {
-            c.Fl_Button_clear(self.button().raw());
+            c.Fl_Button_clear(zfltk.widget.methods(Self, Self.RawPtr).raw(self));
         }
 
         pub fn value(self: *Self) bool {
-            return c.Fl_Button_value(self.button().raw()) != 0;
+            return c.Fl_Button_value(zfltk.widget.methods(Self, Self.RawPtr).raw(self)) != 0;
         }
 
         pub fn setValue(self: *Self, flag: bool) void {
-            c.Fl_Button_set_value(self.button().raw(), @intFromBool(flag));
+            c.Fl_Button_set_value(zfltk.widget.methods(Self, Self.RawPtr).raw(self), @intFromBool(flag));
         }
 
         pub fn setDownBox(self: *Self, f: enums.BoxType) void {
-            c.Fl_Button_set_down_box(self.button().raw(), @intFromEnum(f));
+            c.Fl_Button_set_down_box(zfltk.widget.methods(Self, Self.RawPtr).raw(self), @intFromEnum(f));
         }
 
         pub fn downBox(self: *Self) enums.BoxType {
-            return @enumFromInt(c.Fl_Button_down_box(self.button().raw()));
+            return @enumFromInt(c.Fl_Button_down_box(zfltk.widget.methods(Self, Self.RawPtr).raw(self)));
         }
+    };
+}
+
+pub fn ButtonOwnMethodsProxy(comptime Self: type) type {
+    const OM = methods(Self);
+    return struct {
+        self: *Self,
+        pub inline fn setDownBox(p: @This(), f: enums.BoxType) void { OM.setDownBox(p.self, f); }
+        pub inline fn setShortcut(p: @This(), s: i32) void { OM.setShortcut(p.self, s); }
+        pub inline fn clear(p: @This()) void { OM.clear(p.self); }
+        pub inline fn setValue(p: @This(), v: bool) void { OM.setValue(p.self, v); }
+        pub inline fn value(p: @This()) bool { return OM.value(p.self); }
     };
 }
 

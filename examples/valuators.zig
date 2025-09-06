@@ -23,7 +23,7 @@ pub fn main() !void {
         .spacing = 40,
     });
 
-    pack.add(.{
+    pack.group_methods().add(.{
         try valuator.Slider.init(.{
             .h = 40,
             .style = .nice,
@@ -40,7 +40,7 @@ pub fn main() !void {
 
         try valuator.Counter.init(.{
             .h = 40,
-            .w = win.w(),
+            .w = win.widget_methods().w(),
             .label = "Counter",
         }),
 
@@ -50,8 +50,8 @@ pub fn main() !void {
         }),
     });
 
-    pack.end();
-    win.end();
-    win.show();
+    pack.group_methods().end();
+    win.group_methods().end();
+    win.widget_methods().show();
     try app.run();
 }

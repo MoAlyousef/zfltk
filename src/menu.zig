@@ -44,8 +44,14 @@ fn MenuType(comptime kind: MenuKind) type {
     return struct {
         const Self = @This();
 
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self, RawPtr);
+        // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+        pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
+        pub const menu_ns = methods(Self, RawPtr);
+        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+        pub inline fn menu_methods(self: *Self) MenuMethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
+        pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
 
         pub const RawPtr = switch (kind) {
             .menu_bar => *c.Fl_Menu_Bar,
@@ -143,9 +149,21 @@ fn methods(comptime Self: type, comptime RawPtr: type) type {
     };
 }
 
+pub fn MenuMethodsProxy(comptime Self: type, comptime RawPtr: type) type {
+    const MM = methods(Self, RawPtr);
+    return struct {
+        self: *Self,
+        pub inline fn addEx(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self, data: ?*anyopaque) void, data: ?*anyopaque) void { MM.addEx(p.self, name, shortcut, flag, f, data); }
+        pub inline fn add(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void { MM.add(p.self, name, shortcut, flag, f); }
+        pub inline fn addEmit(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void { MM.addEmit(p.self, name, shortcut, flag, T, msg); }
+        pub inline fn insert(p: @This(), idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void { MM.insert(p.self, idx, name, shortcut, flag, f); }
+        pub inline fn findItem(p: @This(), path: [*c]const u8) MenuItem { return MM.findItem(p.self, path); }
+    };
+}
+
 pub const MenuItem = struct {
     inner: ?*c.Fl_Menu_Item,
-    pub fn setCallback(self: *MenuItem, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.C) void, data: ?*anyopaque) void {
+    pub fn setCallback(self: *MenuItem, comptime cb: fn (w: ?*c.Fl_Widget, data: ?*anyopaque) callconv(.c) void, data: ?*anyopaque) void {
         c.Fl_Menu_Item_set_callback(self.inner, cb, data);
     }
 

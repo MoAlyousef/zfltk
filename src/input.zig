@@ -27,7 +27,12 @@ fn InputType(comptime kind: InputKind) type {
     return struct {
         const Self = @This();
 
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
+        // Namespaced widget methods (Zig 0.15.1 no usingnamespace)
+        pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
+        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
+        pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
 
         const InputRawPtr = *c.Fl_Input;
 

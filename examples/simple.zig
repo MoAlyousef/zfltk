@@ -6,18 +6,18 @@ const Box = zfltk.box.Box;
 const Color = zfltk.enums.Color;
 
 fn butCb(but: *Button, data: ?*anyopaque) void {
-    var box = Box.fromRaw(data.?);
+    const box = Box.fromRaw(data.?);
 
-    box.setLabel("Hello World!");
+    box.widget_methods().setLabel("Hello World!");
 
-    but.setColor(Color.fromName(.cyan));
+    but.widget_methods().setColor(Color.fromName(.cyan));
 }
 
 pub fn main() !void {
     try app.init();
     app.setScheme(.gtk);
 
-    var win = try Window.init(.{
+    const win = try Window.init(.{
         .w = 400,
         .h = 300,
 
@@ -25,7 +25,7 @@ pub fn main() !void {
     });
     win.freePosition();
 
-    var but = try Button.init(.{
+    const but = try Button.init(.{
         .x = 160,
         .y = 220,
         .w = 80,
@@ -34,9 +34,9 @@ pub fn main() !void {
         .label = "Click me!",
     });
 
-    but.setDownBox(.flat);
+    but.own_methods().setDownBox(.flat);
 
-    var box = try Box.init(.{
+    const box = try Box.init(.{
         .x = 10,
         .y = 10,
         .w = 380,
@@ -45,12 +45,12 @@ pub fn main() !void {
         .boxtype = .up,
     });
 
-    box.setLabelFont(.courier);
-    box.setLabelSize(18);
+    box.widget_methods().setLabelFont(.courier);
+    box.widget_methods().setLabelSize(18);
 
-    win.end();
-    win.show();
+    win.group_methods().end();
+    win.widget_methods().show();
 
-    but.setCallbackEx(butCb, box);
+    but.widget_methods().setCallbackEx(butCb, box);
     try app.run();
 }

@@ -49,18 +49,18 @@ pub fn main() !void {
         .boxtype = .up,
     });
 
-    mybox.setLabelFont(.courier);
-    mybox.setLabelSize(18);
+    mybox.widget_methods().setLabelFont(.courier);
+    mybox.widget_methods().setLabelSize(18);
 
-    win.end();
-    win.show();
-    but1.emit(Message, .first);
-    but2.emit(Message, .second);
+    win.group_methods().end();
+    win.widget_methods().show();
+    but1.widget_methods().emit(Message, .first);
+    but2.widget_methods().emit(Message, .second);
 
     while (app.wait()) {
         if (app.recv(Message)) |msg| switch (msg) {
-            .first => mybox.setLabel("Button 1 Clicked!"),
-            .second => mybox.setLabel("Button 2 Clicked!"),
+            .first => mybox.widget_methods().setLabel("Button 1 Clicked!"),
+            .second => mybox.widget_methods().setLabel("Button 2 Clicked!"),
         };
     }
 }

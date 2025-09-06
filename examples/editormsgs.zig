@@ -26,7 +26,7 @@ pub const Message = enum(usize) {
 // Also logic can be added to prompt the user to save their work
 pub fn winCb(w: *window.Window) void {
     if (app.event() == .close) {
-        w.hide();
+        w.widget_methods().hide();
     }
 }
 
@@ -46,62 +46,62 @@ pub fn main() !void {
         .w = 800 - 2,
         .h = 600 - 37,
     });
-    editor.setBuffer(buf);
-    editor.setLinenumberWidth(24);
-    win.end();
-    win.show();
-    win.setCallback(winCb);
+    editor.own_methods().setBuffer(buf);
+    editor.own_methods().setLinenumberWidth(24);
+    win.group_methods().end();
+    win.widget_methods().show();
+    win.widget_methods().setCallback(winCb);
 
-    mymenu.addEmit(
+    mymenu.menu_methods().addEmit(
         "&File/New...\t",
         enums.Shortcut.Ctrl | 'n',
         .normal,
         Message,
         .New,
     );
-    mymenu.addEmit(
+    mymenu.menu_methods().addEmit(
         "&File/Open...\t",
         enums.Shortcut.Ctrl | 'o',
         .normal,
         Message,
         .Open,
     );
-    mymenu.addEmit(
+    mymenu.menu_methods().addEmit(
         "&File/Save...\t",
         enums.Shortcut.Ctrl | 's',
         .menu_divider,
         Message,
         .Save,
     );
-    mymenu.addEmit(
+    mymenu.menu_methods().addEmit(
         "&File/Quit...\t",
         enums.Shortcut.Ctrl | 'q',
         .normal,
         Message,
         .Quit,
     );
-    mymenu.addEmit(
+    mymenu.menu_methods().addEmit(
         "&Edit/Cut...\t",
         enums.Shortcut.Ctrl | 'x',
         .normal,
         Message,
         .Cut,
     );
-    mymenu.addEmit(
+    mymenu.menu_methods().addEmit(
         "&Edit/Copy...\t",
         enums.Shortcut.Ctrl | 'c',
         .normal,
         Message,
         .Copy,
     );
-    mymenu.addEmit(
+    mymenu.menu_methods().addEmit(
         "&Edit/Paste...\t",
         enums.Shortcut.Ctrl | 'v',
         .normal,
         Message,
         .Paste,
     );
-    mymenu.addEmit(
+    mymenu.menu_methods().addEmit(
         "&Help/About...\t",
         enums.Shortcut.Ctrl | 'q',
         .normal,
@@ -109,7 +109,7 @@ pub fn main() !void {
         .About,
     );
 
-    var item = mymenu.findItem("&File/Quit...\t");
+    var item = mymenu.menu_methods().findItem("&File/Quit...\t");
     item.setLabelColor(Color.fromName(.red));
 
     while (app.wait()) {
@@ -121,7 +121,7 @@ pub fn main() !void {
                 dlg.show();
                 const fname = dlg.filename();
                 if (!std.mem.eql(u8, fname, "")) {
-                    editor.buffer().?.loadFile(fname) catch unreachable;
+                    editor.own_methods().buffer().?.loadFile(fname) catch unreachable;
                 }
             },
             .Save => {
@@ -130,13 +130,13 @@ pub fn main() !void {
                 dlg.show();
                 const fname = dlg.filename();
                 if (!std.mem.eql(u8, fname, "")) {
-                    editor.buffer().?.saveFile(fname) catch unreachable;
+                    editor.own_methods().buffer().?.saveFile(fname) catch unreachable;
                 }
             },
-            .Quit => win.hide(),
-            .Cut => editor.cut(),
-            .Copy => editor.copy(),
-            .Paste => editor.paste(),
+            .Quit => win.widget_methods().hide(),
+            .Cut => editor.own_methods().cut(),
+            .Copy => editor.own_methods().copy(),
+            .Paste => editor.own_methods().paste(),
             .About => dialog.message(300, 200, "This editor was built using fltk and zig!"),
         };
     }

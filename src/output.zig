@@ -21,7 +21,8 @@ fn OutputType(comptime kind: OutputKind) type {
     return struct {
         const Self = @This();
 
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
+        // Namespaced widget methods (Zig 0.15.1 no usingnamespace)
+        pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
 
         const OutputRawPtr = *c.Fl_Output;
 

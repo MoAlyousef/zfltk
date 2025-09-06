@@ -51,17 +51,17 @@ pub fn main() !void {
         .label = "Off",
     });
 
-    box.setLabelFont(.courier);
-    box.setLabelSize(24);
+    box.widget_methods().setLabelFont(.courier);
+    box.widget_methods().setLabelSize(24);
 
     sw1.setCallbackEx(switch1Cb, box);
-    sw1.widget().setColor(Color.fromName(.cyan));
+    sw1.widget().widget_methods().setColor(Color.fromName(.cyan));
     sw2.setValue(true);
     sw2.setCallbackEx(switch2Cb, sw1);
     //_ = sw2;
 
-    win.end();
-    win.show();
+    win.group_methods().end();
+    win.widget_methods().show();
 
     try app.run();
 }
@@ -70,14 +70,14 @@ fn switch1Cb(sw: *Switch, data: ?*anyopaque) void {
     var box = Box.fromRaw(data.?);
 
     const str = if (sw.value()) "On" else "Off";
-    box.setLabel(str);
+    box.widget_methods().setLabel(str);
 }
 
 fn switch2Cb(sw2: *Switch, data: ?*anyopaque) void {
     var sw1 = Switch.fromVoidPtr(data.?);
 
     const color = if (sw2.value()) Color.fromName(.cyan) else Color.fromName(.background);
-    sw1.widget().setColor(color);
+    sw1.widget().widget_methods().setColor(color);
     sw1.setAnimation(sw2.value());
 }
 
@@ -104,11 +104,11 @@ const Switch = struct {
         label: ?[:0]const u8 = null,
     };
 
-    fn drawBox(x1: i32, y1: i32, x2: i32, y2: i32, col: Color) callconv(.C) void {
+    fn drawBox(x1: i32, y1: i32, x2: i32, y2: i32, col: Color) callconv(.c) void {
         draw.box(.down, x1 + 4, y1 + 4, x2 - 12, y2 - 8, col);
     }
 
-    fn drawBox2(x1: i32, y1: i32, x2: i32, y2: i32, col: Color) callconv(.C) void {
+    fn drawBox2(x1: i32, y1: i32, x2: i32, y2: i32, col: Color) callconv(.c) void {
         draw.box(.up, x1, y1, x2, y2, col);
         draw.box(.down, x1 + 4, y1 + 4, x2 - 8, y2 - 8, col);
     }
@@ -152,11 +152,11 @@ const Switch = struct {
             //.boxtype = .up,
         });
 
-        self.label.setLabelAlign(Align.left | Align.inside);
+        self.label.widget_methods().setLabelAlign(Align.left | Align.inside);
 
-        self.box1.setEventHandlerEx(clickEventHandle, self);
-        self.box2.setEventHandlerEx(clickEventHandle, self);
-        self.label.setEventHandlerEx(clickEventHandle, self);
+        self.box1.widget_methods().setEventHandlerEx(clickEventHandle, self);
+        self.box2.widget_methods().setEventHandlerEx(clickEventHandle, self);
+        self.label.widget_methods().setEventHandlerEx(clickEventHandle, self);
 
         return self;
     }
@@ -178,10 +178,10 @@ const Switch = struct {
 
         switch (ev) {
             .push => {
-                const h = self.box1.h();
+                const h = self.box1.widget_methods().h();
                 const x = if (self.on) self.opts.x + h else self.opts.x;
-                const y = self.box1.y();
-                const w = self.box1.w();
+                const y = self.box1.widget_methods().y();
+                const w = self.box1.widget_methods().w();
                 //                const w2 = self.options.w;
 
                 const new_x = if (self.on) x - (h) else x + (h);
@@ -201,33 +201,33 @@ const Switch = struct {
                 // Sliding animation
                 if (self.animated) {
                     if (self.on) {
-                        while (self.box1.x() < new_x) {
-                            var x1 = self.box1.x() +| h / 6;
+                        while (self.box1.widget_methods().x() < new_x) {
+                            var x1 = self.box1.widget_methods().x() +| h / 6;
                             if (x1 > new_x) x1 = new_x;
 
                             // One frame at 60fps (what FLTK uses)
-                            std.time.sleep(16_666_666);
-                            self.box1.resize(x1, y, w, h);
-                            self.box1.parent().?.redraw();
+                            std.Thread.sleep(16_666_666);
+                            self.box1.widget_methods().resize(x1, y, w, h);
+                            self.box1.widget_methods().parent().?.widget_methods().redraw();
 
                             _ = app.check();
 
                             //  draw.box(.down, x, y, w, h, Color.fromName(.background));
                         }
                     } else {
-                        while (self.box1.x() > new_x) {
-                            var x1 = self.box1.x() -| h / 6;
+                        while (self.box1.widget_methods().x() > new_x) {
+                            var x1 = self.box1.widget_methods().x() -| h / 6;
                             if (x1 < new_x) x1 = new_x;
 
-                            std.time.sleep(16_666_666);
-                            self.box1.resize(x1, y, w, h);
-                            self.box1.parent().?.redraw();
+                            std.Thread.sleep(16_666_666);
+                            self.box1.widget_methods().resize(x1, y, w, h);
+                            self.box1.widget_methods().parent().?.widget_methods().redraw();
                             _ = app.check();
                         }
                     }
                 } else {
-                    self.box1.resize(new_x, y, w, h);
-                    self.box1.parent().?.redraw();
+                    self.box1.widget_methods().resize(new_x, y, w, h);
+                    self.box1.widget_methods().parent().?.widget_methods().redraw();
                     _ = app.check();
                 }
 
@@ -263,15 +263,15 @@ const Switch = struct {
     }
 
     pub fn setValue(self: *Switch, val: bool) void {
-        const x = self.box1.x();
-        const y = self.box1.y();
-        const w = self.box1.w();
-        const h = self.box1.h();
+        const x = self.box1.widget_methods().x();
+        const y = self.box1.widget_methods().y();
+        const w = self.box1.widget_methods().w();
+        const h = self.box1.widget_methods().h();
         const new_x = if (self.on) x - (h) else x + (h);
 
         self.on = val;
-        self.box1.resize(new_x, y, w, h);
-        self.box1.parent().?.redraw();
+        self.box1.widget_methods().resize(new_x, y, w, h);
+        self.box1.widget_methods().parent().?.widget_methods().redraw();
 
         _ = app.check();
     }

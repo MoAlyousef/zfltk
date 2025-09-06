@@ -1,5 +1,5 @@
 const zfltk = @import("zfltk.zig");
-const Widget = zfltk.Widget;
+const Widget = @import("widget.zig").Widget;
 const c = zfltk.c;
 const widget = zfltk.widget;
 const enums = zfltk.enums;
@@ -72,8 +72,13 @@ fn ValuatorType(comptime kind: ValuatorKind) type {
     return struct {
         const Self = @This();
 
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self, RawPtr);
+        // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+        pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
+        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
+        pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
+        pub const valuator_methods = methods(Self, RawPtr);
         pub const RawPtr = switch (kind) {
             .slider => *c.Fl_Slider,
             .dial => *c.Fl_Dial,
@@ -135,12 +140,12 @@ fn ValuatorType(comptime kind: ValuatorKind) type {
             const label = if (opts.label != null) opts.label.?.ptr else null;
 
             if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
-                var self = Self.fromRaw(ptr);
+                const self = Self.fromRaw(ptr);
 
                 const orientation = @intFromEnum(opts.orientation);
                 const style = @intFromEnum(opts.style);
 
-                c.Fl_Widget_set_type(self.widget().raw(), orientation + style);
+                c.Fl_Widget_set_type(zfltk.widget.methods(Self, RawPtr).widgetRaw(self), orientation + style);
 
                 return self;
             }

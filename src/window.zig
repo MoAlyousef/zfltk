@@ -7,10 +7,23 @@ const Group = zfltk.Group;
 const enums = zfltk.enums;
 
 pub const Window = struct {
-    // Expose methods from `inherited` structs
-    pub usingnamespace zfltk.widget.methods(Window, RawPtr);
-    pub usingnamespace zfltk.group.methods(Window, RawPtr);
-    pub usingnamespace methods(Window);
+    // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+    pub const widget_ns = zfltk.widget.methods(Window, RawPtr);
+    pub const group_ns = zfltk.group.methods(Window, RawPtr);
+    pub const own_ns = methods(Window);
+    pub inline fn widget_methods(self: *Window) zfltk.widget.MethodsProxy(Window, RawPtr) { return .{ .self = self }; }
+    pub inline fn group_methods(self: *Window) zfltk.group.GroupMethodsProxy(Window, RawPtr) { return .{ .self = self }; }
+    pub inline fn own_methods(self: *Window) WindowOwnMethodsProxy(Window) { return .{ .self = self }; }
+
+    pub inline fn widget(self: *Window) *Widget {
+        return widget_ns.widget(self);
+    }
+    pub inline fn raw(self: *Window) RawPtr {
+        return widget_ns.raw(self);
+    }
+    pub inline fn fromRaw(ptr: *anyopaque) *Window {
+        return widget_ns.fromRaw(ptr);
+    }
 
     pub const RawPtr = *c.Fl_Double_Window;
     const type_name = @typeName(RawPtr);
@@ -40,10 +53,23 @@ pub const Window = struct {
 };
 
 pub const GlutWindow = struct {
-    // Expose methods from `inherited` structs
-    pub usingnamespace zfltk.widget.methods(GlutWindow, RawPtr);
-    pub usingnamespace zfltk.group.methods(GlutWindow, RawPtr);
-    pub usingnamespace methods(GlutWindow);
+    // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+    pub const widget_ns = zfltk.widget.methods(GlutWindow, RawPtr);
+    pub const group_ns = zfltk.group.methods(GlutWindow, RawPtr);
+    pub const own_ns = methods(GlutWindow);
+    pub inline fn widget_methods(self: *GlutWindow) zfltk.widget.MethodsProxy(GlutWindow, RawPtr) { return .{ .self = self }; }
+    pub inline fn group_methods(self: *GlutWindow) zfltk.group.GroupMethodsProxy(GlutWindow, RawPtr) { return .{ .self = self }; }
+    pub inline fn own_methods(self: *GlutWindow) WindowOwnMethodsProxy(GlutWindow) { return .{ .self = self }; }
+
+    pub inline fn widget(self: *GlutWindow) *Widget {
+        return widget_ns.widget(self);
+    }
+    pub inline fn raw(self: *GlutWindow) RawPtr {
+        return widget_ns.raw(self);
+    }
+    pub inline fn fromRaw(ptr: *anyopaque) *GlutWindow {
+        return widget_ns.fromRaw(ptr);
+    }
     pub const RawPtr = *c.Fl_Glut_Window;
 
     pub inline fn init(opts: Widget.Options) !*GlutWindow {
@@ -153,6 +179,18 @@ fn methods(comptime Self: type) type {
         pub fn setFullscreen(self: *Window, val: bool) void {
             return c.Fl_Window_fullscreen(@ptrCast(self.raw()), @intFromBool(val));
         }
+    };
+}
+
+pub fn WindowOwnMethodsProxy(comptime Self: type) type {
+    const WM = methods(Self);
+    return struct {
+        self: *Self,
+        pub inline fn setSizeRange(p: @This(), min_w: u31, min_h: u31, max_w: u31, max_h: u31) void { WM.setSizeRange(p.self, min_w, min_h, max_w, max_h); }
+        pub inline fn iconize(p: @This()) void { WM.iconize(p.self); }
+        pub inline fn setCursor(p: @This(), cursor: enums.Cursor) void { WM.setCursor(p.self, cursor); }
+        pub inline fn makeModal(p: @This(), val: bool) void { WM.makeModal(p.self, val); }
+        pub inline fn setFullscreen(p: @This(), val: bool) void { WM.setFullscreen(p.self, val); }
     };
 }
 

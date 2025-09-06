@@ -22,12 +22,12 @@ fn btnCb(_: *button.Button, data: ?*anyopaque) void {
     COUNT += 1;
     var buf: [250]u8 = undefined;
     const label = std.fmt.bufPrintZ(buf[0..], "{d}", .{COUNT}) catch "0";
-    count.setLabel(label);
+    count.widget_methods().setLabel(label);
 }
 
 fn barDrawHandler(b: *box.Box) void {
     draw.setColor(Color.fromRgb(211, 211, 211));
-    draw.rectFill(0, b.h(), b.w(), 3);
+    draw.rectFill(0, b.widget_methods().h(), b.widget_methods().w(), 3);
 }
 
 pub fn main() !void {
@@ -35,36 +35,36 @@ pub fn main() !void {
     var win = try window.Window.init(.{ .w = WIDTH, .h = HEIGHT, .label = "Flutter-like!" });
     win.freePosition();
     var bar = try box.Box.init(.{ .w = WIDTH, .h = 60, .label = "  FLTK App!" });
-    bar.setLabelAlign(Align.left | Align.inside);
+    bar.widget_methods().setLabelAlign(Align.left | Align.inside);
     var text = try box.Box.init(.{ .x = 250, .y = 180, .w = 100, .h = 40, .label = "You have pushed the button this many times:" });
     var count = try box.Box.init(.{ .x = 250, .y = 220, .w = 100, .h = 40, .label = "0" });
     var but = try button.Button.init(.{ .x = WIDTH - 100, .y = HEIGHT - 100, .w = 60, .h = 60, .label = "@+6plus" });
-    win.end();
-    win.resizable(win);
-    win.show();
+    win.group_methods().end();
+    win.group_methods().resizable(win);
+    win.widget_methods().show();
 
     // Theming
     app.setBackground(Color.fromRgb(255, 255, 255));
     app.setVisibleFocus(false);
 
-    bar.setBox(.flat);
-    bar.setLabelSize(22);
-    bar.setLabelColor(Color.fromName(.white));
-    bar.setColor(BLUE);
-    bar.setDrawHandler(barDrawHandler);
+    bar.widget_methods().setBox(.flat);
+    bar.widget_methods().setLabelSize(22);
+    bar.widget_methods().setLabelColor(Color.fromName(.white));
+    bar.widget_methods().setColor(BLUE);
+    bar.widget_methods().setDrawHandler(barDrawHandler);
 
-    text.setLabelSize(18);
-    text.setLabelFont(.times);
+    text.widget_methods().setLabelSize(18);
+    text.widget_methods().setLabelFont(.times);
 
-    count.setLabelSize(36);
-    count.setLabelColor(GRAY);
+    count.widget_methods().setLabelSize(36);
+    count.widget_methods().setLabelColor(GRAY);
 
-    but.setColor(BLUE);
-    but.setSelectionColor(SEL_BLUE);
-    but.setLabelColor(Color.fromName(.white));
-    but.setBox(.oflat);
+    but.widget_methods().setColor(BLUE);
+    but.widget_methods().setSelectionColor(SEL_BLUE);
+    but.widget_methods().setLabelColor(Color.fromName(.white));
+    but.own_methods().setDownBox(.oflat);
     // End theming
 
-    but.setCallbackEx(btnCb, count);
+    but.widget_methods().setCallbackEx(btnCb, count);
     try app.run();
 }

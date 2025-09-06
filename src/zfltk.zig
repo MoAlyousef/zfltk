@@ -68,3 +68,9 @@ pub fn isWidget(comptime T: type) bool {
 test "all" {
     @import("std").testing.refAllDeclsRecursive(@This());
 }
+
+test "smoke" {
+    @setEvalBranchQuota(100_000);
+    // Smoke test: ensure module parses under Zig 0.15.1
+    _ = 0;
+}

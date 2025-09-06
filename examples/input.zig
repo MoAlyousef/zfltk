@@ -65,17 +65,17 @@ pub fn main() !void {
         .label = "Greet!",
     });
 
-    win.end();
-    win.show();
-    but.setEventHandler(butCb);
-    mybox.setLabelSize(24);
+    win.group_methods().end();
+    win.widget_methods().show();
+    but.widget_methods().setEventHandler(butCb);
+    mybox.widget_methods().setLabelSize(24);
 
     while (app.wait()) {
         if (app.recv(ButtonMessage)) |msg| switch (msg) {
             .pushed => {
                 var buf: [100]u8 = undefined;
                 const greeting = if (inp.value().len == 0) "I don't know your name!\nAdd it in the text box above" else try std.fmt.bufPrintZ(buf[0..], "Hello, {s}!", .{inp.value()});
-                mybox.setLabel(greeting);
+                mybox.widget_methods().setLabel(greeting);
             },
             else => {},
         };

@@ -25,10 +25,13 @@ pub const TextEditor = TextDisplayType(.editor);
 
 pub const TextBuffer = struct {
     const Self = @This();
-
-    pub usingnamespace zfltk.widget.methods(TextBuffer, RawPtr);
+    // Namespaced widget methods (Zig 0.15.1 no usingnamespace)
+    pub const widget_ns = zfltk.widget.methods(TextBuffer, RawPtr);
 
     pub const RawPtr = *c.Fl_Text_Buffer;
+
+    pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
+    pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
 
     pub inline fn init() !*TextBuffer {
         if (c.Fl_Text_Buffer_new()) |ptr| {
@@ -156,9 +159,14 @@ fn TextDisplayType(comptime kind: TextKind) type {
     return struct {
         const Self = @This();
 
-        // Expose methods from `inherited` structs
-        pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-        pub usingnamespace methods(Self);
+        // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+        pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
+        pub const own_ns = methods(Self);
+        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+        pub inline fn own_methods(self: *Self) TextMethodsProxy(Self) { return .{ .self = self }; }
+        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
+        pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
 
         const TextDisplayRawPtr = *c.Fl_Text_Display;
 
@@ -188,11 +196,11 @@ fn TextDisplayType(comptime kind: TextKind) type {
             const label = if (opts.label != null) opts.label.?.ptr else null;
 
             if (initFn(opts.x, opts.y, opts.w, opts.h, label)) |ptr| {
-                var self = Self.fromRaw(ptr);
+                const self = Self.fromRaw(ptr);
 
                 if (opts.buffer) {
                     const buf = try TextBuffer.init();
-                    self.setBuffer(buf);
+                    own_ns.setBuffer(self, buf);
                 }
 
                 return self;
@@ -220,7 +228,7 @@ fn methods(comptime Self: type) type {
         }
 
         pub inline fn buffer(self: *Self) ?*TextBuffer {
-            if (c.Fl_Text_Display_get_buffer(self.textDisplay().raw())) |ptr| {
+            if (c.Fl_Text_Display_get_buffer(textDisplay(self).raw())) |ptr| {
                 return TextBuffer.fromRaw(ptr);
             }
 
@@ -228,14 +236,14 @@ fn methods(comptime Self: type) type {
         }
 
         pub inline fn styleBuffer(self: *Self) ?*TextBuffer {
-            if (c.Fl_Text_Display_get_style_buffer(self.textDisplay().raw())) |ptr| {
+            if (c.Fl_Text_Display_get_style_buffer(textDisplay(self).raw())) |ptr| {
                 return TextBuffer.fromRaw(ptr);
             }
             return null;
         }
 
         pub inline fn setBuffer(self: *Self, buf: *TextBuffer) void {
-            c.Fl_Text_Display_set_buffer(self.textDisplay().textDisplay().raw(), buf.raw());
+            c.Fl_Text_Display_set_buffer(textDisplay(self).raw(), buf.raw());
         }
 
         pub fn setHighlightData(self: *Self, sbuf: *TextBuffer, entries: []const StyleTableEntry) void {
@@ -254,79 +262,79 @@ fn methods(comptime Self: type) type {
                 bgcolors[i] = 0;
                 i += 1;
             }
-            c.Fl_Text_Display_set_highlight_data(self.textDisplay().raw(), sbuf.raw(), &colors, &fonts, &fontszs, &attrs, &bgcolors, @intCast(sz));
+            c.Fl_Text_Display_set_highlight_data(textDisplay(self).raw(), sbuf.raw(), &colors, &fonts, &fontszs, &attrs, &bgcolors, @intCast(sz));
         }
 
         pub fn setTextFont(self: *Self, font: enums.Font) void {
-            c.Fl_Text_Display_set_text_font(self.textDisplay().raw(), @intFromEnum(font));
+            c.Fl_Text_Display_set_text_font(textDisplay(self).raw(), @intFromEnum(font));
         }
 
         pub fn setTextColor(self: *Self, col: enums.Color) void {
-            c.Fl_Text_Display_set_text_color(self.textDisplay().raw(), @intCast(col.toRgbi()));
+            c.Fl_Text_Display_set_text_color(textDisplay(self).raw(), @intCast(col.toRgbi()));
         }
 
         pub fn setTextSize(self: *Self, sz: i32) void {
-            c.Fl_Text_Display_set_text_size(self.textDisplay().raw(), sz);
+            c.Fl_Text_Display_set_text_size(textDisplay(self).raw(), sz);
         }
 
         pub fn scroll(self: *Self, topLineNum: i32, horizOffset: i32) void {
-            c.Fl_Text_Display_scroll(self.textDisplay().raw(), topLineNum, horizOffset);
+            c.Fl_Text_Display_scroll(textDisplay(self).raw(), topLineNum, horizOffset);
         }
 
         pub fn insert(self: *Self, text: [*c]const u8) void {
-            c.Fl_Text_Display_insert(self.textDisplay().raw(), text);
+            c.Fl_Text_Display_insert(textDisplay(self).raw(), text);
         }
 
         pub fn setInsertPosition(self: *Self, newPos: u32) void {
-            c.Fl_Text_Display_set_insert_position(self.textDisplay().raw(), newPos);
+            c.Fl_Text_Display_set_insert_position(textDisplay(self).raw(), newPos);
         }
 
         pub fn insertPosition(self: *Self) u32 {
-            return c.Fl_Text_Display_insert_position(self.textDisplay().raw());
+            return c.Fl_Text_Display_insert_position(textDisplay(self).raw());
         }
 
         pub fn countLines(self: *Self, start: u32, end: u32, is_line_start: bool) u32 {
-            return c.Fl_Text_Display_count_lines(self.textDisplay().raw(), @intCast(start), end, @intFromBool(is_line_start));
+            return c.Fl_Text_Display_count_lines(textDisplay(self).raw(), @intCast(start), end, @intFromBool(is_line_start));
         }
 
         pub fn moveRight(self: *Self) void {
-            _ = c.Fl_Text_Display_move_right(self.textDisplay().raw());
+            _ = c.Fl_Text_Display_move_right(textDisplay(self).raw());
         }
 
         pub fn moveLeft(self: *Self) void {
-            _ = c.Fl_Text_Display_move_left(self.textDisplay().raw());
+            _ = c.Fl_Text_Display_move_left(textDisplay(self).raw());
         }
 
         pub fn moveUp(self: *Self) void {
-            _ = c.Fl_Text_Display_move_up(self.textDisplay().raw());
+            _ = c.Fl_Text_Display_move_up(textDisplay(self).raw());
         }
 
         pub fn moveDown(self: *Self) void {
-            _ = c.Fl_Text_Display_move_down(self.textDisplay().raw());
+            _ = c.Fl_Text_Display_move_down(textDisplay(self).raw());
         }
 
         pub fn showCursor(self: *Self, val: bool) void {
-            c.Fl_Text_Display_show_cursor(self.textDisplay().raw(), @intFromBool(val));
+            c.Fl_Text_Display_show_cursor(textDisplay(self).raw(), @intFromBool(val));
         }
 
         pub fn setCursorStyle(self: *Self, style: enums.TextCursor) void {
-            c.Fl_Text_Display_set_cursor_style(self.textDisplay().raw(), @intFromEnum(style));
+            c.Fl_Text_Display_set_cursor_style(textDisplay(self).raw(), @intFromEnum(style));
         }
 
         pub fn setCursorColor(self: *Self, col: enums.Color) void {
-            c.Fl_Text_Display_set_cursor_color(self.textDisplay().raw(), @intCast(col.toRgbi()));
+            c.Fl_Text_Display_set_cursor_color(textDisplay(self).raw(), @intCast(col.toRgbi()));
         }
 
         pub fn setScrollbarSize(self: *Self, size: u32) void {
-            c.Fl_Text_Display_set_scrollbar_size(self.textDisplay().raw(), size);
+            c.Fl_Text_Display_set_scrollbar_size(textDisplay(self).raw(), size);
         }
 
         pub fn setScrollbarAlign(self: *Self, a: i32) void {
-            c.Fl_Text_Display_set_scrollbar_align(self.textDisplay().raw(), a);
+            c.Fl_Text_Display_set_scrollbar_align(textDisplay(self).raw(), a);
         }
 
         pub fn setLinenumberWidth(self: *Self, w: i32) void {
-            c.Fl_Text_Display_set_linenumber_width(self.textDisplay().raw(), w);
+            c.Fl_Text_Display_set_linenumber_width(textDisplay(self).raw(), w);
         }
 
         // Text editor only methods
@@ -341,6 +349,26 @@ fn methods(comptime Self: type) type {
         pub fn copy(self: *TextDisplayType(.editor)) void {
             _ = c.Fl_Text_Editor_kf_copy(self.raw());
         }
+    };
+}
+
+pub fn TextMethodsProxy(comptime Self: type) type {
+    const TM = methods(Self);
+    return struct {
+        self: *Self,
+        pub inline fn buffer(p: @This()) ?*TextBuffer { return TM.buffer(p.self); }
+        pub inline fn setBuffer(p: @This(), buf: *TextBuffer) void { TM.setBuffer(p.self, buf); }
+        pub inline fn setTextFont(p: @This(), font: enums.Font) void { TM.setTextFont(p.self, font); }
+        pub inline fn setTextColor(p: @This(), col: enums.Color) void { TM.setTextColor(p.self, col); }
+        pub inline fn setTextSize(p: @This(), sz: i32) void { TM.setTextSize(p.self, sz); }
+        pub inline fn scroll(p: @This(), t: i32, h: i32) void { TM.scroll(p.self, t, h); }
+        pub inline fn insert(p: @This(), s: [*c]const u8) void { TM.insert(p.self, s); }
+        pub inline fn setInsertPosition(p: @This(), pos: u32) void { TM.setInsertPosition(p.self, pos); }
+        pub inline fn setLinenumberWidth(p: @This(), w: i32) void { TM.setLinenumberWidth(p.self, w); }
+        pub inline fn showCursor(p: @This(), v: bool) void { TM.showCursor(p.self, v); }
+        pub inline fn cut(p: @This()) void { TM.cut(p.self); }
+        pub inline fn copy(p: @This()) void { TM.copy(p.self); }
+        pub inline fn paste(p: @This()) void { TM.paste(p.self); }
     };
 }
 

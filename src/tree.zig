@@ -10,8 +10,9 @@ const c = zfltk.c;
 pub const Tree = struct {
     const Self = @This();
 
-    pub usingnamespace zfltk.widget.methods(Self, RawPtr);
-    pub usingnamespace methods(Self);
+    // Namespaced method sets (Zig 0.15.1 no usingnamespace)
+    pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
+    pub const own_methods = methods(Self);
 
     pub const RawPtr = *c.Fl_Tree;
 
