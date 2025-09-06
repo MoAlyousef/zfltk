@@ -19,7 +19,7 @@ pub const table = @import("table.zig");
 pub const tree = @import("tree.zig");
 pub const draw = @import("draw.zig");
 
-const Widget = widget.Widget;
+pub const Widget = widget.Widget;
 
 pub const c = @cImport({
     @cInclude("cfltk/cfl.h");
@@ -66,11 +66,8 @@ pub fn isWidget(comptime T: type) bool {
 }
 
 test "all" {
+    @setEvalBranchQuota(20_000);
     @import("std").testing.refAllDeclsRecursive(@This());
 }
 
-test "smoke" {
-    @setEvalBranchQuota(100_000);
-    // Smoke test: ensure module parses under Zig 0.15.1
-    _ = 0;
-}
+// no extra smoke tests; keep only module-wide decl checks

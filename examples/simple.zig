@@ -8,9 +8,9 @@ const Color = zfltk.enums.Color;
 fn butCb(but: *Button, data: ?*anyopaque) void {
     const box = Box.fromRaw(data.?);
 
-    box.widget_methods().setLabel("Hello World!");
+    box.asWidget().setLabel("Hello World!");
 
-    but.widget_methods().setColor(Color.fromName(.cyan));
+    but.asWidget().setColor(Color.fromName(.cyan));
 }
 
 pub fn main() !void {
@@ -34,7 +34,7 @@ pub fn main() !void {
         .label = "Click me!",
     });
 
-    but.own_methods().setDownBox(.flat);
+    but.asBase().setDownBox(.flat);
 
     const box = try Box.init(.{
         .x = 10,
@@ -45,12 +45,12 @@ pub fn main() !void {
         .boxtype = .up,
     });
 
-    box.widget_methods().setLabelFont(.courier);
-    box.widget_methods().setLabelSize(18);
+    box.asWidget().setLabelFont(.courier);
+    box.asWidget().setLabelSize(18);
 
-    win.group_methods().end();
-    win.widget_methods().show();
+    win.asGroup().end();
+    win.asWidget().show();
 
-    but.widget_methods().setCallbackEx(butCb, box);
+    but.asWidget().setCallbackEx(butCb, box);
     try app.run();
 }

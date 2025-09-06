@@ -12,7 +12,9 @@ pub const Box = struct {
     pub const RawPtr = *c.Fl_Box;
     // Namespaced widget methods (Zig 0.15.1 no usingnamespace)
     pub const widget_ns = zfltk.widget.methods(Self, *c.Fl_Box);
-    pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+    pub inline fn asWidget(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) {
+        return .{ .self = self };
+    }
 
     pub inline fn widget(self: *Self) *Widget {
         return widget_ns.widget(self);

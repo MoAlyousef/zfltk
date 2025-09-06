@@ -51,8 +51,12 @@ fn GroupType(comptime kind: GroupKind) type {
         pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
         pub const group_ns = methods(Self, RawPtr);
 
-        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
-        pub inline fn group_methods(self: *Self) GroupMethodsProxy(Self, RawPtr) { return .{ .self = self }; }
+        pub inline fn asWidget(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) {
+            return .{ .self = self };
+        }
+        pub inline fn asGroup(self: *Self) GroupMethodsProxy(Self, RawPtr) {
+            return .{ .self = self };
+        }
 
         inline fn widget(self: *Self) *GroupType(.normal) {
             return widget_ns.widget(self);
@@ -202,7 +206,7 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
 
         pub fn child(self: *Self, idx: u31) ?*Widget {
             if (@field(c, ptr_name ++ "_child")(zfltk.widget.methods(Self, RawPtr).raw(self), idx)) |ptr| {
-                return Widget.fromRaw(ptr);
+                return Widget.methods_ns.fromRaw(ptr);
             }
 
             return null;
@@ -282,15 +286,33 @@ pub fn GroupMethodsProxy(comptime Self: type, comptime RawPtr: type) type {
     const GM = methods(Self, RawPtr);
     return struct {
         self: *Self,
-        pub inline fn end(p: @This()) void { GM.end(p.self); }
-        pub inline fn begin(p: @This()) void { GM.begin(p.self); }
-        pub inline fn add(p: @This(), widgets: anytype) void { GM.add(p.self, widgets); }
-        pub inline fn resizable(p: @This(), wid: anytype) void { GM.resizable(p.self, wid); }
-        pub inline fn setScrollbar(p: @This(), t: ScrollType) void { GM.setScrollbar(p.self, t); }
-        pub inline fn fixed(p: @This(), wid: anytype, sz: i32) void { GM.fixed(p.self, wid, sz); }
-        pub inline fn setMargin(p: @This(), sz: u31) void { GM.setMargin(p.self, sz); }
-        pub inline fn setMargins(p: @This(), l: u31, t: u31, r: u31, b: u31) void { GM.setMargins(p.self, l, t, r, b); }
-        pub inline fn setScrollbarSize(p: @This(), size: u31) void { GM.setScrollbarSize(p.self, size); }
+        pub inline fn end(p: @This()) void {
+            GM.end(p.self);
+        }
+        pub inline fn begin(p: @This()) void {
+            GM.begin(p.self);
+        }
+        pub inline fn add(p: @This(), widgets: anytype) void {
+            GM.add(p.self, widgets);
+        }
+        pub inline fn resizable(p: @This(), wid: anytype) void {
+            GM.resizable(p.self, wid);
+        }
+        pub inline fn setScrollbar(p: @This(), t: ScrollType) void {
+            GM.setScrollbar(p.self, t);
+        }
+        pub inline fn fixed(p: @This(), wid: anytype, sz: i32) void {
+            GM.fixed(p.self, wid, sz);
+        }
+        pub inline fn setMargin(p: @This(), sz: u31) void {
+            GM.setMargin(p.self, sz);
+        }
+        pub inline fn setMargins(p: @This(), l: u31, t: u31, r: u31, b: u31) void {
+            GM.setMargins(p.self, l, t, r, b);
+        }
+        pub inline fn setScrollbarSize(p: @This(), size: u31) void {
+            GM.setScrollbarSize(p.self, size);
+        }
     };
 }
 

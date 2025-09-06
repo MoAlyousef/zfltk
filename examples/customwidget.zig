@@ -51,17 +51,17 @@ pub fn main() !void {
         .label = "Off",
     });
 
-    box.widget_methods().setLabelFont(.courier);
-    box.widget_methods().setLabelSize(24);
+    box.asWidget().setLabelFont(.courier);
+    box.asWidget().setLabelSize(24);
 
     sw1.setCallbackEx(switch1Cb, box);
-    sw1.widget().widget_methods().setColor(Color.fromName(.cyan));
+    sw1.widget().asWidget().setColor(Color.fromName(.cyan));
     sw2.setValue(true);
     sw2.setCallbackEx(switch2Cb, sw1);
     //_ = sw2;
 
-    win.group_methods().end();
-    win.widget_methods().show();
+    win.asGroup().end();
+    win.asWidget().show();
 
     try app.run();
 }
@@ -70,14 +70,14 @@ fn switch1Cb(sw: *Switch, data: ?*anyopaque) void {
     var box = Box.fromRaw(data.?);
 
     const str = if (sw.value()) "On" else "Off";
-    box.widget_methods().setLabel(str);
+    box.asWidget().setLabel(str);
 }
 
 fn switch2Cb(sw2: *Switch, data: ?*anyopaque) void {
     var sw1 = Switch.fromVoidPtr(data.?);
 
     const color = if (sw2.value()) Color.fromName(.cyan) else Color.fromName(.background);
-    sw1.widget().widget_methods().setColor(color);
+    sw1.widget().asWidget().setColor(color);
     sw1.setAnimation(sw2.value());
 }
 
@@ -152,11 +152,11 @@ const Switch = struct {
             //.boxtype = .up,
         });
 
-        self.label.widget_methods().setLabelAlign(Align.left | Align.inside);
+        self.label.asWidget().setLabelAlign(Align.left | Align.inside);
 
-        self.box1.widget_methods().setEventHandlerEx(clickEventHandle, self);
-        self.box2.widget_methods().setEventHandlerEx(clickEventHandle, self);
-        self.label.widget_methods().setEventHandlerEx(clickEventHandle, self);
+        self.box1.asWidget().setEventHandlerEx(clickEventHandle, self);
+        self.box2.asWidget().setEventHandlerEx(clickEventHandle, self);
+        self.label.asWidget().setEventHandlerEx(clickEventHandle, self);
 
         return self;
     }
@@ -178,10 +178,10 @@ const Switch = struct {
 
         switch (ev) {
             .push => {
-                const h = self.box1.widget_methods().h();
+                const h = self.box1.asWidget().h();
                 const x = if (self.on) self.opts.x + h else self.opts.x;
-                const y = self.box1.widget_methods().y();
-                const w = self.box1.widget_methods().w();
+                const y = self.box1.asWidget().y();
+                const w = self.box1.asWidget().w();
                 //                const w2 = self.options.w;
 
                 const new_x = if (self.on) x - (h) else x + (h);
@@ -201,33 +201,33 @@ const Switch = struct {
                 // Sliding animation
                 if (self.animated) {
                     if (self.on) {
-                        while (self.box1.widget_methods().x() < new_x) {
-                            var x1 = self.box1.widget_methods().x() +| h / 6;
+                        while (self.box1.asWidget().x() < new_x) {
+                            var x1 = self.box1.asWidget().x() +| h / 6;
                             if (x1 > new_x) x1 = new_x;
 
                             // One frame at 60fps (what FLTK uses)
                             std.Thread.sleep(16_666_666);
-                            self.box1.widget_methods().resize(x1, y, w, h);
-                            self.box1.widget_methods().parent().?.widget_methods().redraw();
+                            self.box1.asWidget().resize(x1, y, w, h);
+                            self.box1.asWidget().parent().?.asWidget().redraw();
 
                             _ = app.check();
 
                             //  draw.box(.down, x, y, w, h, Color.fromName(.background));
                         }
                     } else {
-                        while (self.box1.widget_methods().x() > new_x) {
-                            var x1 = self.box1.widget_methods().x() -| h / 6;
+                        while (self.box1.asWidget().x() > new_x) {
+                            var x1 = self.box1.asWidget().x() -| h / 6;
                             if (x1 < new_x) x1 = new_x;
 
                             std.Thread.sleep(16_666_666);
-                            self.box1.widget_methods().resize(x1, y, w, h);
-                            self.box1.widget_methods().parent().?.widget_methods().redraw();
+                            self.box1.asWidget().resize(x1, y, w, h);
+                            self.box1.asWidget().parent().?.asWidget().redraw();
                             _ = app.check();
                         }
                     }
                 } else {
-                    self.box1.widget_methods().resize(new_x, y, w, h);
-                    self.box1.widget_methods().parent().?.widget_methods().redraw();
+                    self.box1.asWidget().resize(new_x, y, w, h);
+                    self.box1.asWidget().parent().?.asWidget().redraw();
                     _ = app.check();
                 }
 
@@ -263,15 +263,15 @@ const Switch = struct {
     }
 
     pub fn setValue(self: *Switch, val: bool) void {
-        const x = self.box1.widget_methods().x();
-        const y = self.box1.widget_methods().y();
-        const w = self.box1.widget_methods().w();
-        const h = self.box1.widget_methods().h();
+        const x = self.box1.asWidget().x();
+        const y = self.box1.asWidget().y();
+        const w = self.box1.asWidget().w();
+        const h = self.box1.asWidget().h();
         const new_x = if (self.on) x - (h) else x + (h);
 
         self.on = val;
-        self.box1.widget_methods().resize(new_x, y, w, h);
-        self.box1.widget_methods().parent().?.widget_methods().redraw();
+        self.box1.asWidget().resize(new_x, y, w, h);
+        self.box1.asWidget().parent().?.asWidget().redraw();
 
         _ = app.check();
     }

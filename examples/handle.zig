@@ -11,16 +11,16 @@ const draw = zfltk.draw;
 fn butCb(but: *Button, data: ?*anyopaque) void {
     var box = Box.fromRaw(data.?);
 
-    box.widget_methods().setLabel("Hello World!");
+    box.asWidget().setLabel("Hello World!");
 
-    but.widget_methods().setColor(Color.fromName(.cyan));
+    but.asWidget().setColor(Color.fromName(.cyan));
 }
 
 fn boxEventHandler(_: *Box, ev: Event, data: ?*anyopaque) bool {
     const btn = Button.fromRaw(data.?);
     switch (ev) {
         .push => {
-            std.debug.print("Click the button: {s}\n", .{btn.widget_methods().label()});
+            std.debug.print("Click the button: {s}\n", .{btn.asWidget().label()});
             return true;
         },
         else => return false,
@@ -29,7 +29,7 @@ fn boxEventHandler(_: *Box, ev: Event, data: ?*anyopaque) bool {
 
 fn boxDrawHandler(box: *Box) void {
     draw.setLineStyle(.DashDot, 2);
-    draw.rectWithColor(box.widget_methods().x() + 10, box.widget_methods().y() + 10, box.widget_methods().w() - 20, box.widget_methods().h() - 20, Color.fromName(.cyan));
+    draw.rectWithColor(box.asWidget().x() + 10, box.asWidget().y() + 10, box.asWidget().w() - 20, box.asWidget().h() - 20, Color.fromName(.cyan));
 }
 
 pub fn main() !void {
@@ -52,7 +52,7 @@ pub fn main() !void {
         .label = "Click me!",
     });
 
-    but.own_methods().setDownBox(.flat);
+    but.asBase().setDownBox(.flat);
 
     var box = try Box.init(.{
         .x = 10,
@@ -63,15 +63,15 @@ pub fn main() !void {
         .boxtype = .up,
     });
 
-    box.widget_methods().setEventHandlerEx(boxEventHandler, but);
-    box.widget_methods().setDrawHandler(boxDrawHandler);
+    box.asWidget().setEventHandlerEx(boxEventHandler, but);
+    box.asWidget().setDrawHandler(boxDrawHandler);
 
-    box.widget_methods().setLabelFont(.courier);
-    box.widget_methods().setLabelSize(18);
+    box.asWidget().setLabelFont(.courier);
+    box.asWidget().setLabelSize(18);
 
-    win.group_methods().end();
-    win.widget_methods().show();
+    win.asGroup().end();
+    win.asWidget().show();
 
-    but.widget_methods().setCallbackEx(butCb, box);
+    but.asWidget().setCallbackEx(butCb, box);
     try app.run();
 }

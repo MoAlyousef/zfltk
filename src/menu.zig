@@ -47,11 +47,21 @@ fn MenuType(comptime kind: MenuKind) type {
         // Namespaced method sets (Zig 0.15.1 no usingnamespace)
         pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
         pub const menu_ns = methods(Self, RawPtr);
-        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
-        pub inline fn menu_methods(self: *Self) MenuMethodsProxy(Self, RawPtr) { return .{ .self = self }; }
-        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
-        pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
-        pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
+        pub inline fn asWidget(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) {
+            return .{ .self = self };
+        }
+        pub inline fn asMenu(self: *Self) MenuMethodsProxy(Self, RawPtr) {
+            return .{ .self = self };
+        }
+        pub inline fn widget(self: *Self) *Widget {
+            return widget_ns.widget(self);
+        }
+        pub inline fn raw(self: *Self) RawPtr {
+            return widget_ns.raw(self);
+        }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self {
+            return widget_ns.fromRaw(ptr);
+        }
 
         pub const RawPtr = switch (kind) {
             .menu_bar => *c.Fl_Menu_Bar,
@@ -101,50 +111,50 @@ fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub fn add(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
-            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, &widget.zfltk_cb_handler, @ptrFromInt(@intFromPtr(f)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_add")(zfltk.widget.methods(Self, RawPtr).raw(self), name, shortcut, &widget.zfltk_cb_handler, @ptrFromInt(@intFromPtr(f)), @intFromEnum(flag));
         }
 
         pub fn addEx(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self, data: ?*anyopaque) void, data: ?*anyopaque) void {
             var container = app.allocator.alloc(usize, 2) catch unreachable;
             container[0] = @intFromPtr(f);
             container[1] = @intFromPtr(data);
-            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, widget.zfltk_cb_handler_ex, @ptrCast(container.ptr), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_add")(zfltk.widget.methods(Self, RawPtr).raw(self), name, shortcut, widget.zfltk_cb_handler_ex, @ptrCast(container.ptr), @intFromEnum(flag));
         }
 
         pub fn insert(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
-            _ = @field(c, ptr_name ++ "_insert")(self.raw(), @intCast(idx), name, shortcut, &widget.zfltk_cb_handler, @ptrFromInt(@intFromPtr(f)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_insert")(zfltk.widget.methods(Self, RawPtr).raw(self), @intCast(idx), name, shortcut, &widget.zfltk_cb_handler, @ptrFromInt(@intFromPtr(f)), @intFromEnum(flag));
         }
 
         pub fn addEmit(self: *Self, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
-            _ = @field(c, ptr_name ++ "_add")(self.raw(), name, shortcut, widget.shim, @ptrFromInt(@intFromEnum(msg)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_add")(zfltk.widget.methods(Self, RawPtr).raw(self), name, shortcut, widget.shim, @ptrFromInt(@intFromEnum(msg)), @intFromEnum(flag));
         }
 
         pub fn insertEmit(self: *Self, idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
-            _ = @field(c, ptr_name ++ "_insert")(self.raw(), @intCast(idx), name, shortcut, widget.shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
+            _ = @field(c, ptr_name ++ "_insert")(zfltk.widget.methods(Self, RawPtr).raw(self), @intCast(idx), name, shortcut, widget.shim, @as(usize, @bitCast(msg)), @intFromEnum(flag));
         }
 
         pub fn remove(self: *Self, idx: i32) void {
-            _ = @field(c, ptr_name ++ "_remove")(self.raw(), @intCast(idx));
+            _ = @field(c, ptr_name ++ "_remove")(zfltk.widget.methods(Self, RawPtr).raw(self), @intCast(idx));
         }
 
         pub fn findItem(self: *Self, path: [*c]const u8) MenuItem {
-            return MenuItem{ .inner = @field(c, ptr_name ++ "_get_item")(self.raw(), path) };
+            return MenuItem{ .inner = @field(c, ptr_name ++ "_get_item")(zfltk.widget.methods(Self, RawPtr).raw(self), path) };
         }
 
         pub fn clear(self: *Self) void {
-            @field(c, ptr_name ++ "_clear")(self.raw());
+            @field(c, ptr_name ++ "_clear")(zfltk.widget.methods(Self, RawPtr).raw(self));
         }
 
         pub fn setTextFont(self: *Self, font: enums.Font) void {
-            @field(c, ptr_name ++ "_set_text_font")(self.raw(), @intFromEnum(font));
+            @field(c, ptr_name ++ "_set_text_font")(zfltk.widget.methods(Self, RawPtr).raw(self), @intFromEnum(font));
         }
 
         pub fn setTextColor(self: *Self, col: enums.Color) void {
-            @field(c, ptr_name ++ "_set_text_color")(self.raw(), @intCast(col.toRgbi()));
+            @field(c, ptr_name ++ "_set_text_color")(zfltk.widget.methods(Self, RawPtr).raw(self), @intCast(col.toRgbi()));
         }
 
         pub fn setTextSize(self: *Self, sz: i32) void {
-            @field(c, ptr_name ++ "_set_text_size")(self.raw(), @intCast(sz));
+            @field(c, ptr_name ++ "_set_text_size")(zfltk.widget.methods(Self, RawPtr).raw(self), @intCast(sz));
         }
     };
 }
@@ -153,11 +163,21 @@ pub fn MenuMethodsProxy(comptime Self: type, comptime RawPtr: type) type {
     const MM = methods(Self, RawPtr);
     return struct {
         self: *Self,
-        pub inline fn addEx(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self, data: ?*anyopaque) void, data: ?*anyopaque) void { MM.addEx(p.self, name, shortcut, flag, f, data); }
-        pub inline fn add(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void { MM.add(p.self, name, shortcut, flag, f); }
-        pub inline fn addEmit(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void { MM.addEmit(p.self, name, shortcut, flag, T, msg); }
-        pub inline fn insert(p: @This(), idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void { MM.insert(p.self, idx, name, shortcut, flag, f); }
-        pub inline fn findItem(p: @This(), path: [*c]const u8) MenuItem { return MM.findItem(p.self, path); }
+        pub inline fn addEx(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self, data: ?*anyopaque) void, data: ?*anyopaque) void {
+            MM.addEx(p.self, name, shortcut, flag, f, data);
+        }
+        pub inline fn add(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
+            MM.add(p.self, name, shortcut, flag, f);
+        }
+        pub inline fn addEmit(p: @This(), name: [*c]const u8, shortcut: i32, flag: MenuFlag, comptime T: type, msg: T) void {
+            MM.addEmit(p.self, name, shortcut, flag, T, msg);
+        }
+        pub inline fn insert(p: @This(), idx: u32, name: [*c]const u8, shortcut: i32, flag: MenuFlag, f: *const fn (w: *Self) void) void {
+            MM.insert(p.self, idx, name, shortcut, flag, f);
+        }
+        pub inline fn findItem(p: @This(), path: [*c]const u8) MenuItem {
+            return MM.findItem(p.self, path);
+        }
     };
 }
 

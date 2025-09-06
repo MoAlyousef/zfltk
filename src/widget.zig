@@ -9,7 +9,7 @@ const c = zfltk.c;
 pub const Widget = struct {
     // Namespaced widget method set (Zig 0.15.1 no usingnamespace)
     pub const methods_ns = methods(Widget, *c.Fl_Widget);
-    pub fn widget_methods(self: *Widget) MethodsProxy(Widget, *c.Fl_Widget) {
+    pub fn asWidget(self: *Widget) MethodsProxy(Widget, *c.Fl_Widget) {
         return .{ .self = self };
     }
 
@@ -344,9 +344,13 @@ pub fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub fn asWindow(self: *Self) ?*zfltk.window.Window {
-            const ptr = @field(c, ptr_name ++ "_as_window")(self.raw());
-            if (ptr) |p| {
-                return zfltk.window.Window.fromRaw(p);
+            if (@hasDecl(c, ptr_name ++ "_as_window")) {
+                const ptr = @field(c, ptr_name ++ "_as_window")(zfltk.widget.methods(Self, RawPtr).raw(self));
+                if (ptr) |p| {
+                    return zfltk.window.Window.fromRaw(p);
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }
@@ -508,45 +512,111 @@ pub fn MethodsProxy(comptime Self: type, comptime RawPtr: type) type {
     return struct {
         self: *Self,
 
-        pub inline fn show(p: @This()) void { M.show(p.self); }
-        pub inline fn hide(p: @This()) void { M.hide(p.self); }
-        pub inline fn resize(p: @This(), _x: i32, _y: i32, _w: u31, _h: u31) void { M.resize(p.self, _x, _y, _w, _h); }
+        pub inline fn show(p: @This()) void {
+            M.show(p.self);
+        }
+        pub inline fn hide(p: @This()) void {
+            M.hide(p.self);
+        }
+        pub inline fn resize(p: @This(), _x: i32, _y: i32, _w: u31, _h: u31) void {
+            M.resize(p.self, _x, _y, _w, _h);
+        }
 
-        pub inline fn x(p: @This()) i32 { return M.x(p.self); }
-        pub inline fn y(p: @This()) i32 { return M.y(p.self); }
-        pub inline fn w(p: @This()) u31 { return M.w(p.self); }
-        pub inline fn h(p: @This()) u31 { return M.h(p.self); }
+        pub inline fn x(p: @This()) i32 {
+            return M.x(p.self);
+        }
+        pub inline fn y(p: @This()) i32 {
+            return M.y(p.self);
+        }
+        pub inline fn w(p: @This()) u31 {
+            return M.w(p.self);
+        }
+        pub inline fn h(p: @This()) u31 {
+            return M.h(p.self);
+        }
 
-        pub inline fn label(p: @This()) [:0]const u8 { return M.label(p.self); }
-        pub inline fn setLabel(p: @This(), s: [:0]const u8) void { M.setLabel(p.self, s); }
+        pub inline fn label(p: @This()) [:0]const u8 {
+            return M.label(p.self);
+        }
+        pub inline fn setLabel(p: @This(), s: [:0]const u8) void {
+            M.setLabel(p.self, s);
+        }
 
-        pub inline fn setLabelFont(p: @This(), f: enums.Font) void { M.setLabelFont(p.self, f); }
-        pub inline fn setLabelSize(p: @This(), v: u31) void { M.setLabelSize(p.self, v); }
-        pub inline fn setLabelColor(p: @This(), col: enums.Color) void { M.setLabelColor(p.self, col); }
+        pub inline fn setLabelFont(p: @This(), f: enums.Font) void {
+            M.setLabelFont(p.self, f);
+        }
+        pub inline fn setLabelSize(p: @This(), v: u31) void {
+            M.setLabelSize(p.self, v);
+        }
+        pub inline fn setLabelColor(p: @This(), col: enums.Color) void {
+            M.setLabelColor(p.self, col);
+        }
 
-        pub inline fn color(p: @This()) enums.Color { return M.color(p.self); }
-        pub inline fn setColor(p: @This(), col: enums.Color) void { M.setColor(p.self, col); }
-        pub inline fn labelColor(p: @This()) enums.Color { return M.labelColor(p.self); }
-        pub inline fn setSelectionColor(p: @This(), col: enums.Color) void { M.setSelectionColor(p.self, col); }
-        pub inline fn setLabelAlign(p: @This(), a: i32) void { M.setLabelAlign(p.self, a); }
-        pub inline fn clearVisibleFocus(p: @This()) void { M.clearVisibleFocus(p.self); }
-        pub inline fn setVisibleFocus(p: @This(), v: bool) void { M.setVisibleFocus(p.self, v); }
+        pub inline fn color(p: @This()) enums.Color {
+            return M.color(p.self);
+        }
+        pub inline fn setColor(p: @This(), col: enums.Color) void {
+            M.setColor(p.self, col);
+        }
+        pub inline fn labelColor(p: @This()) enums.Color {
+            return M.labelColor(p.self);
+        }
+        pub inline fn setSelectionColor(p: @This(), col: enums.Color) void {
+            M.setSelectionColor(p.self, col);
+        }
+        pub inline fn setLabelAlign(p: @This(), a: i32) void {
+            M.setLabelAlign(p.self, a);
+        }
+        pub inline fn clearVisibleFocus(p: @This()) void {
+            M.clearVisibleFocus(p.self);
+        }
+        pub inline fn setVisibleFocus(p: @This(), v: bool) void {
+            M.setVisibleFocus(p.self, v);
+        }
 
-        pub inline fn setEventHandler(p: @This(), f: *const fn (*Self, enums.Event) bool) void { M.setEventHandler(p.self, f); }
-        pub inline fn setEventHandlerEx(p: @This(), f: *const fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void { M.setEventHandlerEx(p.self, f, data); }
-        pub inline fn setDrawHandler(p: @This(), f: *const fn (*Self) void) void { M.setDrawHandler(p.self, f); }
-        pub inline fn setDrawHandlerEx(p: @This(), f: *const fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void { M.setDrawHandlerEx(p.self, f, data); }
-        pub inline fn setCallback(p: @This(), f: *const fn (*Self) void) void { M.setCallback(p.self, f); }
-        pub inline fn setCallbackEx(p: @This(), f: *const fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void { M.setCallbackEx(p.self, f, data); }
-        pub inline fn emit(p: @This(), comptime T: type, msg: T) void { M.emit(p.self, T, msg); }
+        pub inline fn setEventHandler(p: @This(), f: *const fn (*Self, enums.Event) bool) void {
+            M.setEventHandler(p.self, f);
+        }
+        pub inline fn setEventHandlerEx(p: @This(), f: *const fn (*Self, enums.Event, ?*anyopaque) bool, data: ?*anyopaque) void {
+            M.setEventHandlerEx(p.self, f, data);
+        }
+        pub inline fn setDrawHandler(p: @This(), f: *const fn (*Self) void) void {
+            M.setDrawHandler(p.self, f);
+        }
+        pub inline fn setDrawHandlerEx(p: @This(), f: *const fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+            M.setDrawHandlerEx(p.self, f, data);
+        }
+        pub inline fn setCallback(p: @This(), f: *const fn (*Self) void) void {
+            M.setCallback(p.self, f);
+        }
+        pub inline fn setCallbackEx(p: @This(), f: *const fn (*Self, ?*anyopaque) void, data: ?*anyopaque) void {
+            M.setCallbackEx(p.self, f, data);
+        }
+        pub inline fn emit(p: @This(), comptime T: type, msg: T) void {
+            M.emit(p.self, T, msg);
+        }
 
-        pub inline fn setImage(p: @This(), img: Image) void { M.setImage(p.self, img); }
-        pub inline fn removeImage(p: @This()) void { M.removeImage(p.self); }
-        pub inline fn setDeimage(p: @This(), img: Image) void { M.setDeimage(p.self, img); }
-        pub inline fn removeDeimage(p: @This()) void { M.removeDeimage(p.self); }
-        pub inline fn redraw(p: @This()) void { M.redraw(p.self); }
-        pub inline fn parent(p: @This()) ?*Group { return M.parent(p.self); }
-        pub inline fn setBox(p: @This(), b: enums.BoxType) void { M.setBox(p.self, b); }
+        pub inline fn setImage(p: @This(), img: Image) void {
+            M.setImage(p.self, img);
+        }
+        pub inline fn removeImage(p: @This()) void {
+            M.removeImage(p.self);
+        }
+        pub inline fn setDeimage(p: @This(), img: Image) void {
+            M.setDeimage(p.self, img);
+        }
+        pub inline fn removeDeimage(p: @This()) void {
+            M.removeDeimage(p.self);
+        }
+        pub inline fn redraw(p: @This()) void {
+            M.redraw(p.self);
+        }
+        pub inline fn parent(p: @This()) ?*Group {
+            return M.parent(p.self);
+        }
+        pub inline fn setBox(p: @This(), b: enums.BoxType) void {
+            M.setBox(p.self, b);
+        }
     };
 }
 

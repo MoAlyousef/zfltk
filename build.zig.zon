@@ -1,6 +1,6 @@
 .{
     .name = .zfltk,
-    .version = "0.0.4", // zig 0.14.0
+    .version = "0.0.5", // zig 0.15.0
     .paths = .{
         "src",
         "build.zig",
@@ -11,4 +11,3 @@
     },
     .fingerprint = 0xbbf391ca6351757f,
 }
-

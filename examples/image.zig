@@ -23,7 +23,7 @@ pub fn main() !void {
         .h = 140,
     });
 
-    scroll.group_methods().setScrollbar(.vertical);
+    scroll.asGroup().setScrollbar(.vertical);
 
     var mybox = try Box.init(.{
         .w = 400,
@@ -32,15 +32,15 @@ pub fn main() !void {
         .boxtype = .up,
     });
 
-    scroll.group_methods().add(.{mybox});
-    win.group_methods().add(.{scroll});
+    scroll.asGroup().add(.{mybox});
+    win.asGroup().add(.{scroll});
 
     const img = try Image.load(.png, "screenshots/logo.png");
 
-    mybox.widget_methods().setImage(img);
+    mybox.asWidget().setImage(img);
 
-    win.group_methods().end();
-    win.widget_methods().show();
+    win.asGroup().end();
+    win.asWidget().show();
 
     try app.run();
 }

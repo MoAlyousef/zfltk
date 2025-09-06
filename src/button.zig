@@ -33,10 +33,16 @@ fn ButtonType(comptime kind: ButtonKind) type {
         pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
         pub const own_ns = methods(Self);
 
-        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
-        pub inline fn own_methods(self: *Self) ButtonOwnMethodsProxy(Self) { return .{ .self = self }; }
+        pub inline fn asWidget(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) {
+            return .{ .self = self };
+        }
+        pub inline fn asBase(self: *Self) ButtonOwnMethodsProxy(Self) {
+            return .{ .self = self };
+        }
 
-        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
+        pub inline fn widget(self: *Self) *Widget {
+            return widget_ns.widget(self);
+        }
         pub inline fn raw(self: *Self) RawPtr {
             return widget_ns.raw(self);
         }
@@ -97,32 +103,39 @@ fn methods(comptime Self: type) type {
             return @ptrCast(self);
         }
 
+        inline fn basePtrConst(self: *Self) ?*const c.Fl_Button {
+            return @as(?*const c.Fl_Button, @ptrCast(zfltk.widget.methods(Self, Self.RawPtr).raw(self)));
+        }
+        inline fn basePtr(self: *Self) ?*c.Fl_Button {
+            return @as(?*c.Fl_Button, @ptrCast(zfltk.widget.methods(Self, Self.RawPtr).raw(self)));
+        }
+
         pub fn shortcut(self: *Self) i32 {
-            return c.Fl_Button_shortcut(zfltk.widget.methods(Self, Self.RawPtr).raw(self));
+            return c.Fl_Button_shortcut(basePtrConst(self));
         }
 
         pub fn setShortcut(self: *Self, shrtct: i32) void {
-            c.Fl_Button_set_shortcut(zfltk.widget.methods(Self, Self.RawPtr).raw(self), shrtct);
+            c.Fl_Button_set_shortcut(basePtr(self), shrtct);
         }
 
         pub fn clear(self: *Self) void {
-            c.Fl_Button_clear(zfltk.widget.methods(Self, Self.RawPtr).raw(self));
+            _ = c.Fl_Button_clear(basePtr(self));
         }
 
         pub fn value(self: *Self) bool {
-            return c.Fl_Button_value(zfltk.widget.methods(Self, Self.RawPtr).raw(self)) != 0;
+            return c.Fl_Button_value(basePtr(self)) != 0;
         }
 
         pub fn setValue(self: *Self, flag: bool) void {
-            c.Fl_Button_set_value(zfltk.widget.methods(Self, Self.RawPtr).raw(self), @intFromBool(flag));
+            c.Fl_Button_set_value(basePtr(self), @intFromBool(flag));
         }
 
         pub fn setDownBox(self: *Self, f: enums.BoxType) void {
-            c.Fl_Button_set_down_box(zfltk.widget.methods(Self, Self.RawPtr).raw(self), @intFromEnum(f));
+            c.Fl_Button_set_down_box(basePtr(self), @intFromEnum(f));
         }
 
         pub fn downBox(self: *Self) enums.BoxType {
-            return @enumFromInt(c.Fl_Button_down_box(zfltk.widget.methods(Self, Self.RawPtr).raw(self)));
+            return @enumFromInt(c.Fl_Button_down_box(basePtrConst(self)));
         }
     };
 }
@@ -131,11 +144,21 @@ pub fn ButtonOwnMethodsProxy(comptime Self: type) type {
     const OM = methods(Self);
     return struct {
         self: *Self,
-        pub inline fn setDownBox(p: @This(), f: enums.BoxType) void { OM.setDownBox(p.self, f); }
-        pub inline fn setShortcut(p: @This(), s: i32) void { OM.setShortcut(p.self, s); }
-        pub inline fn clear(p: @This()) void { OM.clear(p.self); }
-        pub inline fn setValue(p: @This(), v: bool) void { OM.setValue(p.self, v); }
-        pub inline fn value(p: @This()) bool { return OM.value(p.self); }
+        pub inline fn setDownBox(p: @This(), f: enums.BoxType) void {
+            OM.setDownBox(p.self, f);
+        }
+        pub inline fn setShortcut(p: @This(), s: i32) void {
+            OM.setShortcut(p.self, s);
+        }
+        pub inline fn clear(p: @This()) void {
+            OM.clear(p.self);
+        }
+        pub inline fn setValue(p: @This(), v: bool) void {
+            OM.setValue(p.self, v);
+        }
+        pub inline fn value(p: @This()) bool {
+            return OM.value(p.self);
+        }
     };
 }
 

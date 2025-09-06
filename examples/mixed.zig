@@ -19,12 +19,12 @@ fn butCb(but: *Button) void {
         .{ c.Fl_event_x(), c.Fl_event_y() },
     ) catch unreachable;
 
-    but.widget_methods().setLabel(label);
+    but.asWidget().setLabel(label);
 }
 
 fn colorButCb(color_but: *Button, _: ?*anyopaque) void {
-    color_but.widget_methods().setColor(Color.fromRgbi(
-        c.Fl_show_colormap(color_but.widget_methods().color().toRgbi()),
+    color_but.asWidget().setColor(Color.fromRgbi(
+        c.Fl_show_colormap(color_but.asWidget().color().toRgbi()),
     ));
 }
 
@@ -75,8 +75,8 @@ pub fn main() !void {
         .h = 190,
         .label = "Click to get mouse coords",
     });
-    but.widget_methods().setLabelSize(24);
-    but.widget_methods().setCallback(butCb);
+    but.asWidget().setLabelSize(24);
+    but.asWidget().setCallback(butCb);
 
     var color_but = try Button.init(.{
         .x = 10,
@@ -85,7 +85,7 @@ pub fn main() !void {
         .h = 80,
         .label = "Set my color!",
     });
-    color_but.widget_methods().setCallbackEx(colorButCb, null);
+    color_but.asWidget().setCallbackEx(colorButCb, null);
 
     // Change this to whatever you want
     var wait_time: f32 = @floatCast(1);
@@ -110,13 +110,13 @@ pub fn main() !void {
     container[0] = @intFromPtr(timeout_but);
     container[1] = @intFromPtr(&wait_time);
 
-    timeout_but.widget_methods().setCallbackEx(
+    timeout_but.asWidget().setCallbackEx(
         timeoutButCb,
         @ptrCast(&container),
     );
 
-    win.group_methods().end();
-    win.widget_methods().show();
+    win.asGroup().end();
+    win.asWidget().show();
 
     try app.run();
 }

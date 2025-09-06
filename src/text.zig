@@ -25,13 +25,14 @@ pub const TextEditor = TextDisplayType(.editor);
 
 pub const TextBuffer = struct {
     const Self = @This();
-    // Namespaced widget methods (Zig 0.15.1 no usingnamespace)
-    pub const widget_ns = zfltk.widget.methods(TextBuffer, RawPtr);
-
     pub const RawPtr = *c.Fl_Text_Buffer;
 
-    pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
-    pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
+    pub inline fn raw(self: *Self) RawPtr {
+        return @ptrCast(@alignCast(self));
+    }
+    pub inline fn fromRaw(ptr: *anyopaque) *Self {
+        return @ptrCast(ptr);
+    }
 
     pub inline fn init() !*TextBuffer {
         if (c.Fl_Text_Buffer_new()) |ptr| {
@@ -54,7 +55,7 @@ pub const TextBuffer = struct {
 
     /// Returns the text of the buffer
     pub fn text(self: *TextBuffer) [:0]const u8 {
-        return c.Fl_Text_Buffer_text(self.raw());
+        return std.mem.span(c.Fl_Text_Buffer_text(self.raw()));
     }
 
     /// Appends to the buffer
@@ -73,7 +74,7 @@ pub const TextBuffer = struct {
     }
     /// Returns the text within the range
     pub fn textRange(self: *TextBuffer, start: u32, end: u32) [:0]const u8 {
-        return c.Fl_Text_Buffer_text_range(self.raw(), @intCast(start), @intCast(end));
+        return std.mem.span(c.Fl_Text_Buffer_text_range(self.raw(), @intCast(start), @intCast(end)));
     }
 
     /// Inserts text into a position
@@ -162,11 +163,21 @@ fn TextDisplayType(comptime kind: TextKind) type {
         // Namespaced method sets (Zig 0.15.1 no usingnamespace)
         pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
         pub const own_ns = methods(Self);
-        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
-        pub inline fn own_methods(self: *Self) TextMethodsProxy(Self) { return .{ .self = self }; }
-        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
-        pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
-        pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
+        pub inline fn asWidget(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) {
+            return .{ .self = self };
+        }
+        pub inline fn asBase(self: *Self) TextMethodsProxy(Self) {
+            return .{ .self = self };
+        }
+        pub inline fn widget(self: *Self) *Widget {
+            return widget_ns.widget(self);
+        }
+        pub inline fn raw(self: *Self) RawPtr {
+            return widget_ns.raw(self);
+        }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self {
+            return widget_ns.fromRaw(ptr);
+        }
 
         const TextDisplayRawPtr = *c.Fl_Text_Display;
 
@@ -286,15 +297,15 @@ fn methods(comptime Self: type) type {
         }
 
         pub fn setInsertPosition(self: *Self, newPos: u32) void {
-            c.Fl_Text_Display_set_insert_position(textDisplay(self).raw(), newPos);
+            c.Fl_Text_Display_set_insert_position(textDisplay(self).raw(), @intCast(newPos));
         }
 
         pub fn insertPosition(self: *Self) u32 {
-            return c.Fl_Text_Display_insert_position(textDisplay(self).raw());
+            return @intCast(c.Fl_Text_Display_insert_position(textDisplay(self).raw()));
         }
 
         pub fn countLines(self: *Self, start: u32, end: u32, is_line_start: bool) u32 {
-            return c.Fl_Text_Display_count_lines(textDisplay(self).raw(), @intCast(start), end, @intFromBool(is_line_start));
+            return @intCast(c.Fl_Text_Display_count_lines(textDisplay(self).raw(), @intCast(start), @intCast(end), @intFromBool(is_line_start)));
         }
 
         pub fn moveRight(self: *Self) void {
@@ -326,7 +337,7 @@ fn methods(comptime Self: type) type {
         }
 
         pub fn setScrollbarSize(self: *Self, size: u32) void {
-            c.Fl_Text_Display_set_scrollbar_size(textDisplay(self).raw(), size);
+            c.Fl_Text_Display_set_scrollbar_size(textDisplay(self).raw(), @as(c_int, @intCast(size)));
         }
 
         pub fn setScrollbarAlign(self: *Self, a: i32) void {
@@ -356,19 +367,45 @@ pub fn TextMethodsProxy(comptime Self: type) type {
     const TM = methods(Self);
     return struct {
         self: *Self,
-        pub inline fn buffer(p: @This()) ?*TextBuffer { return TM.buffer(p.self); }
-        pub inline fn setBuffer(p: @This(), buf: *TextBuffer) void { TM.setBuffer(p.self, buf); }
-        pub inline fn setTextFont(p: @This(), font: enums.Font) void { TM.setTextFont(p.self, font); }
-        pub inline fn setTextColor(p: @This(), col: enums.Color) void { TM.setTextColor(p.self, col); }
-        pub inline fn setTextSize(p: @This(), sz: i32) void { TM.setTextSize(p.self, sz); }
-        pub inline fn scroll(p: @This(), t: i32, h: i32) void { TM.scroll(p.self, t, h); }
-        pub inline fn insert(p: @This(), s: [*c]const u8) void { TM.insert(p.self, s); }
-        pub inline fn setInsertPosition(p: @This(), pos: u32) void { TM.setInsertPosition(p.self, pos); }
-        pub inline fn setLinenumberWidth(p: @This(), w: i32) void { TM.setLinenumberWidth(p.self, w); }
-        pub inline fn showCursor(p: @This(), v: bool) void { TM.showCursor(p.self, v); }
-        pub inline fn cut(p: @This()) void { TM.cut(p.self); }
-        pub inline fn copy(p: @This()) void { TM.copy(p.self); }
-        pub inline fn paste(p: @This()) void { TM.paste(p.self); }
+        pub inline fn buffer(p: @This()) ?*TextBuffer {
+            return TM.buffer(p.self);
+        }
+        pub inline fn setBuffer(p: @This(), buf: *TextBuffer) void {
+            TM.setBuffer(p.self, buf);
+        }
+        pub inline fn setTextFont(p: @This(), font: enums.Font) void {
+            TM.setTextFont(p.self, font);
+        }
+        pub inline fn setTextColor(p: @This(), col: enums.Color) void {
+            TM.setTextColor(p.self, col);
+        }
+        pub inline fn setTextSize(p: @This(), sz: i32) void {
+            TM.setTextSize(p.self, sz);
+        }
+        pub inline fn scroll(p: @This(), t: i32, h: i32) void {
+            TM.scroll(p.self, t, h);
+        }
+        pub inline fn insert(p: @This(), s: [*c]const u8) void {
+            TM.insert(p.self, s);
+        }
+        pub inline fn setInsertPosition(p: @This(), pos: u32) void {
+            TM.setInsertPosition(p.self, pos);
+        }
+        pub inline fn setLinenumberWidth(p: @This(), w: i32) void {
+            TM.setLinenumberWidth(p.self, w);
+        }
+        pub inline fn showCursor(p: @This(), v: bool) void {
+            TM.showCursor(p.self, v);
+        }
+        pub inline fn cut(p: @This()) void {
+            TM.cut(p.self);
+        }
+        pub inline fn copy(p: @This()) void {
+            TM.copy(p.self);
+        }
+        pub inline fn paste(p: @This()) void {
+            TM.paste(p.self);
+        }
     };
 }
 

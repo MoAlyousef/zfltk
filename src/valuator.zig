@@ -74,10 +74,18 @@ fn ValuatorType(comptime kind: ValuatorKind) type {
 
         // Namespaced method sets (Zig 0.15.1 no usingnamespace)
         pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
-        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
-        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
-        pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
-        pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
+        pub inline fn asWidget(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) {
+            return .{ .self = self };
+        }
+        pub inline fn widget(self: *Self) *Widget {
+            return widget_ns.widget(self);
+        }
+        pub inline fn raw(self: *Self) RawPtr {
+            return widget_ns.raw(self);
+        }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self {
+            return widget_ns.fromRaw(ptr);
+        }
         pub const valuator_methods = methods(Self, RawPtr);
         pub const RawPtr = switch (kind) {
             .slider => *c.Fl_Slider,
@@ -171,63 +179,63 @@ fn methods(comptime Self: type, comptime RawPtr: type) type {
         }
 
         pub inline fn setBounds(self: *Self, a: f64, b: f64) void {
-            return @field(c, ptr_name ++ "_set_bounds")(self.raw(), a, b);
+            return @field(c, ptr_name ++ "_set_bounds")(zfltk.widget.methods(Self, RawPtr).raw(self), a, b);
         }
 
         pub inline fn minimum(self: *Self) f64 {
-            return @field(c, ptr_name ++ "_minimum")(self.raw());
+            return @field(c, ptr_name ++ "_minimum")(zfltk.widget.methods(Self, RawPtr).raw(self));
         }
 
         pub inline fn setMinimum(self: *Self, a: f64) void {
-            @field(c, ptr_name ++ "_set_minimum")(self.raw(), a);
+            @field(c, ptr_name ++ "_set_minimum")(zfltk.widget.methods(Self, RawPtr).raw(self), a);
         }
 
         pub inline fn maximum(self: *Self) f64 {
-            return @field(c, ptr_name ++ "_maximum")(self.raw());
+            return @field(c, ptr_name ++ "_maximum")(zfltk.widget.methods(Self, RawPtr).raw(self));
         }
 
         pub inline fn setMaximum(self: *Self, a: f64) void {
-            @field(c, ptr_name ++ "_set_maximum")(self.raw(), a);
+            @field(c, ptr_name ++ "_set_maximum")(zfltk.widget.methods(Self, RawPtr).raw(self), a);
         }
 
         pub inline fn setRange(self: *Self, a: f64, b: f64) void {
-            return @field(c, ptr_name ++ "_set_range")(self.raw(), a, b);
+            return @field(c, ptr_name ++ "_set_range")(zfltk.widget.methods(Self, RawPtr).raw(self), a, b);
         }
 
         pub inline fn setStep(self: *Self, a: f64, b: i32) void {
-            return @field(c, ptr_name ++ "_set_step")(self.raw(), a, b);
+            return @field(c, ptr_name ++ "_set_step")(zfltk.widget.methods(Self, RawPtr).raw(self), a, b);
         }
 
         pub inline fn step(self: *Self) f64 {
-            return @field(c, ptr_name ++ "_step")(self.raw());
+            return @field(c, ptr_name ++ "_step")(zfltk.widget.methods(Self, RawPtr).raw(self));
         }
 
         pub inline fn setPrecision(self: *Self, digits: i32) void {
-            return @field(c, ptr_name ++ "_set_precision")(self.raw(), digits);
+            return @field(c, ptr_name ++ "_set_precision")(zfltk.widget.methods(Self, RawPtr).raw(self), digits);
         }
 
         pub inline fn value(self: *Self) f64 {
-            return @field(c, ptr_name ++ "_value")(self.raw());
+            return @field(c, ptr_name ++ "_value")(zfltk.widget.methods(Self, RawPtr).raw(self));
         }
 
         pub inline fn setValue(self: *Self, arg2: f64) void {
-            return @field(c, ptr_name ++ "_set_value")(self.raw(), arg2);
+            return @field(c, ptr_name ++ "_set_value")(zfltk.widget.methods(Self, RawPtr).raw(self), arg2);
         }
 
         pub inline fn format(self: *Self, arg2: [*c]const u8) void {
-            return @field(c, ptr_name ++ "_format")(self.raw(), arg2);
+            return @field(c, ptr_name ++ "_format")(zfltk.widget.methods(Self, RawPtr).raw(self), arg2);
         }
 
         pub inline fn round(self: *Self, arg2: f64) f64 {
-            return @field(c, ptr_name ++ "_round")(self.raw(), arg2);
+            return @field(c, ptr_name ++ "_round")(zfltk.widget.methods(Self, RawPtr).raw(self), arg2);
         }
 
         pub inline fn clamp(self: *Self, arg2: f64) f64 {
-            return @field(c, ptr_name ++ "_clamp")(self.raw(), arg2);
+            return @field(c, ptr_name ++ "_clamp")(zfltk.widget.methods(Self, RawPtr).raw(self), arg2);
         }
 
         pub inline fn increment(self: *Self, arg2: f64, arg3: i32) f64 {
-            return @field(c, ptr_name ++ "_increment")(self.raw(), arg2, arg3);
+            return @field(c, ptr_name ++ "_increment")(zfltk.widget.methods(Self, RawPtr).raw(self), arg2, arg3);
         }
     };
 }

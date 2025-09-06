@@ -1,7 +1,7 @@
 const zfltk = @import("zfltk.zig");
 const app = zfltk.app;
 const Widget = @import("widget.zig").Widget;
-const ScrollVal = struct { inner: ?*c.Fl_Scrollbar };
+const ScrollVal = struct { inner: ?*anyopaque };
 const enums = @import("enums.zig");
 const c = zfltk.c;
 const std = @import("std");
@@ -36,10 +36,18 @@ fn BrowserType(comptime kind: BrowserKind) type {
 
         // Namespaced widget methods (Zig 0.15.1 no usingnamespace)
         pub const widget_ns = zfltk.widget.methods(Self, RawPtr);
-        pub inline fn widget_methods(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) { return .{ .self = self }; }
-        pub inline fn widget(self: *Self) *Widget { return widget_ns.widget(self); }
-        pub inline fn raw(self: *Self) RawPtr { return widget_ns.raw(self); }
-        pub inline fn fromRaw(ptr: *anyopaque) *Self { return widget_ns.fromRaw(ptr); }
+        pub inline fn asWidget(self: *Self) zfltk.widget.MethodsProxy(Self, RawPtr) {
+            return .{ .self = self };
+        }
+        pub inline fn widget(self: *Self) *Widget {
+            return widget_ns.widget(self);
+        }
+        pub inline fn raw(self: *Self) RawPtr {
+            return widget_ns.raw(self);
+        }
+        pub inline fn fromRaw(ptr: *anyopaque) *Self {
+            return widget_ns.fromRaw(ptr);
+        }
 
         pub inline fn init(opts: Widget.Options) !*Self {
             const init_func = switch (kind) {
@@ -72,21 +80,21 @@ fn BrowserType(comptime kind: BrowserKind) type {
         }
 
         pub fn remove(self: *Self, line: u32) void {
-            return c.Fl_Browser_remove(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
+            _ = c.Fl_Browser_remove(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
         }
 
         pub fn add(self: *Self, item: [:0]const u8) void {
-            return c.Fl_Browser_add(@ptrCast(self.raw()), item.ptr);
+            _ = c.Fl_Browser_add(@ptrCast(self.raw()), item.ptr);
         }
 
         pub fn insert(self: *Self, line: u32, item: [:0]const u8) void {
-            return c.Fl_Browser_insert(@ptrCast(self.raw()), @as(c_int, @intCast(line)), item.ptr);
+            _ = c.Fl_Browser_insert(@ptrCast(self.raw()), @as(c_int, @intCast(line)), item.ptr);
         }
 
         // move_item/swap are not available in cfltk headers in some builds; omit wrappers
 
         pub fn clear(self: *Self) void {
-            return c.Fl_Browser_clear(@ptrCast(self.raw()));
+            _ = c.Fl_Browser_clear(@ptrCast(self.raw()));
         }
 
         pub fn size(self: *Self) i32 {
@@ -94,11 +102,14 @@ fn BrowserType(comptime kind: BrowserKind) type {
         }
 
         pub fn setSize(self: *Self, w: i32, h: i32) void {
-            return c.Fl_Browser_set_size(@ptrCast(self.raw()), w, h);
+            // cfltk does not provide Fl_Browser_set_size; use generic widget resize
+            const wx = self.asWidget().x();
+            const wy = self.asWidget().y();
+            self.asWidget().resize(wx, wy, @as(u31, @intCast(w)), @as(u31, @intCast(h)));
         }
 
         pub fn select(self: *Self, line: u32) void {
-            if (line <= self.size()) return c.Fl_Browser_select(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
+            if (line <= self.size()) _ = c.Fl_Browser_select(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
         }
 
         pub fn selected(self: *Self, line: u32) bool {
@@ -106,35 +117,35 @@ fn BrowserType(comptime kind: BrowserKind) type {
         }
 
         pub fn text(self: *Self, line: u32) [:0]const u8 {
-            return c.Fl_Browser_text(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
+            return std.mem.span(c.Fl_Browser_text(@ptrCast(self.raw()), @as(c_int, @intCast(line))));
         }
 
         pub fn setText(self: *Self, line: u32, txt: [*c]const u8) void {
-            return c.Fl_Browser_set_text(@ptrCast(self.raw()), @as(c_int, @intCast(line)), txt);
+            _ = c.Fl_Browser_set_text(@ptrCast(self.raw()), @as(c_int, @intCast(line)), txt);
         }
 
         pub fn load(self: *Self, path: [*c]const u8) void {
-            return c.Fl_Browser_load_file(@ptrCast(self.raw()), path);
+            _ = c.Fl_Browser_load_file(@ptrCast(self.raw()), path);
         }
 
         pub fn textSize(self: *Self) u32 {
-            return c.Fl_Browser_text_size(@ptrCast(self.raw()));
+            return @as(u32, @intCast(c.Fl_Browser_text_size(@ptrCast(self.raw()))));
         }
 
         pub fn setTextSize(self: *Self, val: u32) void {
-            return c.Fl_Browser_set_text_size(@ptrCast(self.raw()), val);
+            _ = c.Fl_Browser_set_text_size(@ptrCast(self.raw()), @as(c_int, @intCast(val)));
         }
 
         pub fn topline(self: *Self, line: u32) void {
-            return c.Fl_Browser_topline(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
+            _ = c.Fl_Browser_topline(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
         }
 
         pub fn bottomline(self: *Self, line: u32) void {
-            return c.Fl_Browser_bottomline(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
+            _ = c.Fl_Browser_bottomline(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
         }
 
         pub fn middleline(self: *Self, line: u32) void {
-            return c.Fl_Browser_middleline(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
+            _ = c.Fl_Browser_middleline(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
         }
 
         pub fn formatChar(self: *Self) u8 {
@@ -142,7 +153,7 @@ fn BrowserType(comptime kind: BrowserKind) type {
         }
 
         pub fn setFormatChar(self: *Self, char: u8) void {
-            return c.Fl_Browser_set_format_char(@ptrCast(self.raw()), char);
+            _ = c.Fl_Browser_set_format_char(@ptrCast(self.raw()), char);
         }
 
         pub fn columnChar(self: *Self) u8 {
@@ -150,11 +161,11 @@ fn BrowserType(comptime kind: BrowserKind) type {
         }
 
         pub fn setColumnChar(self: *Self, char: u8) void {
-            return c.Fl_Browser_set_column_char(@ptrCast(self.raw()), char);
+            _ = c.Fl_Browser_set_column_char(@ptrCast(self.raw()), char);
         }
 
         pub fn setColumnWidths(self: *Self, arr: [:0]const i32) void {
-            return c.Fl_Browser_set_column_widths(@ptrCast(self.raw()), arr.ptr);
+            _ = c.Fl_Browser_set_column_widths(@ptrCast(self.raw()), arr.ptr);
         }
 
         pub fn displayed(self: *Self, line: u31) bool {
@@ -162,43 +173,43 @@ fn BrowserType(comptime kind: BrowserKind) type {
         }
 
         pub fn makeVisible(self: *Self, line: u31) void {
-            return c.Fl_Browser_make_visible(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
+            _ = c.Fl_Browser_make_visible(@ptrCast(self.raw()), @as(c_int, @intCast(line)));
         }
 
         pub fn position(self: *Self) u31 {
-            return c.Fl_Browser_position(@ptrCast(self.raw()));
+            return @as(u31, @intCast(c.Fl_Browser_position(@ptrCast(self.raw()))));
         }
 
         pub fn setPosition(self: *Self, pos: u31) void {
-            return c.Fl_Browser_set_position(@ptrCast(self.raw()), pos);
+            _ = c.Fl_Browser_set_position(@ptrCast(self.raw()), pos);
         }
 
         pub fn hposition(self: *Self) u31 {
-            return c.Fl_Browser_hposition(@ptrCast(self.raw()));
+            return @as(u31, @intCast(c.Fl_Browser_hposition(@ptrCast(self.raw()))));
         }
 
         pub fn setHposition(self: *Self, pos: u31) void {
-            return c.Fl_Browser_set_hposition(@ptrCast(self.raw()), pos);
+            _ = c.Fl_Browser_set_hposition(@ptrCast(self.raw()), pos);
         }
 
         pub fn hasScrollbar(self: *Self) enums.BrowserScrollbar {
-            return c.Fl_Browser_has_scrollbar(@ptrCast(self.raw()));
+            return @enumFromInt(@as(i32, @intCast(c.Fl_Browser_has_scrollbar(@ptrCast(self.raw())))));
         }
 
         pub fn setHasScrollbar(self: *Self, mode: enums.BrowserScrollbar) void {
-            return c.Fl_Browser_set_has_scrollbar(@ptrCast(self.raw()), mode);
+            _ = c.Fl_Browser_set_has_scrollbar(@ptrCast(self.raw()), @as(u8, @intCast(@intFromEnum(mode))));
         }
 
         pub fn scrollbarSize(self: *Self) u31 {
-            return c.Fl_Browser_scrollbar_size(@ptrCast(self.raw()));
+            return @as(u31, @intCast(c.Fl_Browser_scrollbar_size(@ptrCast(self.raw()))));
         }
 
         pub fn setScrollbarSize(self: *Self, new_size: u31) void {
-            return c.Fl_Browser_set_scrollbar_size(@ptrCast(self.raw()), new_size);
+            _ = c.Fl_Browser_set_scrollbar_size(@ptrCast(self.raw()), new_size);
         }
 
         pub fn sort(self: *Self) void {
-            return c.Fl_Browser_sort(@ptrCast(self.raw()));
+            _ = c.Fl_Browser_sort(@ptrCast(self.raw()));
         }
 
         pub fn scrollbar(self: *Self) ScrollVal {
