@@ -46,7 +46,7 @@ jobs:
         run: |
           pacman -Sy
           pacman --noconfirm -S $MINGW_PACKAGE_PREFIX-cmake $MINGW_PACKAGE_PREFIX-gcc $MINGW_PACKAGE_PREFIX-ninja wget unzip git --needed
-          wget https://ziglang.org/builds/zig-x86_64-windows-0.15.1.zip
+          wget https://ziglang.org/download/0.15.1/zig-x86_64-windows-0.15.1.zip
           unzip -qq zig-x86_64-windows-0.15.1.zip
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && ./scripts/bootstrap_posix.sh -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX && cd ..
