@@ -21,7 +21,22 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && sudo ./scripts/bootstrap_posix.sh && cd ..
-          zig build -Dzfltk-build-examples=true
+          zig build -Dzfltk-build-examples=true -Dzfltk-use-opengl=true
+  crosscompile_windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+      - name: Build
+        run: |
+          git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
+          cd cfltk
+          cmake -Bbin -GNinja -DFLTK_BUILD_TEST=OFF -DFLTK_BUILD_GL=OFF -DCFLTK_USE_OPENGL=OFF -DCMAKE_TOOLCHAIN_FILE=../cmake/zig_windows_toolchain.cmake -DCMAKE_INSTALL_PREFIX=winroot
+          cmake --build bin --target install
+          cd ..
+          zig build -Dtarget=x86_64-windows-gnu --search-prefix ./cfltk/winroot
   build_macos:
     runs-on: macos-latest
     steps:
@@ -33,7 +48,7 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && sudo ./scripts/bootstrap_posix.sh && cd ..
-          zig build --search-prefix /usr/local -Dzfltk-build-examples=true
+          zig build --search-prefix /usr/local -Dzfltk-build-examples=true -Dzfltk-use-opengl=true
   build_windows-mingw:
     runs-on: windows-latest
     steps:
@@ -50,7 +65,7 @@ jobs:
           unzip -qq zig-x86_64-windows-0.15.1.zip
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && ./scripts/bootstrap_posix.sh -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX && cd ..
-          zig-x86_64-windows-0.15.1/zig build --search-prefix $MINGW_PREFIX -Dzfltk-build-examples=true
+          zig-x86_64-windows-0.15.1/zig build --search-prefix $MINGW_PREFIX -Dzfltk-build-examples=true -Dzfltk-use-opengl=true
   build_windows:
     runs-on: windows-latest
     steps:
@@ -64,4 +79,4 @@ jobs:
         run: |
           git clone https://github.com/MoAlyousef/cfltk -b fltk1.4 --recurse-submodules --depth=1
           cd cfltk && cmake -Bbin -GNinja -DFLTK_BUILD_TEST=OFF -DFLTK_BUILD_EXAMPLES=OFF -DFLTK_BUILD_GL=ON -DCFLTK_USE_OPENGL=ON -DFLTK_USE_SYSTEM_LIBPNG=OFF -DFLTK_USE_SYSTEM_LIBJPEG=OFF -DFLTK_USE_SYSTEM_LIBZLIB=OFF -DFLTK_BUILD_FLUID=OFF -DFLTK_BUILD_FLTK_OPTIONS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=C:\\cfltk && cmake --build bin --config Release && cmake --install bin --config Release && cd ..
-          zig build --search-prefix C:\\cfltk -Dzfltk-build-examples=true
+          zig build --search-prefix C:\\cfltk -Dzfltk-build-examples=true -Dzfltk-use-opengl=true

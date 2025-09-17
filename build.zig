@@ -3,6 +3,7 @@ const Build = std.Build;
 
 pub const SdkOpts = struct {
     build_examples: bool = false,
+    use_opengl: bool = false,
 };
 
 const Example = struct {
@@ -48,6 +49,7 @@ pub fn build(b: *std.Build) !void {
 
     opts = SdkOpts{
         .build_examples = b.option(bool, "zfltk-build-examples", "Build zfltk examples") orelse false,
+        .use_opengl = b.option(bool, "zfltk-use-opengl", "Link OpenGL (fltk_gl) support") orelse false,
     };
 
     const zfltk = b.addModule("zfltk", .{
@@ -64,10 +66,12 @@ pub fn build(b: *std.Build) !void {
     zfltk.linkSystemLibrary("fltk_png", .{ .preferred_link_mode = .static });
     zfltk.linkSystemLibrary("fltk_jpeg", .{ .preferred_link_mode = .static });
     zfltk.linkSystemLibrary("fltk_z", .{ .preferred_link_mode = .static });
-    zfltk.linkSystemLibrary("fltk_gl", .{ .preferred_link_mode = .static });
+    if (opts.use_opengl) {
+        zfltk.linkSystemLibrary("fltk_gl", .{ .preferred_link_mode = .static });
+    }
 
-    const target_os = try std.zig.system.resolveTargetQuery(.{});
-    if (target_os.os.tag == .windows) {
+    const os_tag = target.result.os.tag;
+    if (os_tag == .windows) {
         zfltk.linkSystemLibrary("ws2_32", .{});
         zfltk.linkSystemLibrary("comctl32", .{});
         zfltk.linkSystemLibrary("gdi32", .{});
@@ -82,13 +86,17 @@ pub fn build(b: *std.Build) !void {
         zfltk.linkSystemLibrary("kernel32", .{});
         zfltk.linkSystemLibrary("odbc32", .{});
         zfltk.linkSystemLibrary("gdiplus", .{});
-        zfltk.linkSystemLibrary("opengl32", .{});
-        zfltk.linkSystemLibrary("glu32", .{});
-    } else if (target_os.os.tag.isDarwin()) {
+        if (opts.use_opengl) {
+            zfltk.linkSystemLibrary("opengl32", .{});
+            zfltk.linkSystemLibrary("glu32", .{});
+        }
+    } else if (os_tag.isDarwin()) {
         zfltk.linkFramework("Carbon", .{});
         zfltk.linkFramework("Cocoa", .{});
         zfltk.linkFramework("ApplicationServices", .{});
-        zfltk.linkFramework("OpenGL", .{});
+        if (opts.use_opengl) {
+            zfltk.linkFramework("OpenGL", .{});
+        }
         zfltk.linkFramework("ScreenCaptureKit", .{});
         zfltk.linkFramework("UniformTypeIdentifiers", .{});
     } else {
@@ -96,10 +104,12 @@ pub fn build(b: *std.Build) !void {
         zfltk.linkSystemLibrary("wayland-cursor", .{});
         zfltk.linkSystemLibrary("xkbcommon", .{});
         zfltk.linkSystemLibrary("dbus-1", .{});
-        zfltk.linkSystemLibrary("EGL", .{});
-        zfltk.linkSystemLibrary("wayland-egl", .{});
-        zfltk.linkSystemLibrary("GL", .{});
-        zfltk.linkSystemLibrary("GLU", .{});
+        if (opts.use_opengl) {
+            zfltk.linkSystemLibrary("EGL", .{});
+            zfltk.linkSystemLibrary("wayland-egl", .{});
+            zfltk.linkSystemLibrary("GL", .{});
+            zfltk.linkSystemLibrary("GLU", .{});
+        }
         zfltk.linkSystemLibrary("pthread", .{});
         zfltk.linkSystemLibrary("X11", .{});
         zfltk.linkSystemLibrary("Xext", .{});
